@@ -14,13 +14,59 @@ class Exercise: Identifiable, Hashable {
     var name: String
     var desc: String
     var target_muscles: [Muscle]
+    var set_type: ExerciseSetType
     
-    init(id: UUID = UUID(), name: String = "", desc: String = "", target_muscles: [Muscle] = []) {
+    init(
+        id: UUID = UUID(),
+        name: String = "",
+        desc: String = "",
+        target_muscles: [Muscle] = [],
+        set_type: ExerciseSetType = ExerciseSetType.resistance
+    ) {
         self.id = id
         self.name = name
         self.desc = desc
         self.target_muscles = target_muscles
+        self.set_type = set_type 
     }
+}
+
+@Model
+class ExerciseSet {
+    var id: UUID
+    var exercise: Exercise
+    var workout: Workout
+    var weight: Double
+    var repetitions: Int
+    var time: Double
+    var elevation: Double
+    var distance: Double
+    
+    init(
+        id: UUID = UUID(),
+        exercise: Exercise,
+        workout: Workout,
+        weight: Double = 0.0,
+        repetitions: Int = 0,
+        time: Double = 0.0,
+        elevation: Double = 0.0,
+        distance: Double = 0.0
+    ) {
+        self.id = id
+        self.exercise = exercise
+        self.workout = workout
+        self.weight = weight
+        self.repetitions = repetitions
+        self.time = time
+        self.elevation = elevation
+        self.distance = distance
+    }
+}
+
+enum ExerciseSetType: String, Codable {
+    case resistance = "ResistanceSet"
+    case run = "RunSet"
+    case swim = "SwimSet"
 }
 
 @Model
@@ -30,49 +76,6 @@ class Muscle: Hashable {
     init(name: String) {
         self.name = name
     }
-}
-
-protocol ExerciseSet: Identifiable, Hashable {
-    var id: UUID { get }
-    var exercise: Exercise { get }
-    var workout: Workout { get }
-    
-//    init(id: UUID, exercise: Exercise, workout: Workout)
-}
-
-struct ResistanceSet: ExerciseSet {
-    var id: UUID
-    var exercise: Exercise
-    var workout: Workout
-    var weight: Decimal
-    var repetitions: Int
-    var time: Decimal?
-    
-    init(id: UUID = UUID(), exercise: Exercise = Exercise(), workout: Workout = Workout(), weight: Decimal = 0.0, repetitions: Int = 0, time: Decimal? = nil) {
-        self.id = id
-        self.exercise = exercise
-        self.workout = workout
-        self.weight = weight
-        self.repetitions = repetitions
-        self.time = time
-    }
-}
-
-struct RunSet: ExerciseSet {
-    var id: UUID
-    var exercise: Exercise
-    var workout: Workout
-    var elevation: Decimal
-    var time: Decimal
-    var distance: Decimal
-}
-
-struct SwimSet: ExerciseSet {
-    var id: UUID
-    var exercise: Exercise
-    var workout: Workout
-    var distance: Decimal
-    var time: Decimal
 }
 
 let muscles: [Muscle] = [

@@ -12,9 +12,6 @@ struct EditWorkoutView: View {
     @Bindable var workout: Workout
     @EnvironmentObject private var routerManager: NavigationRouter
     @Environment(\.modelContext) var modelContext
-    // Insert @Query with filter that only selects sets with matching workout
-    // Should I do matching exercise && workout in here, or evaluate matching
-    // exercise in the ForEach loop?
     
     var body: some View {
         Form {
@@ -31,16 +28,8 @@ struct EditWorkoutView: View {
                 .pickerStyle(.segmented)
             }
             
-            Text("Exercises")
-            
             ForEach(workout.exercises) {exercise in
-                Section(exercise.name) {
-                    
-                }
-            }
-            
-            Section ("Exercises") {
-                ForEach(workout.exercises) {exercise in
+                Section(exercise.set_type.rawValue) {
                     HStack {
                         Text(exercise.name)
                         Spacer()
@@ -48,9 +37,18 @@ struct EditWorkoutView: View {
                             routerManager.push(to: Route.exerciseDetailsView(exercise: exercise))
                         }
                         .buttonStyle(.plain)
+                        Button("", systemImage: "trash") {
+                            removeExercise(exercise: exercise)
+                            workout.sets.forEach { set in
+                                if set.exercise == exercise {
+                                    workout.sets.remove(at: workout.sets.lastIndex(of: set)!)
+                                }
+                            }
+                        }
+                        .buttonStyle(.plain)
                     }
+                    WorkoutExerciseView(workout: workout, exercise: exercise)
                 }
-                .onDelete(perform: removeExercises)
             }
         }
         .navigationTitle("Edit Workout")
@@ -65,10 +63,8 @@ struct EditWorkoutView: View {
         routerManager.push(to: Route.exerciseListView(workout: workout))
     }
     
-    func removeExercises(_ indexSet: IndexSet) {
-        for index in indexSet {
-            workout.exercises.remove(at: index)
-        }
+    func removeExercise(exercise: Exercise) {
+        workout.exercises.remove(at: workout.exercises.lastIndex(of: exercise)!)
     }
 }
 
@@ -79,6 +75,7 @@ struct EditWorkoutView: View {
         let example = Workout(name: "Example Workout", desc: "This is a sample workout created for the purposes of testing persistent data")
         return EditWorkoutView(workout: example)
             .modelContainer(container)
+            .environmentObject(NavigationRouter())
     } catch {
         fatalError("Failed to create model")
     }

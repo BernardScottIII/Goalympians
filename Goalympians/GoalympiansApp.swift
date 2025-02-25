@@ -14,6 +14,6 @@ struct GoalympiansApp: App {
         WindowGroup {
             ContentView()
         }
-        .modelContainer(for: [Workout.self, Exercise.self, Muscle.self])
+        .modelContainer(for: [Workout.self, Exercise.self, Muscle.self, ExerciseSet.self])
     }
 }

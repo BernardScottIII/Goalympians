@@ -18,9 +18,6 @@ struct ExerciseListView: View {
     var body: some View {
         List {
             ForEach(exercises) {exercise in
-//                NavigationLink(value: Route.exercise(workout: workout, exercise: exercise)) {
-//                    Text(exercise.name)
-//                }
                 HStack {
                     Text(exercise.name)
                     Spacer()
@@ -29,7 +26,6 @@ struct ExerciseListView: View {
                     }
                     .buttonStyle(.plain)
                     Button("", systemImage: "plus") {
-//                        routerManager.push(to: Route.customExercise(workout: workout, exercise: exercise))
                         workout.exercises.append(exercise)
                         routerManager.pop()
                     }
@@ -74,6 +70,9 @@ struct ExerciseListView: View {
         for index in indexSet {
             let exercise = exercises[index]
             modelContext.delete(exercise)
+            if workout.exercises.contains(exercise) {
+                workout.exercises.remove(at: index)
+            }
         }
     }
 }
@@ -81,4 +80,5 @@ struct ExerciseListView: View {
 #Preview {
 //    ExerciseListView(exercise: Exercise(name: "Example Exercise", desc: "This is an example of an exercise which would physically challenge the user.", target_muscles: []))
     ExerciseListView(workout: Workout(name: "Example Workout", desc: "This is a sample workout created for the purposes of testing persistent data"))
+        .environmentObject(NavigationRouter())
 }

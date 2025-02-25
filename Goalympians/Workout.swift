@@ -16,12 +16,21 @@ class Workout {
     var desc: String
     var intensity: Int
     var exercises: [Exercise]
+    var sets: [ExerciseSet]
     
-    init(name: String = "", date: Date = Date.now, desc: String = "", intensity: Int = 2, exercises: [Exercise] = []) {
+    init(
+        name: String = "",
+        date: Date = Date.now,
+        desc: String = "",
+        intensity: Int = 2,
+        exercises: [Exercise] = [],
+        sets: [ExerciseSet] = []
+    ) {
         self.name = name
         self.date = date
         self.desc = desc
         self.intensity = intensity
         self.exercises = exercises
+        self.sets = sets
     }
 }

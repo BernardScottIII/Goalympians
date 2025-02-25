@@ -29,10 +29,19 @@ struct EditExerciseView: View {
                     routerManager.push(to: Route.muscleListView(exercise: exercise))
                 }
             }
+            
+            Section("Exercise Type") {
+                Picker("Exercise Type", selection: $exercise.set_type) {
+                    Text("Resistance").tag(ExerciseSetType.resistance)
+                    Text("Running").tag(ExerciseSetType.run)
+                    Text("Swimming").tag(ExerciseSetType.swim)
+                }
+            }
         }
         Spacer()
         Button("Add Exercise to Workout") {
             workout.exercises.append(exercise)
+            workout.sets.append(ExerciseSet(exercise: exercise, workout: workout))
             routerManager.pop()
             routerManager.pop()
         }
