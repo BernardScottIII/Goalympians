@@ -1,109 +1,23 @@
 //
 //  Exercise.swift
-//  Goalympians
+//  AppDataTest
 //
-//  Created by Bernard Scott on 2/17/25.
+//  Created by Bernard Scott on 3/4/25.
 //
 
 import Foundation
 import SwiftData
 
 @Model
-class Exercise: Identifiable, Hashable {
-    var id = UUID()
+class Exercise {
+    @Attribute(.unique)
     var name: String
     var desc: String
-    var target_muscles: [Muscle]
-    var set_type: ExerciseSetType
+    var setType: SetType
     
-    init(
-        id: UUID = UUID(),
-        name: String = "",
-        desc: String = "",
-        target_muscles: [Muscle] = [],
-        set_type: ExerciseSetType = ExerciseSetType.resistance
-    ) {
-        self.id = id
+    init(name: String, desc: String, setType: SetType) {
         self.name = name
         self.desc = desc
-        self.target_muscles = target_muscles
-        self.set_type = set_type 
+        self.setType = setType
     }
 }
-
-@Model
-class ExerciseSet {
-    var id: UUID
-    var exercise: Exercise
-    var workout: Workout
-    var weight: Double
-    var repetitions: Int
-    var time: Double
-    var elevation: Double
-    var distance: Double
-    
-    init(
-        id: UUID = UUID(),
-        exercise: Exercise,
-        workout: Workout,
-        weight: Double = 0.0,
-        repetitions: Int = 0,
-        time: Double = 0.0,
-        elevation: Double = 0.0,
-        distance: Double = 0.0
-    ) {
-        self.id = id
-        self.exercise = exercise
-        self.workout = workout
-        self.weight = weight
-        self.repetitions = repetitions
-        self.time = time
-        self.elevation = elevation
-        self.distance = distance
-    }
-}
-
-enum ExerciseSetType: String, Codable {
-    case resistance = "ResistanceSet"
-    case run = "RunSet"
-    case swim = "SwimSet"
-}
-
-@Model
-class Muscle: Hashable {
-    var name: String
-    
-    init(name: String) {
-        self.name = name
-    }
-}
-
-let muscles: [Muscle] = [
-    Muscle(name: "Pectoralis Major"),
-    Muscle(name: "Anterior Deltoid"),
-    Muscle(name: "Tricep"),
-    Muscle(name: "Glutes"),
-    Muscle(name: "Hamstring"),
-    Muscle(name: "Quadriceps"),
-    Muscle(name: "Erector Spinae"),
-    Muscle(name: "Calves"),
-    Muscle(name: "Adductors"),
-    Muscle(name: "Abdominals")
-]
-
-//let exercises: [Exercise] = [
-//    Exercise(
-//        name: "Bench Press",
-//        desc: "Lay flat on a bench, take the bar in your hands, lift bar off of bench, bring towards chest until contact, extend away from chest as far as possible. Repeat until fatigued.",
-//        target_muscles: [muscles[0], muscles[1], muscles[2]]
-//    ),
-//    Exercise(
-//        name: "Deadlift",
-//        desc: "Place barbell on ground, add desired weight to each side of barbell, pick up barbell and stand straight up, drop barbell. Repeat until fatigued.",
-//        target_muscles: [muscles[3], muscles[4], muscles[5], muscles[6]]
-//    ),
-//    Exercise(
-//        name: "Squat",
-//        desc: "Approach squat rack with barbell, load desired weight onto each side of barbell, go under barbell and meet barbell wtih shoulders, stand up to unrack barbell, back up and squat down until legs make right angle, stand up, move forward, set bar back down. Repeat until fatigued.",
-//     target_muscles: [muscles[3], muscles[4], muscles[5], muscles[7], muscles[8], muscles[9]])
-//]

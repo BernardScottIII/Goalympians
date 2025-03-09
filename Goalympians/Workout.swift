@@ -1,36 +1,35 @@
 //
 //  Workout.swift
-//  Goalympians
+//  AppDataTest
 //
-//  Created by Bernard Scott on 2/12/25.
+//  Created by Bernard Scott on 3/4/25.
 //
 
 import Foundation
 import SwiftData
 
 @Model
-class Workout {
+class Workout: Hashable {
     var id = UUID()
     var name: String
     var date: Date
     var desc: String
     var intensity: Int
+    
+    @Relationship
     var exercises: [Exercise]
-    var sets: [ExerciseSet]
     
     init(
         name: String = "",
-        date: Date = Date.now,
+        date: Date = .now,
         desc: String = "",
         intensity: Int = 2,
-        exercises: [Exercise] = [],
-        sets: [ExerciseSet] = []
+        exercises: [Exercise] = []
     ) {
         self.name = name
         self.date = date
         self.desc = desc
         self.intensity = intensity
         self.exercises = exercises
-        self.sets = sets
     }
 }
