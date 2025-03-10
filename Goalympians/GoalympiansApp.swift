@@ -9,24 +9,22 @@ import SwiftUI
 import SwiftData
 import FirebaseCore
 
-class AppDelegate: NSObject, UIApplicationDelegate {
-  func application(_ application: UIApplication,
-                   didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
-    FirebaseApp.configure()
-
-    return true
-  }
-}
+// Code which gives me the filepath of the database file for this application
+//@UIApplicationMain
+//class AppDelegate: UIResponder, UIApplicationDelegate {
+//    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+//        print("Application Directory \(NSHomeDirectory())")
+//        return true
+//    }
+//}
 
 @main
 struct GoalympiansApp: App {
-    @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
-    
     var body: some Scene {
         WindowGroup {
             ContentView()
         }
-        .modelContainer(for: [Workout.self, Exercise.self, Muscle.self, ExerciseSet.self])
+        .modelContainer(for: [Workout.self, ResistanceSet.self, RunSet.self, SwimSet.self])
     }
 }
 
