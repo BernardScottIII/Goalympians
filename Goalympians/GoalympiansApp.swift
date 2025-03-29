@@ -20,11 +20,26 @@ import FirebaseCore
 
 @main
 struct GoalympiansApp: App {
+    
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
+
     var body: some Scene {
         WindowGroup {
-            ContentView()
+//            ContentView()
+            NavigationStack {
+//                AuthenticationView()
+                RootView()
+            }
         }
         .modelContainer(for: [Workout.self, ResistanceSet.self, RunSet.self, SwimSet.self])
+    }
+}
+
+class AppDelegate: NSObject, UIApplicationDelegate {
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+        FirebaseApp.configure()
+        
+        return true
     }
 }
 
