@@ -7,18 +7,35 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		37307E2E2D7F9B6000D7A2F9 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 37307E2D2D7F9B6000D7A2F9 /* FirebaseAuth */; };
 		376A14532D6DEF01006292F8 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 376A14522D6DEF01006292F8 /* FirebaseAnalytics */; };
+		376A14552D6DEF01006292F8 /* FirebaseAnalyticsWithoutAdIdSupport in Frameworks */ = {isa = PBXBuildFile; productRef = 376A14542D6DEF01006292F8 /* FirebaseAnalyticsWithoutAdIdSupport */; };
 		376A14572D6DEF01006292F8 /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = 376A14562D6DEF01006292F8 /* FirebaseCore */; };
+		37CDFC952D99DB5500A3226C /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 37CDFC942D99DB5500A3226C /* FirebaseAuth */; };
+		37CDFC972D99DC0C00A3226C /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 37CDFC962D99DC0C00A3226C /* FirebaseFirestore */; };
+		37CDFCAC2D99E51A00A3226C /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 37CDFCAB2D99E51A00A3226C /* GoogleSignIn */; };
+		37CDFCAE2D99E51A00A3226C /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 37CDFCAD2D99E51A00A3226C /* GoogleSignInSwift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		37AE6E052D5D40810003C065 /* Goalympians.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Goalympians.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		37CDFCB02D99E9A900A3226C /* Exceptions for "Goalympians" folder in "Goalympians" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 37AE6E042D5D40810003C065 /* Goalympians */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		37AE6E072D5D40810003C065 /* Goalympians */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				37CDFCB02D99E9A900A3226C /* Exceptions for "Goalympians" folder in "Goalympians" target */,
+			);
 			path = Goalympians;
 			sourceTree = "<group>";
 		};
@@ -31,25 +48,22 @@
 			files = (
 				376A14532D6DEF01006292F8 /* FirebaseAnalytics in Frameworks */,
 				376A14572D6DEF01006292F8 /* FirebaseCore in Frameworks */,
-				37307E2E2D7F9B6000D7A2F9 /* FirebaseAuth in Frameworks */,
+				37CDFCAE2D99E51A00A3226C /* GoogleSignInSwift in Frameworks */,
+				376A14552D6DEF01006292F8 /* FirebaseAnalyticsWithoutAdIdSupport in Frameworks */,
+				37CDFC972D99DC0C00A3226C /* FirebaseFirestore in Frameworks */,
+				37CDFC952D99DB5500A3226C /* FirebaseAuth in Frameworks */,
+				37CDFCAC2D99E51A00A3226C /* GoogleSignIn in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		37307E2C2D7F9B6000D7A2F9 /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
 		37AE6DFC2D5D40810003C065 = {
 			isa = PBXGroup;
 			children = (
 				37AE6E072D5D40810003C065 /* Goalympians */,
-				37307E2C2D7F9B6000D7A2F9 /* Frameworks */,
+				37CDFC932D99DB5500A3226C /* Frameworks */,
 				37AE6E062D5D40810003C065 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -60,6 +74,13 @@
 				37AE6E052D5D40810003C065 /* Goalympians.app */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		37CDFC932D99DB5500A3226C /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -83,8 +104,12 @@
 			name = Goalympians;
 			packageProductDependencies = (
 				376A14522D6DEF01006292F8 /* FirebaseAnalytics */,
+				376A14542D6DEF01006292F8 /* FirebaseAnalyticsWithoutAdIdSupport */,
 				376A14562D6DEF01006292F8 /* FirebaseCore */,
-				37307E2D2D7F9B6000D7A2F9 /* FirebaseAuth */,
+				37CDFC942D99DB5500A3226C /* FirebaseAuth */,
+				37CDFC962D99DC0C00A3226C /* FirebaseFirestore */,
+				37CDFCAB2D99E51A00A3226C /* GoogleSignIn */,
+				37CDFCAD2D99E51A00A3226C /* GoogleSignInSwift */,
 			);
 			productName = Goalympians;
 			productReference = 37AE6E052D5D40810003C065 /* Goalympians.app */;
@@ -116,6 +141,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				376A14512D6DEE55006292F8 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				37CDFCAA2D99E51A00A3226C /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 37AE6E062D5D40810003C065 /* Products */;
@@ -278,6 +304,7 @@
 				DEVELOPMENT_TEAM = CL3NY4NNNY;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Goalympians/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -307,6 +334,7 @@
 				DEVELOPMENT_TEAM = CL3NY4NNNY;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Goalympians/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -357,23 +385,51 @@
 				minimumVersion = 11.8.1;
 			};
 		};
+		37CDFCAA2D99E51A00A3226C /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/google/GoogleSignIn-iOS.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 8.0.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		37307E2D2D7F9B6000D7A2F9 /* FirebaseAuth */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 376A14512D6DEE55006292F8 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
-			productName = FirebaseAuth;
-		};
 		376A14522D6DEF01006292F8 /* FirebaseAnalytics */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 376A14512D6DEE55006292F8 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseAnalytics;
 		};
+		376A14542D6DEF01006292F8 /* FirebaseAnalyticsWithoutAdIdSupport */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 376A14512D6DEE55006292F8 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAnalyticsWithoutAdIdSupport;
+		};
 		376A14562D6DEF01006292F8 /* FirebaseCore */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 376A14512D6DEE55006292F8 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseCore;
+		};
+		37CDFC942D99DB5500A3226C /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 376A14512D6DEE55006292F8 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
+		};
+		37CDFC962D99DC0C00A3226C /* FirebaseFirestore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 376A14512D6DEE55006292F8 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestore;
+		};
+		37CDFCAB2D99E51A00A3226C /* GoogleSignIn */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 37CDFCAA2D99E51A00A3226C /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignIn;
+		};
+		37CDFCAD2D99E51A00A3226C /* GoogleSignInSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 37CDFCAA2D99E51A00A3226C /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignInSwift;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

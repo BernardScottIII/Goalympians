@@ -44,9 +44,17 @@ struct ContentView: View {
             }
             
             Tab("Settings", systemImage: "gear") {
+                if !showSignInView {
+                    NavigationStack {
+                        SettingsView(showSignInView: $showSignInView)
+                            .navigationTitle("Settings")
+                    }
+                }
+            }
+            
+            Tab("Profile", systemImage: "person") {
                 NavigationStack {
-                    SettingsView(showSignInView: $showSignInView)
-                        .navigationTitle("Settings")
+                    ProfileView(showSignInView: $showSignInView)
                 }
             }
         }
