@@ -67,7 +67,6 @@ struct SettingsView: View {
             
             emailSection
         }
-        .navigationTitle("Settings")
     }
 }
 

@@ -25,11 +25,7 @@ struct GoalympiansApp: App {
 
     var body: some Scene {
         WindowGroup {
-//            ContentView()
-            NavigationStack {
-//                AuthenticationView()
-                RootView()
-            }
+            RootView()
         }
         .modelContainer(for: [Workout.self, ResistanceSet.self, RunSet.self, SwimSet.self])
     }

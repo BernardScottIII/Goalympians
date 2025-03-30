@@ -9,13 +9,23 @@ import SwiftUI
 
 struct RootView: View {
     
+    @Environment(\.modelContext) private var modelContext
+    
     @State private var showSignInView: Bool = false
+    @State private var selectedTab: Tabs = .workouts
+    @State private var path: [Workout] = []
+    
+    enum Tabs: String, Equatable, Hashable, Identifiable {
+        var id: Tabs { self }
+        
+        case workouts = "Workouts"
+        case insights = "Insights"
+        case settings = "Settings"
+    }
     
     var body: some View {
         ZStack {
-            NavigationStack {
-                SettingsView(showSignInView: $showSignInView)
-            }
+            ContentView(showSignInView: $showSignInView)
         }
         .onAppear {
             let authUser = try? AuthenticationManager.shared.getAuthenticatedUser()
@@ -26,6 +36,12 @@ struct RootView: View {
                 AuthenticationView(showSignInView: $showSignInView)
             }
         }
+    }
+    
+    func addWorkout() {
+        let newWorkout = Workout()
+        modelContext.insert(newWorkout)
+        path = [newWorkout]
     }
 }
 
