@@ -12,23 +12,42 @@ struct ContentView: View {
     @Query var workouts: [Workout]
     @Environment(\.modelContext) private var modelContext
     @State private var path: [Workout] = []
+    @Binding var showSignInView: Bool
     
     var body: some View {
-        NavigationStack(path: $path) {
-            List {
-                ForEach(workouts) { workout in
-                    NavigationLink(value: workout) {
-                        Text(workout.name)
+        TabView {
+            Tab("Workouts", systemImage: "dumbbell") {
+                NavigationStack(path: $path) {
+                    List {
+                        ForEach(workouts) { workout in
+                            NavigationLink(value: workout) {
+                                Text(workout.name)
+                            }
+                        }
+                        .onDelete(perform: deleteWorkout)
+                    }
+                    .navigationTitle("Workouts")
+                    .navigationDestination(for: Workout.self) { workout in
+                        EditWorkoutView(workout: workout)
+                    }
+                    .toolbar {
+                        Button("Add Workout", action: addWorkout)
                     }
                 }
-                .onDelete(perform: deleteWorkout)
             }
-            .navigationTitle("Goalympians")
-            .navigationDestination(for: Workout.self) { workout in
-                EditWorkoutView(workout: workout)
+            
+            Tab("Insights", systemImage: "chart.xyaxis.line") {
+                NavigationStack {
+                    Text("Insights Page")
+                        .navigationTitle("Insights Page")
+                }
             }
-            .toolbar {
-                Button("Add Workout", action: addWorkout)
+            
+            Tab("Settings", systemImage: "gear") {
+                NavigationStack {
+                    SettingsView(showSignInView: $showSignInView)
+                        .navigationTitle("Settings")
+                }
             }
         }
     }
@@ -47,5 +66,5 @@ struct ContentView: View {
 }
 
 #Preview {
-    ContentView()
+    ContentView(showSignInView: .constant(true))
 }
