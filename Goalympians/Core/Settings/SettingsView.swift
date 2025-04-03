@@ -38,9 +38,13 @@ struct SettingsView: View {
             if viewModel.authProviders.contains(.email) {
                 emailSection
             }
+            if viewModel.authUser?.isAnonymous == true {
+                anonymousSection
+            }
         }
         .onAppear {
             viewModel.loadAuthProviders()
+            viewModel.loadAuthUser()
         }
     }
 }
@@ -52,6 +56,36 @@ struct SettingsView: View {
 }
 
 extension SettingsView {
+    private var anonymousSection: some View {
+        Section {
+            Button("Link Google Account") {
+                Task {
+                    do {
+                        try await viewModel.linkGoogleAccount()
+                        print("GOOGLE LINKED")
+                        showSignInView = true
+                    } catch {
+                        print(error)
+                    }
+                }
+            }
+            
+            Button("Link Email Account") {
+                Task {
+                    do {
+                        try await viewModel.linkEmailAccount()
+                        print("EMAIL LINKED")
+                        showSignInView = true
+                    } catch {
+                        print(error)
+                    }
+                }
+            }
+        } header: {
+            Text("Create Account")
+        }
+    }
+    
     private var emailSection: some View {
         Section {
             Button("Reset Password") {

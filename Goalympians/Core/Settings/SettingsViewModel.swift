@@ -11,6 +11,7 @@ import Foundation
 final class SettingsViewModel: ObservableObject {
     
     @Published var authProviders: [AuthProviderOption] = []
+    @Published var authUser: AuthDataResultModel? = nil
     
     func loadAuthProviders() {
         if let providers = try? AuthenticationManager.shared.getProviders() {
@@ -42,5 +43,22 @@ final class SettingsViewModel: ObservableObject {
     
     func deleteAccount() async throws {
         try await AuthenticationManager.shared.delete()
+    }
+    
+    func loadAuthUser() {
+        self.authUser = try? AuthenticationManager.shared.getAuthenticatedUser()
+    }
+    
+    func linkGoogleAccount() async throws {
+        let helper = SignInGoogleHelper()
+        let tokens = try await helper.signIn()
+        self.authUser = try await AuthenticationManager.shared.linkGoogle(tokens: tokens)
+        
+    }
+    
+    func linkEmailAccount() async throws {
+        let email = "hello123@gmail.com"
+        let password = "Hello123!"
+        self.authUser = try await AuthenticationManager.shared.linkEmail(email: email, password: password)
     }
 }
