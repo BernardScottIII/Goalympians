@@ -15,7 +15,7 @@ struct RootView: View {
     
     var body: some View {
         ZStack {
-            ContentView(showSignInView: $showSignInView)
+            TabbarView(showSignInView: $showSignInView)
         }
         .onAppear {
             let authUser = try? AuthenticationManager.shared.getAuthenticatedUser()

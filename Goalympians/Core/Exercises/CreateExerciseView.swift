@@ -9,7 +9,6 @@ import SwiftUI
 import SwiftData
 
 struct CreateExerciseView: View {
-    @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
     @State private var name: String = ""
     @State private var desc: String = ""
@@ -28,7 +27,9 @@ struct CreateExerciseView: View {
         }
         .navigationTitle("Create Exercise")
         Button("Create New Exercise") {
-            modelContext.insert(Exercise(name: name, desc: desc, setType: setType))
+            Task {
+                try await ExerciseManager.shared.uploadExercise(exercise: DBExercise(id: UUID().hashValue, name: name, description: desc, userId: AuthenticationManager.shared.getAuthenticatedUser().uid))
+            }
             dismiss()
         }
     }
