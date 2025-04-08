@@ -11,6 +11,7 @@ import FirebaseFirestore
 struct ActivityView: View {
     
     @StateObject private var viewModel = ActivityViewModel()
+    @State private var refreshHelper: Int = 0
     
     var workoutId: String
     
@@ -21,12 +22,11 @@ struct ActivityView: View {
             } else {
                 ForEach(viewModel.activities, id: \.workoutActivity.id.self) { entry in
                     HStack {
-                        Text(entry.exercise.name)
-                        
-                        Spacer()
+                        ActivityCellView(exercise: entry.exercise)
                         
                         Button("", systemImage: "plus") {
-                            // Unimplemented Button
+                            viewModel.addActivitySet(workoutId: workoutId, activityId: entry.workoutActivity.id)
+                            refreshHelper = UUID().hashValue
                         }
                         .buttonStyle(.plain)
                         Button("", systemImage: "trash") {
@@ -34,6 +34,8 @@ struct ActivityView: View {
                         }
                         .buttonStyle(.plain)
                     }
+                    
+                    ActivitySetView(refreshHelper: $refreshHelper, workoutId: workoutId, activityId: entry.workoutActivity.id)
                 }
             }
         }

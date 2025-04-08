@@ -32,4 +32,10 @@ final class ActivityViewModel: ObservableObject {
             getActivities(workoutId: workoutId)
         }
     }
+    
+    func addActivitySet(workoutId: String, activityId: String) {
+        Task {
+            try await WorkoutManager.shared.addWorkoutActivitySet(workoutId: workoutId, activityId: activityId)
+        }
+    }
 }

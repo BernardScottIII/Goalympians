@@ -8,13 +8,7 @@
 import SwiftUI
 import SwiftData
 
-enum SetType: String, Codable, Hashable, CaseIterable {
-    static var allCases: [SetType] = [resistanceSet, runSet, swimSet]
-    
-    case resistanceSet = "Resistance Set"
-    case runSet = "Run Set"
-    case swimSet = "Swim Set"
-}
+
 
 @Model
 class ResistanceSet {
