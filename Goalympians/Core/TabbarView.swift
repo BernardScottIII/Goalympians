@@ -9,16 +9,13 @@ import SwiftUI
 import SwiftData
 
 struct TabbarView: View {
-    @Query var workouts: [Workout]
-    @Environment(\.modelContext) private var modelContext
-    @State private var path: [Workout] = []
     @Binding var showSignInView: Bool
     
     var body: some View {
         TabView {
             Tab("Workouts", systemImage: "dumbbell") {
-                NavigationStack(path: $path) {
-                    WorkoutView(path: $path)
+                NavigationStack {
+                    WorkoutView()
                 }
             }
             
@@ -29,30 +26,13 @@ struct TabbarView: View {
                 }
             }
             
-//            Tab("Settings", systemImage: "gear") {
-//                if !showSignInView {
-//                    NavigationStack {
-//                        SettingsView(showSignInView: $showSignInView)
-//                            .navigationTitle("Settings")
-//                    }
-//                }
-//            }
-            
             Tab("Profile", systemImage: "person") {
                 NavigationStack {
                     ProfileView(showSignInView: $showSignInView)
                 }
             }
-            
-//            Tab("Exercises", systemImage: "figure.run") {
-//                NavigationStack {
-//                    ExercisesView()
-//                }
-//            }
         }
     }
-    
-    
 }
 
 #Preview {

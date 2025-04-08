@@ -9,8 +9,6 @@ import SwiftUI
 
 struct RootView: View {
     
-    @Environment(\.modelContext) private var modelContext
-    
     @State private var showSignInView: Bool = false
     
     var body: some View {

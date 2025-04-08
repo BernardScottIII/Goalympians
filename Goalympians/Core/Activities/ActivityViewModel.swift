@@ -1,5 +1,5 @@
 //
-//  ActivitiesViewModel.swift
+//  ActivityViewModel.swift
 //  Goalympians
 //
 //  Created by Bernard Scott on 4/7/25.
