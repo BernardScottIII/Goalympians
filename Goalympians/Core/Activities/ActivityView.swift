@@ -21,22 +21,24 @@ struct ActivityView: View {
                 Text("No Exercises in Workout")
             } else {
                 ForEach(viewModel.activities, id: \.workoutActivity.id.self) { entry in
-                    HStack {
-                        ActivityCellView(exercise: entry.exercise)
+                    Section {
+                        HStack {
+                            ActivityCellView(exercise: entry.exercise)
+                            
+                            Button("", systemImage: "plus") {
+                                viewModel.addActivitySet(workoutId: workoutId, activityId: entry.workoutActivity.id)
+                                refreshHelper = UUID().hashValue
+                            }
+                            .buttonStyle(.plain)
+                            Button("", systemImage: "trash") {
+                                viewModel.removeFromWorkout(workoutId: workoutId, activityId: entry.workoutActivity.id)
+                            }
+                            .buttonStyle(.plain)
+                        }
                         
-                        Button("", systemImage: "plus") {
-                            viewModel.addActivitySet(workoutId: workoutId, activityId: entry.workoutActivity.id)
-                            refreshHelper = UUID().hashValue
-                        }
-                        .buttonStyle(.plain)
-                        Button("", systemImage: "trash") {
-                            viewModel.removeFromWorkout(workoutId: workoutId, activityId: entry.workoutActivity.id)
-                        }
-                        .buttonStyle(.plain)
+                        ActivitySetView(refreshHelper: $refreshHelper, workoutId: workoutId, activityId: entry.workoutActivity.id)
                     }
-                    
-                    ActivitySetView(refreshHelper: $refreshHelper, workoutId: workoutId, activityId: entry.workoutActivity.id)
-                }
+                    }
             }
         }
         .onAppear {

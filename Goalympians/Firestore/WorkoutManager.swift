@@ -140,6 +140,29 @@ extension WorkoutManager {
     func getWorkoutActivity(workoutId: String, activityId: String) async throws -> DBActivity {
         try await workoutActivityDocument(workoutId: workoutId, activityId: activityId).getDocument(as: DBActivity.self)
     }
+    
+    func updateActivitySet(workoutId: String, activity: DBActivity, set: DBActivitySet) async throws {
+        switch activity.setType {
+        case .resistanceSet:
+            try activitySetDocument(workoutId: workoutId, activityId: activity.id, activitySetId: set.id).setData(from: set as! DBResistanceSet, merge: true)
+        case .runSet:
+            try activitySetDocument(workoutId: workoutId, activityId: activity.id, activitySetId: set.id).setData(from: set as! DBRunSet, merge: true)
+        case .swimSet:
+            try activitySetDocument(workoutId: workoutId, activityId: activity.id, activitySetId: set.id).setData(from: set as! DBSwimSet, merge: true)
+        }
+    }
+    
+    func getActivitySet(workoutId: String, activity: DBActivity, setId: String) async throws -> DBActivitySet {
+        switch activity.setType {
+        case .resistanceSet:
+            return try await activitySetDocument(workoutId: workoutId, activityId: activity.id, activitySetId: setId).getDocument(as: DBResistanceSet.self)
+        case .runSet:
+            return try await activitySetDocument(workoutId: workoutId, activityId: activity.id, activitySetId: setId).getDocument(as: DBRunSet.self)
+        case .swimSet:
+            return try await activitySetDocument(workoutId: workoutId, activityId: activity.id, activitySetId: setId).getDocument(as: DBSwimSet.self)
+        }
+        
+    }
 }
 
 

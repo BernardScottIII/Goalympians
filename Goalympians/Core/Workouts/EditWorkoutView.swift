@@ -22,10 +22,8 @@ struct EditWorkoutView: View {
                 TextField("name", text: $workout.name)
                 TextField("desc", text: $workout.desc, axis: .vertical)
                 DatePicker("date", selection: $workout.date)
-
-                Section("Exercises") {
-                    ActivityView(workoutId: workoutId)
-                }
+                
+                ActivityView(workoutId: workoutId)
             }
         }
         .navigationTitle("Edit Workout")

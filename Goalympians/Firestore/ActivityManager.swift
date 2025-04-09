@@ -142,6 +142,12 @@ struct DBActivity: Identifiable, Codable {
         self.exerciseId = try container.decode(Int.self, forKey: .exerciseId)
         self.setType = try container.decode(SetType.self, forKey: .setType)
     }
+    
+    init(id: String, exerciseId: Int, setType: SetType) {
+        self.id = id
+        self.exerciseId = exerciseId
+        self.setType = setType
+    }
 }
 
 final class ActivityManager {

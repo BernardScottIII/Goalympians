@@ -28,7 +28,10 @@ final class ActivityViewModel: ObservableObject {
     
     func removeFromWorkout(workoutId: String, activityId: String) {
         Task {
-            try? await WorkoutManager.shared.removeWorkoutActivity(workoutId: workoutId, activityId: activityId)
+            for activitySet in try await WorkoutManager.shared.getAllActivitySets(workoutId: workoutId, activityId: activityId) {
+                try await WorkoutManager.shared.removeWorkoutActivitySet(workoutId: workoutId, activityId: activityId, activitySetId: activitySet.id)
+            }
+            try await WorkoutManager.shared.removeWorkoutActivity(workoutId: workoutId, activityId: activityId)
             getActivities(workoutId: workoutId)
         }
     }
