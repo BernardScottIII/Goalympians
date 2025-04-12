@@ -29,7 +29,7 @@ struct ResistanceExerciseView: View {
         .buttonStyle(.plain)
         ForEach(resistanceSets) {resistanceSet in
             if resistanceSet.exercise == exercise {
-                ResistanceSetView(resistanceSet: resistanceSet)
+//                ResistanceSetView(resistanceSet: resistanceSet)
             }
         }
         .onDelete(perform: removeResistanceSet)
