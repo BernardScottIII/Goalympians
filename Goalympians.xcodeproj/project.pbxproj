@@ -21,7 +21,7 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		37CDFCB02D99E9A900A3226C /* Exceptions for "Goalympians" folder in "Goalympians" target */ = {
+		37EF9A5A2DAAD083000B77C0 /* Exceptions for "Goalympians" folder in "Goalympians" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
@@ -34,7 +34,7 @@
 		37AE6E072D5D40810003C065 /* Goalympians */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				37CDFCB02D99E9A900A3226C /* Exceptions for "Goalympians" folder in "Goalympians" target */,
+				37EF9A5A2DAAD083000B77C0 /* Exceptions for "Goalympians" folder in "Goalympians" target */,
 			);
 			path = Goalympians;
 			sourceTree = "<group>";
@@ -304,7 +304,7 @@
 				DEVELOPMENT_TEAM = CL3NY4NNNY;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = Goalympians/Info.plist;
+				INFOPLIST_FILE = "/Users/bernardscott/syncthing/General School/Spring 2025/CMPS 490/Goalympians/Goalympians/Info.plist";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -334,7 +334,7 @@
 				DEVELOPMENT_TEAM = CL3NY4NNNY;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = Goalympians/Info.plist;
+				INFOPLIST_FILE = "/Users/bernardscott/syncthing/General School/Spring 2025/CMPS 490/Goalympians/Goalympians/Info.plist";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
