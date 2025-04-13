@@ -72,6 +72,13 @@ struct DBRunSet: DBActivitySet, Codable {
         self.elevation = try container.decode(Double.self, forKey: .elevation)
         self.duration = try container.decode(Double.self, forKey: .duration)
     }
+    
+    init(id: String, distance: Double, elevation: Double, duration: Double) {
+        self.id = id
+        self.distance = distance
+        self.elevation = elevation
+        self.duration = duration
+    }
 }
 
 struct DBSwimSet: DBActivitySet, Codable {
@@ -101,6 +108,13 @@ struct DBSwimSet: DBActivitySet, Codable {
         self.distance = try container.decode(Double.self, forKey: .distance)
         self.laps = try container.decode(Int.self, forKey: .laps)
         self.duration = try container.decode(Double.self, forKey: .duration)
+    }
+    
+    init(id: String, distance: Double, laps: Int, duration: Double) {
+        self.id = id
+        self.distance = distance
+        self.laps = laps
+        self.duration = duration
     }
 }
 

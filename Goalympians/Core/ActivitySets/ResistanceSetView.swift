@@ -18,6 +18,7 @@ struct ResistanceSetView: View {
     @State private var repetitions: Int? = nil
     @FocusState private var weightFocused: Bool
     @FocusState private var repetitionsFocused: Bool
+    @StateObject private var viewModel = ResistanceSetViewModel()
     
     var body: some View {
         HStack {
@@ -26,13 +27,13 @@ struct ResistanceSetView: View {
                 .onChange(of: weightFocused) { oldValue, newValue in
                     if newValue == false {
                         Task {
-                            try await WorkoutManager.shared.updateActivitySet(workoutId: workoutId, activity: activity, set: DBResistanceSet(id: resistanceSet.id, weight: weight ?? 0.0, repetitions: repetitions ?? 0))
+                            try await viewModel.updateActivitySet(workoutId: workoutId, activity: activity, set: DBResistanceSet(id: resistanceSet.id, weight: weight ?? 0.0, repetitions: repetitions ?? 0))
                         }
                     }
                 }
                 .onAppear {
                     Task {
-                        let snapshot = try await WorkoutManager.shared.getActivitySet(workoutId: workoutId, activity: activity, setId: resistanceSet.id) as! DBResistanceSet
+                        let snapshot = try await viewModel.getSetMetrics(workoutId: workoutId, activity: activity, setId: resistanceSet.id)
                         weight = snapshot.weight
                         repetitions = snapshot.repetitions
                     }
@@ -43,13 +44,13 @@ struct ResistanceSetView: View {
                 .onChange(of: repetitionsFocused) { oldValue, newValue in
                     if newValue == false {
                         Task {
-                            try await WorkoutManager.shared.updateActivitySet(workoutId: workoutId, activity: activity, set: DBResistanceSet(id: resistanceSet.id, weight: weight ?? 0.0, repetitions: repetitions ?? 0))
+                            try await viewModel.updateActivitySet(workoutId: workoutId, activity: activity, set: DBResistanceSet(id: resistanceSet.id, weight: weight ?? 0.0, repetitions: repetitions ?? 0))
                         }
                     }
                 }
             Button("", systemImage: "trash") {
                 Task {
-                    try await WorkoutManager.shared.removeWorkoutActivitySet(workoutId: workoutId, activityId: activity.id, activitySetId: resistanceSet.id)
+                    try await viewModel.removeActivitySet(workoutId: workoutId, activityId: activity.id, setId: resistanceSet.id)
                     refreshHelper = UUID().hashValue
                 }
             }

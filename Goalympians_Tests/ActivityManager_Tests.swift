@@ -21,18 +21,75 @@ final class ActivityManager_Tests: XCTestCase {
     }
 
     func test_DBResistanceSet_init_shouldBeValid() {
-        // Given
-        let id = UUID().uuidString
-        let weight = 123.45
-        let repetitions = 42
-        
-        // When
-        let set = DBResistanceSet(id: id, weight: weight, repetitions: repetitions)
-        
-        // Then
-        XCTAssert(id == set.id)
-        XCTAssert(weight == set.weight)
-        XCTAssert(repetitions == set.repetitions)
+        for _ in 0..<100 {
+            // Given
+            let id = UUID().uuidString
+            let weight = Double.random(in: 0..<100.00)
+            let repetitions = Int.random(in: 0..<100)
+            
+            // When
+            let set = DBResistanceSet(id: id, weight: weight, repetitions: repetitions)
+            
+            // Then
+            XCTAssertEqual(id, set.id)
+            XCTAssertEqual(weight, set.weight)
+            XCTAssertEqual(repetitions, set.repetitions)
+        }
+    }
+    
+    func test_DBRunSet_init_shouldBeValid() {
+        for _ in 0..<100 {
+            // Given
+            let id = UUID().uuidString
+            let distance = Double.random(in: 0..<100.00)
+            let elevation = Double.random(in: 0..<100.00)
+            let duration = Double.random(in: 0..<100.00)
+            
+            // When
+            let set = DBRunSet(id: id, distance: distance, elevation: elevation, duration: duration)
+            
+            // Then
+            XCTAssertEqual(id, set.id)
+            XCTAssertEqual(distance, set.distance)
+            XCTAssertEqual(elevation, set.elevation)
+            XCTAssertEqual(duration, set.duration)
+        }
+    }
+    
+    func test_DBSwimSet_init_shouldBeValid() {
+        for _ in 0..<100 {
+            // Given
+            let id = UUID().uuidString
+            let distance = Double.random(in: 0..<100.00)
+            let laps = Int.random(in: 0..<100)
+            let duration = Double.random(in: 0..<100.00)
+            
+            // When
+            let set = DBSwimSet(id: id, distance: distance, laps: laps, duration: duration)
+            
+            // Then
+            XCTAssertEqual(id, set.id)
+            XCTAssertEqual(distance, set.distance)
+            XCTAssertEqual(laps, set.laps)
+            XCTAssertEqual(duration, set.duration)
+        }
+    }
+    
+    func test_DBActivity_init_shouldBeValid() {
+        for _ in 0..<100 {
+            // Given
+            let id = UUID().uuidString
+            let exerciseId = Int.random(in: 0..<100)
+            let setType = SetType.allCases[Int.random(in: 0..<SetType.allCases.count)]
+            
+            // When
+            let activity = DBActivity(id: id, exerciseId: exerciseId, setType: setType)
+            
+            // Then
+            XCTAssertEqual(id, activity.id)
+            XCTAssertEqual(exerciseId, activity.exerciseId)
+            XCTAssertEqual(setType, setType)
+        }
     }
 
 }
