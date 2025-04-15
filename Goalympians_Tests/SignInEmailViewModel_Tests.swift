@@ -29,5 +29,17 @@ final class SignInEmailViewModel_Tests: XCTestCase {
         XCTAssertEqual(vm.email.count, 0)
         XCTAssertTrue(vm.email.isEmpty)
     }
+    
+    func test_SignInEmailViewModel_password_shouldBeEmptyString() {
+        // Given
+        
+        // When
+        let vm = SignInEmailViewModel()
+        
+        // Then
+        XCTAssertEqual(vm.password, "")
+        XCTAssertEqual(vm.password.count, 0)
+        XCTAssertTrue(vm.password.isEmpty)
+    }
 
 }
