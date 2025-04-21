@@ -131,7 +131,7 @@ struct DBActivityList: Codable {
 
 struct DBActivity: Identifiable, Codable {
     let id: String
-    let exerciseId: Int
+    let exerciseId: String
     let setType: SetType
     
     func encode(to encoder: any Encoder) throws {
@@ -153,11 +153,11 @@ struct DBActivity: Identifiable, Codable {
     init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         self.id = try container.decode(String.self, forKey: .id)
-        self.exerciseId = try container.decode(Int.self, forKey: .exerciseId)
+        self.exerciseId = try container.decode(String.self, forKey: .exerciseId)
         self.setType = try container.decode(SetType.self, forKey: .setType)
     }
     
-    init(id: String, exerciseId: Int, setType: SetType) {
+    init(id: String, exerciseId: String, setType: SetType) {
         self.id = id
         self.exerciseId = exerciseId
         self.setType = setType

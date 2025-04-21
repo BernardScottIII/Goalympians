@@ -20,7 +20,7 @@ struct ExercisesView: View {
                 Text(exercise.name)
                     .contextMenu {
                         Button("Add to Workout") {
-                            viewModel.addWorkoutActivity(workoutId: workoutId, exerciseId: exercise.id)
+                            viewModel.addWorkoutActivity(workoutId: workoutId, exerciseId: exercise.id!)
                             dismiss()
                         }
                     }
@@ -30,6 +30,9 @@ struct ExercisesView: View {
         .task {
             try? await viewModel.getAllExercises()
         }
+//        .onAppear {
+//            viewModel.downloadProductsAndUploadToFirebase()
+//        }
         .toolbar {
 //            ToolbarItem(placement: .topBarLeading) {
 //                Menu("Filter: None") {

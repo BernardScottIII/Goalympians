@@ -8,6 +8,7 @@
 import SwiftUI
 import SwiftData
 import FirebaseCore
+import FirebaseFirestore
 
 // Code which gives me the filepath of the database file for this application
 //@UIApplicationMain
@@ -22,6 +23,8 @@ import FirebaseCore
 struct GoalympiansApp: App {
     
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
+    
+    
 
     var body: some Scene {
         WindowGroup {
@@ -34,6 +37,23 @@ struct GoalympiansApp: App {
 class AppDelegate: NSObject, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
         FirebaseApp.configure()
+        
+        let settings = FirestoreSettings()
+        
+        // Use memory-only cache
+        settings.cacheSettings =
+        MemoryCacheSettings(garbageCollectorSettings: MemoryLRUGCSettings())
+
+        // Use persistent disk cache, with 100 MB cache size
+        settings.cacheSettings = PersistentCacheSettings(sizeBytes: 100 * 1024 * 1024 as NSNumber)
+
+        // Any additional options
+        // ...
+
+        // Enable offline data persistence
+        let db = Firestore.firestore()
+        db.settings = settings
+
         
         return true
     }

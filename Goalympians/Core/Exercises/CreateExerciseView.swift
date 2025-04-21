@@ -13,6 +13,9 @@ struct CreateExerciseView: View {
     @State private var name: String = ""
     @State private var desc: String = ""
     @State private var setType: SetType = SetType.resistanceSet
+    @State private var muscle: String = ""
+    @State private var equipment: String = ""
+    @State private var difficulty: Int = 1
     
     var body: some View {
         Form {
@@ -24,11 +27,16 @@ struct CreateExerciseView: View {
                     Text(set_type.rawValue)
                 }
             }
+            
+            TextField("Muscle Type", text: $muscle)
+            TextField("Equipment Used", text: $equipment)
+            TextField("Difficulty", value: $difficulty, format: .number)
+            
         }
         .navigationTitle("Create Exercise")
         Button("Create New Exercise") {
             Task {
-                try await ExerciseManager.shared.uploadExercise(exercise: DBExercise(id: UUID().hashValue, name: name, description: desc, userId: AuthenticationManager.shared.getAuthenticatedUser().uid))
+                try await ExerciseManager.shared.uploadExercise(exercise: APIExercise(id: UUID().uuidString, name: name, bodyPart: "unknown_part", equipment: equipment, target: muscle, secondaryMuscles: ["No secondary muscles"], instructions: ["no given instructions"], gifUrl: "no url"))
             }
             dismiss()
         }

@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ActivityCellView: View {
     
-    let exercise: DBExercise
+    let exercise: APIExercise
     
     var body: some View {
         HStack {
@@ -21,5 +21,13 @@ struct ActivityCellView: View {
 }
 
 #Preview {
-    ActivityCellView(exercise: DBExercise(id: 0, name: "Sample Exercise", description: "An example exercise for testing purposes.", userId: "SampleUid"))
+    ActivityCellView(exercise: APIExercise(id: UUID().uuidString, name: "Sample Exercise", bodyPart: "Head", equipment: "Keyboard and Mosue", target: "Brain", secondaryMuscles: ["Forehead", "Fingers", "Eyes"], instructions: ["Sit down at the keyboard", "start typing", "nothing works", "cry"], gifUrl: "google.com"))
+//        id: 0,
+//        name: "Sample Exercise",
+//        type: "An example exercise for testing purposes",
+//        muscle: "Brain",
+//        equipment: "Computer",
+//        difficulty: "beginner",
+//        instructions: "Sitting down and writing code all day.",
+//        userId: UUID().uuidString))
 }

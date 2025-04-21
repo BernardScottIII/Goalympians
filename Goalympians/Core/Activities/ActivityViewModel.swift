@@ -9,13 +9,13 @@ import Foundation
 
 @MainActor
 final class ActivityViewModel: ObservableObject {
-    @Published private(set) var activities: [(workoutActivity: DBActivity, exercise: DBExercise)] = []
+    @Published private(set) var activities: [(workoutActivity: DBActivity, exercise: APIExercise)] = []
     
     func getActivities(workoutId: String) {
         Task {
             let workoutActivities = try await WorkoutManager.shared.getAllWorkoutActivities(workoutId: workoutId)
             
-            var localArray: [(workoutActivity: DBActivity, exercise: DBExercise)] = []
+            var localArray: [(workoutActivity: DBActivity, exercise: APIExercise)] = []
             for workoutActivity in workoutActivities {
                 if let exercise = try? await ExerciseManager.shared.getExercise(exerciseId: String(workoutActivity.exerciseId)) {
                     localArray.append((workoutActivity, exercise))

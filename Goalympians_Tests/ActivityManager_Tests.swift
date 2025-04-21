@@ -91,5 +91,10 @@ final class ActivityManager_Tests: XCTestCase {
             XCTAssertEqual(setType, setType)
         }
     }
+    
+    func test_etc() {
+        // Given
+//        let mockUser = User()... 
+    }
 
 }

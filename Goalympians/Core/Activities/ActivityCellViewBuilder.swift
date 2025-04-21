@@ -10,7 +10,7 @@ import SwiftUI
 struct ActivityCellViewBuilder: View {
     
     let exerciseId: String
-    @State private var activity: DBExercise? = nil
+    @State private var activity: APIExercise? = nil
     
     var body: some View {
         ZStack {

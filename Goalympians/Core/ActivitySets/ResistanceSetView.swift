@@ -63,7 +63,7 @@ private func previewFunc() {}
 #Preview {
     NavigationStack {
         Form {
-            ResistanceSetView(resistanceSet: DBResistanceSet(id: "iP1wvEqnL3YdoTGDlvyv", weight: 0.0, repetitions: 0), workoutId: "49F6D3AB-C3A6-4B9C-84DF-ECF5E4ECEC3D", activity: DBActivity(id: "GzTwAOOgE40xBv6bFZ9Z", exerciseId: 6108960088522398000, setType: .resistanceSet), refreshHelper: .constant(0))
+            ResistanceSetView(resistanceSet: DBResistanceSet(id: "iP1wvEqnL3YdoTGDlvyv", weight: 0.0, repetitions: 0), workoutId: "49F6D3AB-C3A6-4B9C-84DF-ECF5E4ECEC3D", activity: DBActivity(id: "GzTwAOOgE40xBv6bFZ9Z", exerciseId: UUID().uuidString, setType: .resistanceSet), refreshHelper: .constant(0))
         }
     }
 }

@@ -55,7 +55,7 @@ final class WorkoutManager {
         try workoutDocument(workoutId: workout.id).setData(from: workout, merge: true)
     }
     
-    func addWorkoutActivity(workoutId: String, exerciseId: Int) async throws {
+    func addWorkoutActivity(workoutId: String, exerciseId: String) async throws {
         let document = workoutActivityCollection(workoutId: workoutId).document()
         let documentId = document.documentID
         

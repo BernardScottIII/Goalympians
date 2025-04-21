@@ -32,7 +32,7 @@ final class ExerciseManager_Tests: XCTestCase {
             // Then
             XCTAssertEqual(id, exercise.id)
             XCTAssertEqual(name, exercise.name)
-            XCTAssertEqual(description, exercise.description)
+            XCTAssertEqual(description, exercise.instructions)
             XCTAssertEqual(userId, exercise.userId)
         }
     }
