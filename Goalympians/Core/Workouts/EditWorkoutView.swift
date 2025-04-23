@@ -10,6 +10,7 @@ import FirebaseFirestore
 
 struct EditWorkoutView: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.modelContext) private var modelContext
     @StateObject private var viewModel: ActivityViewModel
     private var workoutDataService: WorkoutManagerProtocol
     
@@ -44,13 +45,14 @@ struct EditWorkoutView: View {
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(true)
         .toolbar {
-//            NavigationLink("Add Exercise") {
-//                ExercisesView(workoutDataService: workoutDataService, workoutId: workoutId)
-//            }
-            NavigationLink("See Exercises") {
-                DBExerciseView()
+            NavigationLink("Add Exercise") {
+                ExercisesView(workoutDataService: workoutDataService, workoutId: workoutId)
             }
+//            NavigationLink(destination: ExerciseListWrapperView()) {
+//                Text("See Exercises")
+//            }
         }
+//        DBExerciseView()
         
         Button("Save Changes") {
             Task {
@@ -66,6 +68,5 @@ struct EditWorkoutView: View {
 #Preview {
     NavigationStack {
         EditWorkoutView(workoutDataService: ProdWorkoutManager(workoutCollection: Firestore.firestore().collection("workouts")), workout: Workout(name: "Example Workout", date: Date.now, desc: "This is a sample workout", intensity: 2, exercises: []), workoutId: "49F6D3AB-C3A6-4B9C-84DF-ECF5E4ECEC3D", userId: "yf3B3l48yKbzgRWVbzKH3JyMKLz2")
-//        EditWorkoutView(workoutDataService: ProdWorkoutManager(workoutCollection: Firestore.firestore().collection("workouts")))
     }
 }

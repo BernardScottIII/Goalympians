@@ -131,7 +131,7 @@ final class ExerciseManager {
     }
 }
 
-extension Query {
+extension FirebaseFirestore.Query {
     func getDocuments<T>(as type: T.Type) async throws -> [T] where T : Decodable {
         let snapshot = try await self.getDocuments()
         

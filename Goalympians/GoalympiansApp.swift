@@ -28,9 +28,10 @@ struct GoalympiansApp: App {
 
     var body: some Scene {
         WindowGroup {
+//            DBExerciseView()
             RootView()
+                .modelContainer(for: DevExercise.self)
         }
-        .modelContainer(for: [DevExercise.self])
     }
 }
 
