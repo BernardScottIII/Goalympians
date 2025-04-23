@@ -7,16 +7,24 @@
 
 import SwiftUI
 import SwiftData
+import FirebaseFirestore
 
 struct WorkoutView: View {
     
-    @StateObject private var viewModel = WorkoutViewModel()
+    @StateObject private var viewModel: WorkoutViewModel
+    let workoutDataService: WorkoutManagerProtocol
+    
+    init(workoutDataService: WorkoutManagerProtocol) {
+        _viewModel = StateObject(wrappedValue: WorkoutViewModel(workoutDataService: workoutDataService))
+        self.workoutDataService = workoutDataService
+    }
     
     var body: some View {
         List {
             ForEach(viewModel.workouts) { workout in
                 NavigationLink(workout.name) {
                     EditWorkoutView(
+                        workoutDataService: workoutDataService,
                         workout: Workout(name: workout.name, date: workout.date, desc: workout.description, intensity: 2, exercises: []),
                         workoutId: workout.id,
                         userId: workout.userId
@@ -32,14 +40,15 @@ struct WorkoutView: View {
 //            Button("Add Workout", action: addWorkout)
             NavigationLink("Add Workout") {
 //                EditWorkoutView()
-                CreateWorkoutView()
+                CreateWorkoutView(workoutDataService: workoutDataService)
             }
         }
     }
 }
 
 #Preview {
+    let dataService = ProdWorkoutManager(workoutCollection: Firestore.firestore().collection("workouts"))
     NavigationStack {
-        WorkoutView()
+        WorkoutView(workoutDataService: dataService)
     }
 }

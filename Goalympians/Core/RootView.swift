@@ -6,14 +6,16 @@
 //
 
 import SwiftUI
+import FirebaseFirestore
 
 struct RootView: View {
     
     @State private var showSignInView: Bool = false
+    private var workoutDataService = ProdWorkoutManager(workoutCollection: Firestore.firestore().collection("workouts"))
     
     var body: some View {
         ZStack {
-            TabbarView(showSignInView: $showSignInView)
+            TabbarView(showSignInView: $showSignInView, workoutDataService: workoutDataService)
         }
         .onAppear {
             let authUser = try? AuthenticationManager.shared.getAuthenticatedUser()

@@ -10,10 +10,21 @@ import FirebaseFirestore
 
 struct ActivityView: View {
     
-    @StateObject private var viewModel = ActivityViewModel()
-    @State private var refreshHelper: Int = 0
+    @StateObject private var viewModel: ActivityViewModel
+    @State private var refreshHelper: Int
+    let workoutDataService: WorkoutManagerProtocol
     
     var workoutId: String
+    
+    init(
+        workoutDataService: WorkoutManagerProtocol,
+        workoutId: String
+    ) {
+        _viewModel = StateObject(wrappedValue: ActivityViewModel(dataService: workoutDataService))
+        self.refreshHelper = 0
+        self.workoutId = workoutId
+        self.workoutDataService = workoutDataService
+    }
     
     var body: some View {
         List {
@@ -36,7 +47,7 @@ struct ActivityView: View {
                             .buttonStyle(.plain)
                         }
                         
-                        ActivitySetView(refreshHelper: $refreshHelper, workoutId: workoutId, activityId: entry.workoutActivity.id)
+                        ActivitySetView(workoutDataService: workoutDataService, refreshHelper: $refreshHelper, workoutId: workoutId, activityId: entry.workoutActivity.id)
                     }
                     }
             }
@@ -49,6 +60,9 @@ struct ActivityView: View {
 
 #Preview {
     NavigationStack {
-        ActivityView(workoutId: "49F6D3AB-C3A6-4B9C-84DF-ECF5E4ECEC3D")
+        ActivityView(
+            workoutDataService: ProdWorkoutManager(workoutCollection: Firestore.firestore().collection("workouts")),
+            workoutId: "1"
+        )
     }
 }

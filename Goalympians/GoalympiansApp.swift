@@ -30,7 +30,7 @@ struct GoalympiansApp: App {
         WindowGroup {
             RootView()
         }
-        .modelContainer(for: [Workout.self, ResistanceSet.self, RunSet.self, SwimSet.self])
+        .modelContainer(for: [DevExercise.self])
     }
 }
 

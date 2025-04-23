@@ -6,16 +6,17 @@
 //
 
 import SwiftUI
-import SwiftData
+import FirebaseFirestore
 
 struct TabbarView: View {
     @Binding var showSignInView: Bool
+    let workoutDataService: WorkoutManagerProtocol
     
     var body: some View {
         TabView {
             Tab("Workouts", systemImage: "dumbbell") {
                 NavigationStack {
-                    WorkoutView()
+                    WorkoutView(workoutDataService: workoutDataService)
                 }
             }
             
@@ -36,5 +37,5 @@ struct TabbarView: View {
 }
 
 #Preview {
-    TabbarView(showSignInView: .constant(true))
+    TabbarView(showSignInView: .constant(true), workoutDataService: ProdWorkoutManager(workoutCollection: Firestore.firestore().collection("workouts")))
 }

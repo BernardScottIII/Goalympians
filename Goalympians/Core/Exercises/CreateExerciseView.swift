@@ -34,7 +34,7 @@ struct CreateExerciseView: View {
             
         }
         .navigationTitle("Create Exercise")
-        Button("Create New Exercise") {
+        Button("Save New Exercise") {
             Task {
                 try await ExerciseManager.shared.uploadExercise(exercise: APIExercise(id: UUID().uuidString, name: name, bodyPart: "unknown_part", equipment: equipment, target: muscle, secondaryMuscles: ["No secondary muscles"], instructions: ["no given instructions"], gifUrl: "no url"))
             }

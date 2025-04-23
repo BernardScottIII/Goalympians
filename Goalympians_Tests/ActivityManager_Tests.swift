@@ -79,7 +79,7 @@ final class ActivityManager_Tests: XCTestCase {
         for _ in 0..<100 {
             // Given
             let id = UUID().uuidString
-            let exerciseId = Int.random(in: 0..<100)
+            let exerciseId = UUID().uuidString
             let setType = SetType.allCases[Int.random(in: 0..<SetType.allCases.count)]
             
             // When

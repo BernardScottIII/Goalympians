@@ -11,9 +11,14 @@ import Foundation
 final class WorkoutViewModel: ObservableObject {
     
     @Published private(set) var workouts: [DBWorkout] = []
+    let workoutDataService: WorkoutManagerProtocol
+    
+    init(workoutDataService: WorkoutManagerProtocol) {
+        self.workoutDataService = workoutDataService
+    }
     
     func getAllWorkouts() async throws {
-        self.workouts = try await WorkoutManager.shared.getAllWorkouts()
+        self.workouts = try await workoutDataService.getAllWorkouts()
     }
     
     
