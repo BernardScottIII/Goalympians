@@ -27,14 +27,12 @@ struct DBWorkout: Identifiable, Codable {
 }
 
 final class ProdWorkoutManager: WorkoutManagerProtocol {
-//    static let shared = WorkoutManager()
-//    private init() {}
+    
+    private var workoutCollection: CollectionReference //= Firestore.firestore().collection("workouts")
     
     init(workoutCollection: CollectionReference) {
         self.workoutCollection = workoutCollection
     }
-    
-    private var workoutCollection: CollectionReference //= Firestore.firestore().collection("workouts")
     
     private func workoutDocument(workoutId: String) -> DocumentReference {
         workoutCollection.document(workoutId)
@@ -57,7 +55,9 @@ final class ProdWorkoutManager: WorkoutManagerProtocol {
     }
     
     func getAllWorkouts() async throws -> [DBWorkout] {
-        try await workoutCollection.getDocuments(as: DBWorkout.self)
+        try await workoutCollection
+            .whereField("userId", isEqualTo: AuthenticationManager.shared.getAuthenticatedUser().uid)
+            .getDocuments(as: DBWorkout.self)
     }
     
     func updateWorkout(workout: DBWorkout) async throws {

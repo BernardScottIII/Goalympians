@@ -11,19 +11,27 @@ import FirebaseFirestore
 struct TabbarView: View {
     @Binding var showSignInView: Bool
     let workoutDataService: WorkoutManagerProtocol
+    @StateObject private var workoutViewModel: WorkoutViewModel
+    @StateObject private var activityViewModel: ActivityViewModel
+    
+    init(workoutDataService: WorkoutManagerProtocol, showSignInView: Binding<Bool>) {
+        _workoutViewModel = StateObject(wrappedValue: WorkoutViewModel(workoutDataService: workoutDataService))
+        _activityViewModel = StateObject(wrappedValue: ActivityViewModel(dataService: workoutDataService))
+        self.workoutDataService = workoutDataService
+        _showSignInView = showSignInView
+    }
     
     var body: some View {
         TabView {
             Tab("Workouts", systemImage: "dumbbell") {
                 NavigationStack {
-                    WorkoutView(workoutDataService: workoutDataService)
+                    WorkoutView(viewModel: workoutViewModel)
                 }
             }
             
             Tab("Insights", systemImage: "chart.xyaxis.line") {
                 NavigationStack {
-                    Text("Insights Page")
-                        .navigationTitle("Insights Page")
+                    InsightsView(workoutViewModel: workoutViewModel, activityViewModel: activityViewModel)
                 }
             }
             
@@ -37,5 +45,5 @@ struct TabbarView: View {
 }
 
 #Preview {
-    TabbarView(showSignInView: .constant(true), workoutDataService: ProdWorkoutManager(workoutCollection: Firestore.firestore().collection("workouts")))
+    TabbarView(workoutDataService: ProdWorkoutManager(workoutCollection: Firestore.firestore().collection("workouts")), showSignInView: .constant(false))
 }

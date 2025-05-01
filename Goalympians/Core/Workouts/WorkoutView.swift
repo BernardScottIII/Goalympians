@@ -11,20 +11,20 @@ import FirebaseFirestore
 
 struct WorkoutView: View {
     
-    @StateObject private var viewModel: WorkoutViewModel
-    let workoutDataService: WorkoutManagerProtocol
+    @StateObject var viewModel: WorkoutViewModel
+//    let workoutDataService: WorkoutManagerProtocol
     
-    init(workoutDataService: WorkoutManagerProtocol) {
-        _viewModel = StateObject(wrappedValue: WorkoutViewModel(workoutDataService: workoutDataService))
-        self.workoutDataService = workoutDataService
-    }
+//    init(workoutDataService: WorkoutManagerProtocol) {
+//        _viewModel = StateObject(wrappedValue: WorkoutViewModel(workoutDataService: workoutDataService))
+//        self.workoutDataService = workoutDataService
+//    }
     
     var body: some View {
         List {
             ForEach(viewModel.workouts) { workout in
                 NavigationLink(workout.name) {
                     EditWorkoutView(
-                        workoutDataService: workoutDataService,
+                        workoutDataService: viewModel.workoutDataService,
                         workout: Workout(name: workout.name, date: workout.date, desc: workout.description, intensity: 2, exercises: []),
                         workoutId: workout.id,
                         userId: workout.userId
@@ -40,7 +40,7 @@ struct WorkoutView: View {
 //            Button("Add Workout", action: addWorkout)
             NavigationLink("Add Workout") {
 //                EditWorkoutView()
-                CreateWorkoutView(workoutDataService: workoutDataService)
+                CreateWorkoutView(workoutDataService: viewModel.workoutDataService)
             }
         }
     }
@@ -48,7 +48,8 @@ struct WorkoutView: View {
 
 #Preview {
     let dataService = ProdWorkoutManager(workoutCollection: Firestore.firestore().collection("workouts"))
+    let viewModel = WorkoutViewModel(workoutDataService: dataService)
     NavigationStack {
-        WorkoutView(workoutDataService: dataService)
+        WorkoutView(viewModel: viewModel)
     }
 }
