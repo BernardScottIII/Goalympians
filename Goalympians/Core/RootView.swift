@@ -10,12 +10,14 @@ import FirebaseFirestore
 
 struct RootView: View {
     
+    @EnvironmentObject private var healthManager: HealthManager
     @State private var showSignInView: Bool = false
     private var workoutDataService = ProdWorkoutManager(workoutCollection: Firestore.firestore().collection("workouts"))
     
     var body: some View {
         ZStack {
             TabbarView(workoutDataService: workoutDataService, showSignInView: $showSignInView)
+                .environmentObject(healthManager)
         }
         .onAppear {
             let authUser = try? AuthenticationManager.shared.getAuthenticatedUser()

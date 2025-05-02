@@ -9,6 +9,8 @@ import SwiftUI
 import FirebaseFirestore
 
 struct TabbarView: View {
+    
+    @EnvironmentObject private var healthManager: HealthManager
     @Binding var showSignInView: Bool
     let workoutDataService: WorkoutManagerProtocol
     @StateObject private var workoutViewModel: WorkoutViewModel
@@ -32,6 +34,7 @@ struct TabbarView: View {
             Tab("Insights", systemImage: "chart.xyaxis.line") {
                 NavigationStack {
                     InsightsView(workoutViewModel: workoutViewModel, activityViewModel: activityViewModel)
+                        .environmentObject(healthManager)
                 }
             }
             

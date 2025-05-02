@@ -23,7 +23,7 @@ import FirebaseFirestore
 struct GoalympiansApp: App {
     
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
-    
+    @StateObject var healthManager = HealthManager()
     
 
     var body: some Scene {
@@ -31,6 +31,7 @@ struct GoalympiansApp: App {
 //            DBExerciseView()
             RootView()
                 .modelContainer(for: DevExercise.self)
+                .environmentObject(healthManager)
         }
     }
 }

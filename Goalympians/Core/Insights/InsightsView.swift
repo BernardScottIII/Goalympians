@@ -10,11 +10,29 @@ import Charts
 import FirebaseFirestore
 
 final class InsightsViewModel: ObservableObject {
+    @Published private(set) var exercises: [APIExercise] = []
     @Published private(set) var insights: [DBWorkout] = []
     
     func getInsights() {
-        
+        Task {
+            self.exercises = try await ExerciseManager.shared.getAllExercises(nameDescending: nil, forCategory: nil)
+        }
     }
+    
+    func addUserInsight(exerciseId: String) {
+        Task {
+            let authDataResult = try AuthenticationManager.shared.getAuthenticatedUser()
+            try? await UserManager.shared.addUserInsight(userId: authDataResult.uid, exerciseName: exerciseId)
+        }
+    }
+}
+
+struct HKInsight {
+    let id: Int
+    let title: String
+    let subtitle: String
+    let image: String
+    let amount: String
 }
 
 struct InsightsView: View {
@@ -22,6 +40,8 @@ struct InsightsView: View {
     var activityViewModel: ActivityViewModel
     
     @State private var currentInsight: String?
+    @State private var hKInsight: HKInsight = HKInsight(id: 1, title: "", subtitle: "", image: "", amount: "")
+    @EnvironmentObject private var healthManager: HealthManager
     
     private var selectedInsight: ActivityInsight? {
         guard let currentInsight else { return nil }
@@ -30,26 +50,17 @@ struct InsightsView: View {
         }
     }
     
-    private let exerciseInsights: [ExerciseInsight] = [
-        .init(userId: "GzP3A2DuGXcurrH1GrIl0ghqYPe2", exerciseName: "Sample Exercise 1", setType: .resistanceSet, repetitionCount: 152, weightTotal: 340, pr: 30),
-        .init(userId: "GzP3A2DuGXcurrH1GrIl0ghqYPe2", exerciseName: "Sample Exercise 2", setType: .resistanceSet, repetitionCount: 84, weightTotal: 200, pr: 15),
-        .init(userId: "GzP3A2DuGXcurrH1GrIl0ghqYPe2", exerciseName: "Sample Exercise 1", setType: .runSet, repetitionCount: 180, weightTotal: 1250, pr: 135),
-        .init(userId: "GzP3A2DuGXcurrH1GrIl0ghqYPe2", exerciseName: "Sample Exercise 2", setType: .runSet, repetitionCount: 50, weightTotal: 180, pr: 135),
-        .init(userId: "GzP3A2DuGXcurrH1GrIl0ghqYPe2", exerciseName: "Sample Exercise 1", setType: .swimSet, repetitionCount: 125, weightTotal: 1250, pr: 135),
-        .init(userId: "GzP3A2DuGXcurrH1GrIl0ghqYPe2", exerciseName: "Sample Exercise 2", setType: .swimSet, repetitionCount: 100, weightTotal: 1250, pr: 135),
-        .init(userId: "GzP3A2DuGXcurrH1GrIl0ghqYPe2", exerciseName: "Sample Exercise 3", setType: .resistanceSet, repetitionCount: 20, weightTotal: 500, pr: 85),
-        .init(userId: "GzP3A2DuGXcurrH1GrIl0ghqYPe2", exerciseName: "Sample Exercise 3", setType: .runSet, repetitionCount: 160, weightTotal: 625, pr: 300),
-        .init(userId: "GzP3A2DuGXcurrH1GrIl0ghqYPe2", exerciseName: "Sample Exercise 3", setType: .swimSet, repetitionCount: 60, weightTotal: 1250, pr: 185)
-    ]
-    
     @StateObject private var viewModel = InsightsViewModel()
     
     var body: some View {
         VStack {
+            HStack {
+                Text("Steps: \(healthManager.fetchTodaySteps())")
+            }
             Chart {
                 ForEach(ActivityInsight.mockData, id: \.id) { insight in
                     BarMark(
-                        x: .value("Total Number of Sets", insight.totalSetsRecorded),
+                        x: .value("Total Number of Repetitions", insight.totalRepetitionsRecorded),
                         y: .value("Exercise Name", insight.exerciseName)
                     )
                     .foregroundStyle(
@@ -59,15 +70,15 @@ struct InsightsView: View {
                 }
                 if let selectedInsight {
                     RuleMark(
-                        xStart: .value("Total Number of Sets", selectedInsight.totalSetsRecorded),
-                        xEnd: .value("Max Number of Sets", 150),
+                        xStart: .value("Total Number of Repetitions", selectedInsight.totalRepetitionsRecorded),
+                        xEnd: .value("Max Number of Repetitions", 150),
                         y: .value("Exercise Name", selectedInsight.exerciseName)
                     )
                     .foregroundStyle(.secondary.opacity(0.3))
                     .annotation(position: .overlay, overflowResolution: .init(x: .fit(to: .chart), y: .fit(to: .chart))) {
                         VStack {
                             Text(selectedInsight.exerciseName)
-                            Text("\(selectedInsight.totalSetsRecorded)")
+                            Text("\(selectedInsight.totalRepetitionsRecorded)")
                         }
                         .foregroundStyle(.white)
                         .padding(12)
@@ -95,59 +106,21 @@ struct InsightsView: View {
     }
 }
 
-struct WorkoutInsight: Identifiable {
-    let id = UUID()
-    let userId: String
-    let workoutId: String
-    let workoutDate: Date
-    let totalSets: Int
-    let totalExercises: Int
-    let totalWeight: Double
-    let totalRepetitions: Int
-    let setCountBreakdown: [SetType:Int]
-}
-
-struct ExerciseInsight: Identifiable {
-    let id = UUID()
-    let userId: String
-    let exerciseName: String // Date in the example
-    let setType: SetType
-    
-//    let insightDetails: [insightDetailCategory:Any]
-    
-    // Cumulative total of repetitions recorded by this user across all workouts.
-    let repetitionCount: Int
-    
-    // For every activitySet, append the repetitions * weight to this total
-    // Example:
-    // - set 1 [ 10 lbs for 10 reps]
-    // - set 2 [ 15 lbs for 8 reps]
-    // - set 3 [ 20 lbs for 6 reps]
-    // total to append: (10*10) + (15*8) + (20*6) = 340lbs
-    let weightTotal: Double
-    
-    // "pr" stands for personal record (also known as one-repetition maximum),
-    // with a user's personal record being denoted by the maximum amount of
-    // weight they can take on while still successfully completing one
-    // repetition of the indicated exercise.
-    let pr: Double
-}
-
 struct ActivityInsight: Identifiable {
     let id = UUID()
     let userId: String
     let exerciseName: String
     let usedInWorkouts: Int
-    let totalSetsRecorded: Int
+    let totalRepetitionsRecorded: Int
     let setType: SetType
     
     static let mockData: [ActivityInsight] = [
-        .init(userId: "GzP3A2DuGXcurrH1GrIl0ghqYPe2", exerciseName: "Sample Exercise 1", usedInWorkouts: 6, totalSetsRecorded: 32, setType: .resistanceSet),
-        .init(userId: "GzP3A2DuGXcurrH1GrIl0ghqYPe2", exerciseName: "Sample Exercise 2", usedInWorkouts: 8, totalSetsRecorded: 64, setType: .runSet),
-        .init(userId: "GzP3A2DuGXcurrH1GrIl0ghqYPe2", exerciseName: "Sample Exercise 3", usedInWorkouts: 5, totalSetsRecorded: 35, setType: .swimSet),
-        .init(userId: "GzP3A2DuGXcurrH1GrIl0ghqYPe2", exerciseName: "Sample Exercise 4", usedInWorkouts: 3, totalSetsRecorded: 12, setType: .resistanceSet),
-        .init(userId: "GzP3A2DuGXcurrH1GrIl0ghqYPe2", exerciseName: "Sample Exercise 5", usedInWorkouts: 4, totalSetsRecorded: 32, setType: .swimSet),
-        .init(userId: "GzP3A2DuGXcurrH1GrIl0ghqYPe2", exerciseName: "Sample Exercise 6", usedInWorkouts: 10, totalSetsRecorded: 120, setType: .runSet),
+        .init(userId: "GzP3A2DuGXcurrH1GrIl0ghqYPe2", exerciseName: "Sample Exercise 1", usedInWorkouts: 6, totalRepetitionsRecorded: 32, setType: .resistanceSet),
+        .init(userId: "GzP3A2DuGXcurrH1GrIl0ghqYPe2", exerciseName: "Sample Exercise 2", usedInWorkouts: 8, totalRepetitionsRecorded: 64, setType: .runSet),
+        .init(userId: "GzP3A2DuGXcurrH1GrIl0ghqYPe2", exerciseName: "Sample Exercise 3", usedInWorkouts: 5, totalRepetitionsRecorded: 35, setType: .swimSet),
+        .init(userId: "GzP3A2DuGXcurrH1GrIl0ghqYPe2", exerciseName: "Sample Exercise 4", usedInWorkouts: 3, totalRepetitionsRecorded: 12, setType: .resistanceSet),
+        .init(userId: "GzP3A2DuGXcurrH1GrIl0ghqYPe2", exerciseName: "Sample Exercise 5", usedInWorkouts: 4, totalRepetitionsRecorded: 32, setType: .swimSet),
+        .init(userId: "GzP3A2DuGXcurrH1GrIl0ghqYPe2", exerciseName: "Sample Exercise 6", usedInWorkouts: 10, totalRepetitionsRecorded: 120, setType: .runSet),
     ]
 }
 
