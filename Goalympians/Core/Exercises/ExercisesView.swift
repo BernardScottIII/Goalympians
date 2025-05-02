@@ -34,9 +34,9 @@ struct ExercisesView: View {
         ExerciseListView(sort: sortOrder, targetMuscle: targetMuscle, searchString: searchText, viewModel: viewModel, workoutId: workoutId)
             .navigationTitle("Exercises")
             .searchable(text: $searchText)
-        //        .onAppear {
-        //            viewModel.getExercises()
-        //        }
+            .onAppear {
+                viewModel.getExercises()
+            }
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
 //                    Menu("Filter: \(viewModel.selectedFilter?.rawValue ?? "NONE")") {
