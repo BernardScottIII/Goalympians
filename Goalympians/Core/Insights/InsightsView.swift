@@ -40,7 +40,6 @@ struct InsightsView: View {
     var activityViewModel: ActivityViewModel
     
     @State private var currentInsight: String?
-    @State private var hKInsight: HKInsight = HKInsight(id: 1, title: "", subtitle: "", image: "", amount: "")
     @EnvironmentObject private var healthManager: HealthManager
     
     private var selectedInsight: ActivityInsight? {
@@ -53,10 +52,13 @@ struct InsightsView: View {
     @StateObject private var viewModel = InsightsViewModel()
     
     var body: some View {
-        VStack {
-            HStack {
-                Text("Steps: \(healthManager.fetchTodaySteps())")
+        ScrollView {
+            LazyVGrid(columns: Array(repeating: GridItem(spacing: 20), count: 2)){
+                ForEach(healthManager.hkInsights.sorted(by: { $0.value.id < $1.value.id }), id: \.key) { insight in
+                    HKInsightCard(hkInsight: insight.value)
+                }
             }
+            .padding(.horizontal)
             Chart {
                 ForEach(ActivityInsight.mockData, id: \.id) { insight in
                     BarMark(
@@ -101,7 +103,8 @@ struct InsightsView: View {
         }
         .navigationTitle("Insights Page")
         .onAppear {
-            viewModel.getInsights()
+            healthManager.fetchTodaySteps()
+            healthManager.fetchTodayCalories()
         }
     }
 }
@@ -125,7 +128,10 @@ struct ActivityInsight: Identifiable {
 }
 
 #Preview {
+    @Previewable @StateObject var healthManager = HealthManager()
     NavigationStack {
         InsightsView(workoutViewModel: WorkoutViewModel(workoutDataService: ProdWorkoutManager(workoutCollection: Firestore.firestore().collection("workouts"))), activityViewModel: ActivityViewModel(dataService: ProdWorkoutManager(workoutCollection: Firestore.firestore().collection("workouts"))))
+            .environmentObject(healthManager)
     }
 }
+
