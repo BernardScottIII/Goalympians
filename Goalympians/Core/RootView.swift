@@ -32,5 +32,7 @@ struct RootView: View {
 }
 
 #Preview {
+    @Previewable @StateObject var healthManager = HealthManager()
     RootView()
+        .environmentObject(healthManager)
 }

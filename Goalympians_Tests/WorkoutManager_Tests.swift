@@ -151,7 +151,8 @@ final class WorkoutManager_Tests: XCTestCase {
         // Given
         // Delete all pre-existing workouts in test_workouts
         let pwm = ProdWorkoutManager(workoutCollection: Firestore.firestore().collection("test_workouts"))
-        let userId = UUID().uuidString
+        let authDataResult = try! await AuthenticationManager.shared.signInUser(email: "unit-test@unit-test.com", password: "unit-test")
+        let userId = authDataResult.uid
         let existingDocList = try! await pwm.getAllWorkouts()
         for entry in existingDocList {
             let id = entry.id
@@ -171,6 +172,7 @@ final class WorkoutManager_Tests: XCTestCase {
         
         // When
         let workoutsList = try! await pwm.getAllWorkouts()
+        let _ = print(workoutsList)
         
         // Then
         XCTAssertEqual(workoutsList[0].id, workout1.id)

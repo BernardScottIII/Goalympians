@@ -91,6 +91,9 @@ struct ExercisesView: View {
             }
             print("All saved successfully!")
         }
+        NavigationLink("Create New Exercise") {
+            CreateExerciseView()
+        }
     }
     
     func addExercise(exercise: APIExercise) {
