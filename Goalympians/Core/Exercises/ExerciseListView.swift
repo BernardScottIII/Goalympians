@@ -11,14 +11,14 @@ import FirebaseFirestore
 
 struct ExerciseListView: View {
     @Environment(\.dismiss) private var dismiss
-    @Environment(\.modelContext) private var modelContext
-    @SwiftData.Query private var exercises: [DevExercise]
+//    @Environment(\.modelContext) private var modelContext
+//    @SwiftData.Query private var exercises: [DevExercise]
     
     var viewModel: ExercisesViewModel
     var workoutId: String
     
     var body: some View {
-        List(exercises, id: \.id) { exercise in
+        List(viewModel.exercises, id: \.id) { exercise in
             Text(exercise.name)
                 .contextMenu {
                     Button("Add to Workout") {
@@ -28,43 +28,14 @@ struct ExerciseListView: View {
                 }
         }
     }
-    
-    init(
-        sort: SortDescriptor<DevExercise>,
-        targetMuscle: String,
-        searchString: String,
-        viewModel: ExercisesViewModel,
-        workoutId: String) {
-            _exercises = Query(
-                filter: #Predicate {
-                    if searchString.isEmpty {
-                        if targetMuscle == "Any Muscle" {
-                            return true
-                        } else {
-                            return $0.target == targetMuscle
-                        }
-                    } else {
-                        if targetMuscle == "Any Muscle" {
-                            return $0.name.localizedStandardContains(searchString)
-                        } else {
-                            return $0.name.localizedStandardContains(searchString) && $0.target == targetMuscle
-                        }
-                    }
-                },
-                sort: [sort])
-        self.viewModel = viewModel
-        self.workoutId = workoutId
-    }
 }
 
 #Preview {
     NavigationStack {
         ExerciseListView(
-            sort: SortDescriptor(\DevExercise.name),
-            targetMuscle: "Any Muscle",
-            searchString: "",
             viewModel: ExercisesViewModel(dataService: ProdWorkoutManager(workoutCollection: Firestore.firestore().collection("test_workouts"))),
-            workoutId: "")
+            workoutId: ""
+        )
             .modelContainer(for: DevExercise.self)
     }
 }

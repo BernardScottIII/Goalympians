@@ -12,9 +12,7 @@ import FirebaseFirestore
 struct ExercisesView: View {
     
     @Environment(\.dismiss) private var dismiss
-    @Environment(\.modelContext) private var modelContext
     @StateObject private var viewModel: ExercisesViewModel
-    @State private var sortOrder = SortDescriptor(\DevExercise.name)
     @State private var targetMuscle = "Any Muscle"
     @State private var searchText = ""
     
@@ -31,83 +29,47 @@ struct ExercisesView: View {
     }
     
     var body: some View {
-        ExerciseListView(sort: sortOrder, targetMuscle: targetMuscle, searchString: searchText, viewModel: viewModel, workoutId: workoutId)
-            .navigationTitle("Exercises")
-            .searchable(text: $searchText)
-            .onAppear {
-                viewModel.getExercises()
-            }
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-//                    Menu("Filter: \(viewModel.selectedFilter?.rawValue ?? "NONE")") {
-//                        ForEach(ExercisesViewModel.FilterOption.allCases, id: \.self) { option in
-//                            Button(option.rawValue) {
-//                                Task {
-//                                    try? await viewModel.filterSelectedOption(option: option)
-//                                }
-//                            }
-//                        }
-//                    }
-                    Menu("Sort", systemImage: "arrow.up.arrow.down") {
-                        Picker("Sort", selection: $sortOrder) {
-                            Text("Name")
-                                .tag(SortDescriptor(\DevExercise.name))
-                            Text("Body Part")
-                                .tag(SortDescriptor(\DevExercise.bodyPart))
-                            Text("Equipment")
-                                .tag(SortDescriptor(\DevExercise.equipment))
-                        }
-                        .pickerStyle(.inline)
+        List(viewModel.exercises, id: \.id) { exercise in
+            Text(exercise.name)
+                .contextMenu {
+                    Button("Add to Workout") {
+                        viewModel.addWorkoutActivity(workoutId: workoutId, exerciseId: exercise.id!)
+                        dismiss()
                     }
                 }
-                ToolbarItem(placement: .topBarTrailing) {
-                    Menu("Target Muscle", systemImage: "figure.strengthtraining.traditional") {
-                        Picker("Category", selection: $targetMuscle) {
-                            Text("Any Muscle")
-                                .tag("Any Muscle")
-                            ForEach(ExercisesViewModel.CategoryOption.allCases, id: \.self) { category in
-                                Text(category.rawValue)
-                                    .tag(category.rawValue)
+        }
+        .navigationTitle("Exercises")
+        .searchable(text: $searchText)
+        .onAppear {
+            viewModel.getExercises()
+        }
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Menu("Filter: \(viewModel.selectedFilter?.rawValue ?? "NONE")", systemImage: "arrow.up.arrow.down") {
+                    ForEach(ExercisesViewModel.FilterOption.allCases, id: \.self) { option in
+                        Button(option.rawValue) {
+                            Task {
+                                try? await viewModel.filterSelectedOption(option: option)
                             }
                         }
-                        .pickerStyle(.inline)
                     }
                 }
-//                ToolbarItem(placement: .topBarTrailing) {
-//                    Menu("Category: \(viewModel.selectedCategory?.rawValue ?? "NONE")") {
-//                        ForEach(ExercisesViewModel.CategoryOption.allCases, id: \.self) { option in
-//                            Button(option.rawValue) {
-//                                Task {
-//                                    try? await viewModel.categorySelected(category: option)
-//                                }
-//                            }
-//                        }
-//                    }
-//                }
             }
-        Button("Add Exercises to Database") {
-            viewModel.exercises.forEach { exercise in
-                addExercise(exercise: exercise)
+            ToolbarItem(placement: .topBarTrailing) {
+                Menu("Category: \(viewModel.selectedCategory?.rawValue ?? "NONE")", systemImage: "figure.strengthtraining.traditional") {
+                    ForEach(ExercisesViewModel.CategoryOption.allCases, id: \.self) { option in
+                        Button(option.rawValue) {
+                            Task {
+                                try? await viewModel.categorySelected(category: option)
+                            }
+                        }
+                    }
+                }
             }
-            print("All saved successfully!")
         }
         NavigationLink("Create New Exercise") {
             CreateExerciseView()
         }
-    }
-    
-    func addExercise(exercise: APIExercise) {
-        let storedExercise = DevExercise(
-            id: exercise.id,
-            name: exercise.name,
-            bodyPart: exercise.bodyPart,
-            equipment: exercise.equipment,
-            target: exercise.target,
-            secondaryMuscles: exercise.secondaryMuscles,
-            instructions: exercise.instructions,
-            gifUrl: exercise.gifUrl
-        )
-        modelContext.insert(storedExercise)
     }
 }
 

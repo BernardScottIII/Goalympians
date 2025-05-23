@@ -21,7 +21,17 @@ struct ActivityCellView: View {
 }
 
 #Preview {
-    ActivityCellView(exercise: APIExercise(id: UUID().uuidString, name: "Sample Exercise", bodyPart: "Head", equipment: "Keyboard and Mosue", target: "Brain", secondaryMuscles: ["Forehead", "Fingers", "Eyes"], instructions: ["Sit down at the keyboard", "start typing", "nothing works", "cry"], gifUrl: "google.com"))
+    ActivityCellView(exercise: APIExercise(
+        id: UUID().uuidString,
+        name: "Sample Exercise",
+        bodyPart: "Head",
+        equipment: "Keyboard and Mosue",
+        target: "Brain",
+        secondaryMuscles: ["Forehead", "Fingers", "Eyes"],
+        instructions: ["Sit down at the keyboard", "start typing", "nothing works", "cry"],
+        gifUrl: "google.com",
+        uuid: "SampleUserID"
+    ))
 //        id: 0,
 //        name: "Sample Exercise",
 //        type: "An example exercise for testing purposes",

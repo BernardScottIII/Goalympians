@@ -31,6 +31,8 @@ struct ExerciseDetailsView: View {
             target: "Brain",
             secondaryMuscles: ["Forehead", "Fingers", "eyes"],
             instructions: ["Sit down at keyboard", "start typing", "nothing works", "cry"],
-            gifUrl: "google.com"))
+            gifUrl: "google.com",
+            uuid: "SampleUserID"
+        ))
     }
 }
