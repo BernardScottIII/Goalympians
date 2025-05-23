@@ -22,16 +22,24 @@ struct WorkoutView: View {
     var body: some View {
         List {
             ForEach(viewModel.workouts) { workout in
-                NavigationLink(workout.name) {
-                    EditWorkoutView(
-                        workoutDataService: viewModel.workoutDataService,
-                        workout: Workout(name: workout.name, date: workout.date, desc: workout.description, intensity: 2, exercises: []),
-                        workoutId: workout.id,
-                        userId: workout.userId
-                    )
-                }
+//                NavigationLink(workout.name) {
+//                    EditWorkoutView(
+//                        workoutDataService: viewModel.workoutDataService,
+//                        workout: Workout(name: workout.name, date: workout.date, desc: workout.description, intensity: 2, exercises: []),
+//                        workoutId: workout.id,
+//                        userId: workout.userId
+//                    )
+//                }
+                NavigationLink(workout.name, value: workout)
             }
         }
+        .navigationDestination(for: DBWorkout.self, destination: { workout in
+            EditWorkoutView(
+                workoutDataService: viewModel.workoutDataService,
+                workout: Workout(name: workout.name, date: workout.date, desc: workout.description, intensity: 2, exercises: []),
+                workoutId: workout.id,
+                userId: workout.userId)
+        })
         .navigationTitle("Workouts")
         .task {
             try? await viewModel.getAllWorkouts()

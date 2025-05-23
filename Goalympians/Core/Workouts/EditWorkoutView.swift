@@ -48,11 +48,7 @@ struct EditWorkoutView: View {
             NavigationLink("Add Exercise") {
                 ExercisesView(workoutDataService: workoutDataService, workoutId: workoutId)
             }
-//            NavigationLink(destination: ExerciseListWrapperView()) {
-//                Text("See Exercises")
-//            }
         }
-//        DBExerciseView()
         
         Button("Save Changes") {
             Task {

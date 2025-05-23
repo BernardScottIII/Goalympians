@@ -18,7 +18,7 @@ struct DBWorkoutArray: Codable {
     let total, skip, limit: Int
 }
 
-struct DBWorkout: Identifiable, Codable {
+struct DBWorkout: Identifiable, Codable, Hashable {
     let id: String
     let userId: String
     var name: String
