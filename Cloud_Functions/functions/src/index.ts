@@ -12,7 +12,7 @@ import * as v2 from "firebase-functions/v2";
 import * as v1 from "firebase-functions/v1";
 // import * as logger from "firebase-functions/logger";
 
-type Indexable = { [key: string]: any };
+type Indexable = {[key:string]:string};
 
 // Start writing functions
 // https://firebase.google.com/docs/functions/typescript
@@ -34,12 +34,12 @@ type Sku = { name: string; usd: number; eur?: number };
 const USD_TO_EUROS = 0.95;
 // Tell Firestore at what path we want to trigger the update
 export const newsku = v1.firestore.document("/inventory/{sku}")
-  .onCreate(snapshot => {
+  .onCreate((snapshot) => {
     const data = snapshot.data() as Sku;
-    const balls: Sku = { name: "bals", usd: 69}
+    const balls: Sku = {name: "bals", usd: 69};
     balls.eur = balls.usd * USD_TO_EUROS;
     const eur = data.usd * USD_TO_EUROS;
-    return snapshot.ref.set({ eur, ...data }, { merge: true });
+    return snapshot.ref.set({eur, ...data}, {merge: true});
   });
 
 /*
@@ -60,17 +60,18 @@ type ActivityInsight = {
   setType: string;
 }
 
-export const updateInsight = v1.firestore.document("/users/{user_id}/insights/{insight_id}")
+// export const updateinsight =
+// v1.firestore.document("/users/{user_id}/insights/{insight_id}")
+export const updateinsight = v1.firestore.document("/workouts/{id}")
   .onUpdate((change, context) => {
-    
     const temp: ActivityInsight = {
       id: "1234",
       userId: "2345",
-      exerciseName: "testercice",
+      exerciseName: "test exercise",
       usedInWorkouts: 12,
       totalRepetitionsRecorded: 23,
       setType: "resistance set",
-    }
+    };
     console.log(temp);
     const newValue = change.after.data();
     const previousValue = change.before.data();
