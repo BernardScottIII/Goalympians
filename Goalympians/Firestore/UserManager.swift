@@ -81,6 +81,11 @@ final class UserManager {
     
     func createNewUser(user: DBUser) async throws {
         try userDocument(userId: user.userId).setData(from: user, merge: false)
+        
+        try await addUserInsight(
+            userId: user.userId,
+            insightName: "workout_count",
+            insightData: ["count":0])
     }
     
     func getUser(userId: String) async throws -> DBUser {
@@ -95,15 +100,15 @@ final class UserManager {
         try await userDocument(userId: userId).updateData(data)
     }
     
-    func addUserInsight(userId: String, exerciseName: String) async throws {
+    func addUserInsight(userId: String, insightName: String, insightData: [String:Any]) async throws {
         
         let document = userInsightCollection(userId: userId).document()
         let documentId = document.documentID
         
         let data: [String:Any] = [
             "id": documentId,
-            "exercise_name": exerciseName,
-            "date_created": Timestamp()
+            "name": insightName,
+            "data": insightData
         ]
         
         try await document.setData(data, merge: false)
@@ -111,5 +116,9 @@ final class UserManager {
     
     func removeUserInsight(userId: String, insightId: String) async throws {
         try await userInsightDocument(userId: userId, insightId: insightId).delete()
+    }
+    
+    func getAllUserInsights(userId: String) async throws -> [Insight] {
+        try await userInsightCollection(userId: userId).getDocuments(as: Insight.self)
     }
 }
