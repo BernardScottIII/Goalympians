@@ -71,7 +71,7 @@ struct HKInsight {
 }
 
 struct InsightsView: View {
-    var activityViewModel: ActivityViewModel
+//    @ObservedObject var activityViewModel: ActivityViewModel
     
     @State private var currentInsight: String?
     @EnvironmentObject private var healthManager: HealthManager
@@ -179,7 +179,7 @@ struct ActivityInsight: Identifiable {
 #Preview {
     @Previewable @StateObject var healthManager = HealthManager()
     NavigationStack {
-        InsightsView(activityViewModel: ActivityViewModel(dataService: ProdWorkoutManager(workoutCollection: Firestore.firestore().collection("workouts"))))
+        InsightsView()
             .environmentObject(healthManager)
     }
 }

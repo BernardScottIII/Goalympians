@@ -23,5 +23,14 @@ final class WorkoutViewModel: ObservableObject {
         self.workouts = try await workoutDataService.getAllWorkouts()
     }
     
-    
+    func binding(for workoutId: String) -> Binding<DBWorkout>? {
+        guard let index = workouts.firstIndex(where: {$0.id == workoutId }) else {
+            return nil
+        }
+        
+        return Binding(
+            get: {self.workouts[index]},
+            set: {self.workouts[index] = $0}
+        )
+    }
 }
