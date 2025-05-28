@@ -81,7 +81,7 @@ private func previewFunc() {}
 #Preview {
     NavigationStack {
         Form {
-            ResistanceSetView(workoutDataService: ProdWorkoutManager(workoutCollection: Firestore.firestore().collection("workouts")), resistanceSet: DBResistanceSet(id: "iP1wvEqnL3YdoTGDlvyv", weight: 0.0, repetitions: 0), workoutId: "49F6D3AB-C3A6-4B9C-84DF-ECF5E4ECEC3D", activity: DBActivity(id: "GzTwAOOgE40xBv6bFZ9Z", exerciseId: UUID().uuidString, setType: .resistanceSet), activitySetViewModel: ActivitySetViewModel(workoutDataService: ProdWorkoutManager(workoutCollection: Firestore.firestore().collection("workouts"))))
+            ResistanceSetView(workoutDataService: ProdWorkoutManager(workoutCollection: Firestore.firestore().collection("workouts")), resistanceSet: DBResistanceSet(id: "iP1wvEqnL3YdoTGDlvyv", weight: 0.0, repetitions: 0), workoutId: "49F6D3AB-C3A6-4B9C-84DF-ECF5E4ECEC3D", activity: DBActivity(id: "GzTwAOOgE40xBv6bFZ9Z", exerciseId: UUID().uuidString, setType: .resistanceSet, workoutIndex: 0), activitySetViewModel: ActivitySetViewModel(workoutDataService: ProdWorkoutManager(workoutCollection: Firestore.firestore().collection("workouts"))))
         }
     }
 }

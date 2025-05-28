@@ -133,21 +133,21 @@ struct DBActivity: Identifiable, Codable {
     let id: String
     let exerciseId: String
     let setType: SetType
+    let workoutIndex: Int
     
     func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(self.id, forKey: .id)
         try container.encode(self.exerciseId, forKey: .exerciseId)
         try container.encode(self.setType, forKey: .setType)
+        try container.encode(self.workoutIndex, forKey: .workoutIndex)
     }
     
     enum CodingKeys: String, CodingKey {
         case id = "id"
         case exerciseId = "exercise_id"
         case setType = "set_type"
-        case resistanceSets = "resistance_sets"
-        case runSets = "run_sets"
-        case swimSets = "swim_sets"
+        case workoutIndex = "workout_index"
     }
     
     init(from decoder: any Decoder) throws {
@@ -155,12 +155,19 @@ struct DBActivity: Identifiable, Codable {
         self.id = try container.decode(String.self, forKey: .id)
         self.exerciseId = try container.decode(String.self, forKey: .exerciseId)
         self.setType = try container.decode(SetType.self, forKey: .setType)
+        self.workoutIndex = try container.decode(Int.self, forKey: .workoutIndex)
     }
     
-    init(id: String, exerciseId: String, setType: SetType) {
+    init(
+        id: String,
+        exerciseId: String,
+        setType: SetType,
+        workoutIndex: Int
+    ) {
         self.id = id
         self.exerciseId = exerciseId
         self.setType = setType
+        self.workoutIndex = workoutIndex
     }
 }
 

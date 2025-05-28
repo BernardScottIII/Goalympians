@@ -67,11 +67,14 @@ final class ProdWorkoutManager: WorkoutManagerProtocol {
     func addWorkoutActivity(workoutId: String, exerciseId: String) async throws {
         let document = workoutActivityCollection(workoutId: workoutId).document()
         let documentId = document.documentID
+        let exerciseCount = workoutActivityCollection(workoutId: workoutId).count
+        let snapshot = try await exerciseCount.getAggregation(source: .server)
         
         let data: [String:Any] = [
             DBActivity.CodingKeys.id.rawValue: documentId,
             DBActivity.CodingKeys.exerciseId.rawValue: exerciseId,
             DBActivity.CodingKeys.setType.rawValue: "resistance_set",
+            DBActivity.CodingKeys.workoutIndex.rawValue: snapshot.count// 1 + the number of documents in the activities collection
         ]
         
         try await document.setData(data, merge: false)
@@ -82,7 +85,9 @@ final class ProdWorkoutManager: WorkoutManagerProtocol {
     }
     
     func getAllWorkoutActivities(workoutId: String) async throws -> [DBActivity] {
-        try await workoutActivityCollection(workoutId: workoutId).getDocuments(as: DBActivity.self)
+        try await workoutActivityCollection(workoutId: workoutId)
+            .order(by: DBActivity.CodingKeys.workoutIndex.rawValue)
+            .getDocuments(as: DBActivity.self)
     }
 }
 
