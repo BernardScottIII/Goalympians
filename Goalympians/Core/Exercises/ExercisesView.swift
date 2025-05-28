@@ -15,6 +15,7 @@ struct ExercisesView: View {
     @StateObject private var viewModel: ExercisesViewModel
     @State private var targetMuscle = "Any Muscle"
     @State private var searchText = ""
+    @State private var selectedExerciseId: String?
     
     let workoutDataService: WorkoutManagerProtocol
     var workoutId: String
@@ -30,13 +31,28 @@ struct ExercisesView: View {
     
     var body: some View {
         List(viewModel.exercises, id: \.id) { exercise in
-            Text(exercise.name)
-                .contextMenu {
-                    Button("Add to Workout") {
-                        viewModel.addWorkoutActivity(workoutId: workoutId, exerciseId: exercise.id!)
-                        dismiss()
-                    }
+            HStack {
+                Text(exercise.name)
+                
+                Spacer()
+                
+                Button("", systemImage: "plus") {
+                    viewModel.addWorkoutActivity(workoutId: workoutId, exerciseId: exercise.id!)
+                    dismiss()
                 }
+                
+                // "It's good enough"
+                ZStack(alignment: .trailing) {
+                    NavigationLink {
+                        ExerciseDetailsView(exercise: exercise)
+                    } label: {
+                        Image(systemName: "info.circle")
+                            .foregroundStyle(.blue)
+                    }
+                    .scaledToFit()
+                }
+            }
+            .buttonStyle(.plain)
         }
         .navigationTitle("Exercises")
         .searchable(text: $searchText)

@@ -42,18 +42,17 @@ struct ActivityView: View {
                                 viewModel.addActivitySet(workoutId: workoutId, activityId: entry.workoutActivity.id)
                                 viewModel.updatedActivityId = entry.workoutActivity.id
                             }
-                            .buttonStyle(.plain)
                             
                             Button("", systemImage: "trash") {
                                 viewModel.removeFromWorkout(workoutId: workoutId, activityId: entry.workoutActivity.id)
                                 viewModel.getActivities(workoutId: workoutId)
                             }
-                            .buttonStyle(.plain)
                         }
                         
                         ActivitySetView(workoutDataService: workoutDataService, workoutId: workoutId, activityId: entry.workoutActivity.id)
                             .environmentObject(viewModel)
                     }
+                    .buttonStyle(.plain)
                 }
             }
         }

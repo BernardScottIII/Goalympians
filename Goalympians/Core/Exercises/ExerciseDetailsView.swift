@@ -13,11 +13,24 @@ struct ExerciseDetailsView: View {
     
     var body: some View {
         List {
-            Text(exercise.name)
-            ForEach(exercise.instructions, id: \.self) { instruction in
-                Text(instruction)
+            Section("Instructions") {
+                ForEach(exercise.instructions, id: \.self) { instruction in
+                    Text(instruction)
+                }
+            }
+            Section("Equipment") {
+                Text(exercise.equipment)
+            }
+            Section("Target Muscle") {
+                Text(exercise.target)
+            }
+            Section("Secondary Muscles") {
+                ForEach(exercise.secondaryMuscles, id: \.self) { muscle in
+                    Text(muscle)
+                }
             }
         }
+        .navigationTitle(exercise.name)
     }
 }
 
