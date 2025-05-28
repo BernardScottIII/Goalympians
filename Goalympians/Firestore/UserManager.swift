@@ -79,13 +79,18 @@ final class UserManager {
         userInsightCollection(userId: userId).document(insightId)
     }
     
+    private func preloadUserInsights(userId: String) async throws {
+        try await addUserInsight(
+            userId: userId,
+            insightName: "workout_count",
+            insightData: ["count":0])
+//        try await addUserInsight(userId: userId, insightName: <#T##String#>, insightData: <#T##[String : Any]#>)
+    }
+    
     func createNewUser(user: DBUser) async throws {
         try userDocument(userId: user.userId).setData(from: user, merge: false)
         
-        try await addUserInsight(
-            userId: user.userId,
-            insightName: "workout_count",
-            insightData: ["count":0])
+        try await preloadUserInsights(userId: user.userId)
     }
     
     func getUser(userId: String) async throws -> DBUser {

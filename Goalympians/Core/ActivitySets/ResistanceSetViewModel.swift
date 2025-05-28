@@ -27,6 +27,8 @@ final class ResistanceSetViewModel: ObservableObject {
     }
     
     func removeActivitySet(workoutId: String, activityId: String, setId: String) async throws {
-        try await workoutDataService.removeWorkoutActivitySet(workoutId: workoutId, activityId: activityId, activitySetId: setId)
+        Task {
+            try await workoutDataService.removeWorkoutActivitySet(workoutId: workoutId, activityId: activityId, activitySetId: setId)
+        }
     }
 }

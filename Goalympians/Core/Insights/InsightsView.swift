@@ -51,6 +51,15 @@ struct Insight: Identifiable, Codable {
         self.name = try container.decode(String.self, forKey: .name)
         self.data = try container.decode([String : Double].self, forKey: .data)
     }
+    
+    // form: [insight_name:data_dict]
+    // Maybe have a exercise_insights subcollection?
+    // Move everything up a level and have various <feature>_insights collections
+    // exercise_insights, workout_insights,
+    let defaultInsights = [
+        "workout_count": ["count":0],
+        "exercise_count": ["no_exercise":0]
+    ]
 }
 
 struct HKInsight {

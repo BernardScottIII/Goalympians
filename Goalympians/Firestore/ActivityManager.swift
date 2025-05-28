@@ -44,14 +44,6 @@ struct DBResistanceSet: DBActivitySet, Codable {
     }
 }
 
-struct DBResistanceSetMetric: DBActivitySet, Identifiable {
-    let id: String
-    let exerciseId: String
-    let repetitionCount: Int
-    let weightCount: Double
-    let pr: Double
-}
-
 struct DBRunSet: DBActivitySet, Codable {
     let id: String
     let distance: Double
@@ -177,6 +169,4 @@ final class ActivityManager {
     private init() {}
     
     private let activityCollection = Firestore.firestore().collection("activities")
-    
-    
 }

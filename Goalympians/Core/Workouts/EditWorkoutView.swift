@@ -11,7 +11,9 @@ import FirebaseFirestore
 struct EditWorkoutView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var modelContext
-    @StateObject private var viewModel: ActivityViewModel
+    // We're sharing this VM, when we don't really want to... we want our parent-level plus button to call
+    // a function in that child view's unique vm and do something
+//    @StateObject private var activitySetViewModel: ActivitySetViewModel
     private var workoutDataService: WorkoutManagerProtocol
     
     @Bindable var workout: Workout
@@ -24,7 +26,6 @@ struct EditWorkoutView: View {
         workoutId: String,
         userId: String
     ) {
-        _viewModel = StateObject(wrappedValue: ActivityViewModel(dataService: workoutDataService))
         self.workoutId = workoutId
         self.workout = workout
         self.userId = userId

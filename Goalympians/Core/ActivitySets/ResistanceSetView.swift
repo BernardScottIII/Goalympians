@@ -14,9 +14,9 @@ struct ResistanceSetView: View {
     let workoutId: String
     let activity: DBActivity
     let workoutDataService: WorkoutManagerProtocol
-    @Binding var refreshHelper: Int
-
+    @ObservedObject var activitySetViewModel: ActivitySetViewModel
     
+    // Maybe I should move some of these into the ViewModel?
     @State private var weight: Double? = nil
     @State private var repetitions: Int? = nil
     @FocusState private var weightFocused: Bool
@@ -28,14 +28,14 @@ struct ResistanceSetView: View {
         resistanceSet: DBActivitySet,
         workoutId: String,
         activity: DBActivity,
-        refreshHelper: Binding<Int>
+        activitySetViewModel: ActivitySetViewModel
     ) {
         self.workoutDataService = workoutDataService
         _viewModel = StateObject(wrappedValue: ResistanceSetViewModel(workoutDataService: workoutDataService))
         self.resistanceSet = resistanceSet
         self.workoutId = workoutId
         self.activity = activity
-        _refreshHelper = refreshHelper
+        self.activitySetViewModel = activitySetViewModel
     }
     
     var body: some View {
@@ -69,7 +69,7 @@ struct ResistanceSetView: View {
             Button("", systemImage: "trash") {
                 Task {
                     try await viewModel.removeActivitySet(workoutId: workoutId, activityId: activity.id, setId: resistanceSet.id)
-                    refreshHelper = UUID().hashValue
+                    activitySetViewModel.getActivitySets(workoutId: workoutId, activityId: activity.id)
                 }
             }
         }
@@ -81,7 +81,7 @@ private func previewFunc() {}
 #Preview {
     NavigationStack {
         Form {
-            ResistanceSetView(workoutDataService: ProdWorkoutManager(workoutCollection: Firestore.firestore().collection("workouts")), resistanceSet: DBResistanceSet(id: "iP1wvEqnL3YdoTGDlvyv", weight: 0.0, repetitions: 0), workoutId: "49F6D3AB-C3A6-4B9C-84DF-ECF5E4ECEC3D", activity: DBActivity(id: "GzTwAOOgE40xBv6bFZ9Z", exerciseId: UUID().uuidString, setType: .resistanceSet), refreshHelper: .constant(0))
+            ResistanceSetView(workoutDataService: ProdWorkoutManager(workoutCollection: Firestore.firestore().collection("workouts")), resistanceSet: DBResistanceSet(id: "iP1wvEqnL3YdoTGDlvyv", weight: 0.0, repetitions: 0), workoutId: "49F6D3AB-C3A6-4B9C-84DF-ECF5E4ECEC3D", activity: DBActivity(id: "GzTwAOOgE40xBv6bFZ9Z", exerciseId: UUID().uuidString, setType: .resistanceSet), activitySetViewModel: ActivitySetViewModel(workoutDataService: ProdWorkoutManager(workoutCollection: Firestore.firestore().collection("workouts"))))
         }
     }
 }

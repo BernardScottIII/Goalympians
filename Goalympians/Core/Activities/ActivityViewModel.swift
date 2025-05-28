@@ -10,6 +10,8 @@ import Foundation
 @MainActor
 final class ActivityViewModel: ObservableObject {
     @Published private(set) var activities: [(workoutActivity: DBActivity, exercise: APIExercise)] = []
+    @Published var updatedActivityId: String = ""
+    
     let dataService: WorkoutManagerProtocol
     
     init(dataService: WorkoutManagerProtocol) {
