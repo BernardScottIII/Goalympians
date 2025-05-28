@@ -9,13 +9,20 @@ import Foundation
 
 @MainActor
 final class ActivityViewModel: ObservableObject {
-    @Published private(set) var activities: [(workoutActivity: DBActivity, exercise: DBExercise)] = []
+    @Published private(set) var activities: [(workoutActivity: DBActivity, exercise: APIExercise)] = []
+    @Published var updatedActivityId: String = ""
+    
+    let dataService: WorkoutManagerProtocol
+    
+    init(dataService: WorkoutManagerProtocol) {
+        self.dataService = dataService
+    }
     
     func getActivities(workoutId: String) {
         Task {
-            let workoutActivities = try await WorkoutManager.shared.getAllWorkoutActivities(workoutId: workoutId)
+            let workoutActivities = try await dataService.getAllWorkoutActivities(workoutId: workoutId)
             
-            var localArray: [(workoutActivity: DBActivity, exercise: DBExercise)] = []
+            var localArray: [(workoutActivity: DBActivity, exercise: APIExercise)] = []
             for workoutActivity in workoutActivities {
                 if let exercise = try? await ExerciseManager.shared.getExercise(exerciseId: String(workoutActivity.exerciseId)) {
                     localArray.append((workoutActivity, exercise))
@@ -28,17 +35,17 @@ final class ActivityViewModel: ObservableObject {
     
     func removeFromWorkout(workoutId: String, activityId: String) {
         Task {
-            for activitySet in try await WorkoutManager.shared.getAllActivitySets(workoutId: workoutId, activityId: activityId) {
-                try await WorkoutManager.shared.removeWorkoutActivitySet(workoutId: workoutId, activityId: activityId, activitySetId: activitySet.id)
+            for activitySet in try await dataService.getAllActivitySets(workoutId: workoutId, activityId: activityId) {
+                try await dataService.removeWorkoutActivitySet(workoutId: workoutId, activityId: activityId, activitySetId: activitySet.id)
             }
-            try await WorkoutManager.shared.removeWorkoutActivity(workoutId: workoutId, activityId: activityId)
+            try await dataService.removeWorkoutActivity(workoutId: workoutId, activityId: activityId)
             getActivities(workoutId: workoutId)
         }
     }
     
     func addActivitySet(workoutId: String, activityId: String) {
         Task {
-            try await WorkoutManager.shared.addWorkoutActivitySet(workoutId: workoutId, activityId: activityId)
+            try await dataService.addWorkoutActivitySet(workoutId: workoutId, activityId: activityId)
         }
     }
 }

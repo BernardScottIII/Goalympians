@@ -9,18 +9,30 @@ import SwiftUI
 
 struct ExerciseDetailsView: View {
     
-    let exercise: DBExercise
+    let exercise: APIExercise
     
     var body: some View {
         List {
             Text(exercise.name)
-            Text(exercise.description)
+            ForEach(exercise.instructions, id: \.self) { instruction in
+                Text(instruction)
+            }
         }
     }
 }
 
 #Preview {
     NavigationStack {
-        ExerciseDetailsView(exercise: DBExercise(id: 12309487012, name: "Temporary Exercise", description: "This was created for testing purposes.", userId: "1nqfnN123I1npcY2743hwASDGhfqh"))
+        ExerciseDetailsView(exercise: APIExercise(
+            id: UUID().uuidString,
+            name: "Sample Exercise",
+            bodyPart: "Head",
+            equipment: "Keyboard and Mouse",
+            target: "Brain",
+            secondaryMuscles: ["Forehead", "Fingers", "eyes"],
+            instructions: ["Sit down at keyboard", "start typing", "nothing works", "cry"],
+            gifUrl: "google.com",
+            uuid: "SampleUserID"
+        ))
     }
 }

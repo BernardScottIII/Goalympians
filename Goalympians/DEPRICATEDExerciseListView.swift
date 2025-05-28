@@ -8,7 +8,7 @@
 import SwiftUI
 import SwiftData
 
-struct ExerciseListView: View {
+struct DEPRICATEDExerciseListView: View {
     @Query var exercises: [Exercise]
     @Bindable var workout: Workout
     @Environment(\.modelContext) private var modelContext
@@ -48,5 +48,5 @@ struct ExerciseListView: View {
 }
 
 #Preview {
-    ExerciseListView(workout: Workout())
+    DEPRICATEDExerciseListView(workout: Workout())
 }

@@ -10,35 +10,51 @@ import FirebaseFirestore
 
 struct ActivityView: View {
     
-    @StateObject private var viewModel = ActivityViewModel()
-    @State private var refreshHelper: Int = 0
-    
+    @StateObject private var viewModel: ActivityViewModel
+
+    let workoutDataService: WorkoutManagerProtocol
     var workoutId: String
+    
+    init(
+        workoutDataService: WorkoutManagerProtocol,
+        workoutId: String
+    ) {
+        _viewModel = StateObject(wrappedValue: ActivityViewModel(dataService: workoutDataService))
+        self.workoutId = workoutId
+        self.workoutDataService = workoutDataService
+    }
     
     var body: some View {
         List {
             if viewModel.activities.isEmpty {
-                Text("No Exercises in Workout")
+                Section {
+                    Text("No Exercises in Workout")
+                }
             } else {
                 ForEach(viewModel.activities, id: \.workoutActivity.id.self) { entry in
                     Section {
                         HStack {
-                            ActivityCellView(exercise: entry.exercise)
+                            Text(entry.exercise.name)
+                            
+                            Spacer()
                             
                             Button("", systemImage: "plus") {
                                 viewModel.addActivitySet(workoutId: workoutId, activityId: entry.workoutActivity.id)
-                                refreshHelper = UUID().hashValue
+                                viewModel.updatedActivityId = entry.workoutActivity.id
                             }
                             .buttonStyle(.plain)
+                            
                             Button("", systemImage: "trash") {
                                 viewModel.removeFromWorkout(workoutId: workoutId, activityId: entry.workoutActivity.id)
+                                viewModel.getActivities(workoutId: workoutId)
                             }
                             .buttonStyle(.plain)
                         }
                         
-                        ActivitySetView(refreshHelper: $refreshHelper, workoutId: workoutId, activityId: entry.workoutActivity.id)
+                        ActivitySetView(workoutDataService: workoutDataService, workoutId: workoutId, activityId: entry.workoutActivity.id)
+                            .environmentObject(viewModel)
                     }
-                    }
+                }
             }
         }
         .onAppear {
@@ -48,7 +64,11 @@ struct ActivityView: View {
 }
 
 #Preview {
+    @Previewable @State var collection = Firestore.firestore().collection("workouts")
     NavigationStack {
-        ActivityView(workoutId: "49F6D3AB-C3A6-4B9C-84DF-ECF5E4ECEC3D")
+        ActivityView(
+            workoutDataService: ProdWorkoutManager(workoutCollection: collection),
+            workoutId: "1"
+        )
     }
 }

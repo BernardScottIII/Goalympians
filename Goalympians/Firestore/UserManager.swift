@@ -71,8 +71,26 @@ final class UserManager {
         userCollection.document(userId)
     }
     
+    private func userInsightCollection(userId: String) -> CollectionReference {
+        userDocument(userId: userId).collection("insights")
+    }
+    
+    private func userInsightDocument(userId: String, insightId: String) -> DocumentReference {
+        userInsightCollection(userId: userId).document(insightId)
+    }
+    
+    private func preloadUserInsights(userId: String) async throws {
+        try await addUserInsight(
+            userId: userId,
+            insightName: "workout_count",
+            insightData: ["count":0])
+//        try await addUserInsight(userId: userId, insightName: <#T##String#>, insightData: <#T##[String : Any]#>)
+    }
+    
     func createNewUser(user: DBUser) async throws {
         try userDocument(userId: user.userId).setData(from: user, merge: false)
+        
+        try await preloadUserInsights(userId: user.userId)
     }
     
     func getUser(userId: String) async throws -> DBUser {
@@ -85,5 +103,27 @@ final class UserManager {
         ]
         
         try await userDocument(userId: userId).updateData(data)
+    }
+    
+    func addUserInsight(userId: String, insightName: String, insightData: [String:Any]) async throws {
+        
+        let document = userInsightCollection(userId: userId).document()
+        let documentId = document.documentID
+        
+        let data: [String:Any] = [
+            "id": documentId,
+            "name": insightName,
+            "data": insightData
+        ]
+        
+        try await document.setData(data, merge: false)
+    }
+    
+    func removeUserInsight(userId: String, insightId: String) async throws {
+        try await userInsightDocument(userId: userId, insightId: insightId).delete()
+    }
+    
+    func getAllUserInsights(userId: String) async throws -> [Insight] {
+        try await userInsightCollection(userId: userId).getDocuments(as: Insight.self)
     }
 }

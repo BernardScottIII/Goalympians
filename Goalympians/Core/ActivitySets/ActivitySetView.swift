@@ -6,34 +6,27 @@
 //
 
 import SwiftUI
-
-@MainActor
-final class ActivitySetViewModel: ObservableObject {
-    @Published private(set) var sets: [(activitySet: DBActivitySet, workoutActivity: DBActivity)] = []
-    
-    func getActivitySets(workoutId: String, activityId: String) {
-        Task {
-            let activitySets = try await WorkoutManager.shared.getAllActivitySets(workoutId: workoutId, activityId: activityId)
-            
-            var localArray: [(activitySet: DBActivitySet, workoutActivity: DBActivity)] = []
-            for set in activitySets {
-                if let activity = try? await  WorkoutManager.shared.getWorkoutActivity(workoutId: workoutId, activityId: activityId) {
-                    localArray.append((set, activity))
-                }
-            }
-            
-            self.sets = localArray
-        }
-    }
-}
+import FirebaseFirestore
 
 struct ActivitySetView: View {
     
-    @StateObject private var viewModel = ActivitySetViewModel()
+    @StateObject private var viewModel: ActivitySetViewModel
+    @EnvironmentObject private var activityViewModel: ActivityViewModel
     
-    @Binding var refreshHelper: Int
+    let workoutDataService: WorkoutManagerProtocol
     let workoutId: String
     let activityId: String
+    
+    init(
+        workoutDataService: WorkoutManagerProtocol,
+        workoutId: String,
+        activityId: String
+    ) {
+        _viewModel = StateObject(wrappedValue: ActivitySetViewModel(workoutDataService: workoutDataService))
+        self.workoutId = workoutId
+        self.activityId = activityId
+        self.workoutDataService = workoutDataService
+    }
     
     var body: some View {
         Group {
@@ -43,28 +36,31 @@ struct ActivitySetView: View {
             else {
                 ForEach(viewModel.sets, id:\.activitySet.id) { entry in
                     if entry.activitySet is DBResistanceSet {
-                        ResistanceSetView(resistanceSet: entry.activitySet, workoutId: workoutId, activity: entry.workoutActivity, refreshHelper: $refreshHelper)
+                        ResistanceSetView(workoutDataService: workoutDataService, resistanceSet: entry.activitySet, workoutId: workoutId, activity: entry.workoutActivity, activitySetViewModel: viewModel)
                     } else if entry.activitySet is DBRunSet {
                         Text("Run Set!")
                     } else if entry.activitySet is DBSwimSet {
                         Text("Swim Set!")
                     }
                 }
-                .id(refreshHelper)
             }
         }
-        .id(refreshHelper)
         .onAppear {
             viewModel.getActivitySets(workoutId: workoutId, activityId: activityId)
+        }
+        .onChange(of: activityViewModel.updatedActivityId) { oldValue, newValue in
+            if newValue == activityId {
+                viewModel.getActivitySets(workoutId: workoutId, activityId: activityId)
+            }
         }
     }
 }
 
 #Preview {
-    @Previewable @State var refreshHelper = UUID().hashValue
+    @Previewable var workoutCollection = Firestore.firestore().collection("workouts")
     NavigationStack {
         Form {
-            ActivitySetView(refreshHelper: $refreshHelper, workoutId: "49F6D3AB-C3A6-4B9C-84DF-ECF5E4ECEC3D", activityId: "GzTwAOOgE40xBv6bFZ9Z")
+            ActivitySetView(workoutDataService: ProdWorkoutManager(workoutCollection: workoutCollection), workoutId: "49F6D3AB-C3A6-4B9C-84DF-ECF5E4ECEC3D", activityId: "GzTwAOOgE40xBv6bFZ9Z")
         }
     }
 }

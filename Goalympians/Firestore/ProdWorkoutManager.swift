@@ -5,6 +5,11 @@
 //  Created by Bernard Scott on 4/3/25.
 //
 
+// Problems with Singletons
+// 1. Singletons are global, which will lead to clutter and confusion. Gets even worse in a multi-threaded env.
+// 2. Unable to customize the init() because the singleton is initialized at write-time, as opposed to ideally at runtime
+// 3. Unable to switch service providers, meaning I can't test my code!
+
 import Foundation
 import FirebaseFirestore
 
@@ -13,7 +18,7 @@ struct DBWorkoutArray: Codable {
     let total, skip, limit: Int
 }
 
-struct DBWorkout: Identifiable, Codable {
+struct DBWorkout: Identifiable, Codable, Hashable {
     let id: String
     let userId: String
     var name: String
@@ -21,11 +26,13 @@ struct DBWorkout: Identifiable, Codable {
     var date: Date
 }
 
-final class WorkoutManager {
-    static let shared = WorkoutManager()
-    private init() {}
+final class ProdWorkoutManager: WorkoutManagerProtocol {
     
-    private let workoutCollection: CollectionReference = Firestore.firestore().collection("workouts")
+    private var workoutCollection: CollectionReference //= Firestore.firestore().collection("workouts")
+    
+    init(workoutCollection: CollectionReference) {
+        self.workoutCollection = workoutCollection
+    }
     
     private func workoutDocument(workoutId: String) -> DocumentReference {
         workoutCollection.document(workoutId)
@@ -48,14 +55,16 @@ final class WorkoutManager {
     }
     
     func getAllWorkouts() async throws -> [DBWorkout] {
-        try await workoutCollection.getDocument(as: DBWorkout.self)
+        try await workoutCollection
+            .whereField("userId", isEqualTo: AuthenticationManager.shared.getAuthenticatedUser().uid)
+            .getDocuments(as: DBWorkout.self)
     }
     
     func updateWorkout(workout: DBWorkout) async throws {
         try workoutDocument(workoutId: workout.id).setData(from: workout, merge: true)
     }
     
-    func addWorkoutActivity(workoutId: String, exerciseId: Int) async throws {
+    func addWorkoutActivity(workoutId: String, exerciseId: String) async throws {
         let document = workoutActivityCollection(workoutId: workoutId).document()
         let documentId = document.documentID
         
@@ -73,12 +82,12 @@ final class WorkoutManager {
     }
     
     func getAllWorkoutActivities(workoutId: String) async throws -> [DBActivity] {
-        try await workoutActivityCollection(workoutId: workoutId).getDocument(as: DBActivity.self)
+        try await workoutActivityCollection(workoutId: workoutId).getDocuments(as: DBActivity.self)
     }
 }
 
 // MARK: Activity Set
-extension WorkoutManager {
+extension ProdWorkoutManager {
     private func activitySetCollection(workoutId: String, activityId: String) -> CollectionReference {
         workoutActivityDocument(workoutId: workoutId, activityId: activityId).collection("activity_sets")
     }
@@ -129,11 +138,11 @@ extension WorkoutManager {
         
         return switch activity.setType {
         case .resistanceSet:
-            try await activitySetCollection(workoutId: workoutId, activityId: activityId).getDocument(as: DBResistanceSet.self)
+            try await activitySetCollection(workoutId: workoutId, activityId: activityId).getDocuments(as: DBResistanceSet.self)
         case .runSet:
-            try await activitySetCollection(workoutId: workoutId, activityId: activityId).getDocument(as: DBRunSet.self)
+            try await activitySetCollection(workoutId: workoutId, activityId: activityId).getDocuments(as: DBRunSet.self)
         case .swimSet:
-            try await activitySetCollection(workoutId: workoutId, activityId: activityId).getDocument(as: DBSwimSet.self)
+            try await activitySetCollection(workoutId: workoutId, activityId: activityId).getDocuments(as: DBSwimSet.self)
         }
     }
     

@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import FirebaseFirestore
 
 struct CreateWorkoutView: View {
     
@@ -14,6 +15,12 @@ struct CreateWorkoutView: View {
     @State private var name: String = ""
     @State private var description: String = ""
     @State private var date: Date = Date.now
+    
+    let workoutDataService: WorkoutManagerProtocol
+    
+    init(workoutDataService: WorkoutManagerProtocol) {
+        self.workoutDataService = workoutDataService
+    }
     
     var body: some View {
         Form {
@@ -24,7 +31,7 @@ struct CreateWorkoutView: View {
         .navigationTitle("Create Workout")
         Button("Create Workout") {
             Task {
-                try await WorkoutManager.shared.createNewWorkout(workout: DBWorkout(
+                try await workoutDataService.createNewWorkout(workout: DBWorkout(
                     id: UUID().uuidString,
                     userId: AuthenticationManager.shared.getAuthenticatedUser().uid,
                     name: name,
@@ -39,6 +46,6 @@ struct CreateWorkoutView: View {
 
 #Preview {
     NavigationStack {
-        CreateWorkoutView()
+        CreateWorkoutView(workoutDataService: ProdWorkoutManager(workoutCollection: Firestore.firestore().collection("workouts")))
     }
 }
