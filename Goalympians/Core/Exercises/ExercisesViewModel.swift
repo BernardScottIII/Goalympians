@@ -83,6 +83,10 @@ final class ExercisesViewModel: ObservableObject {
         case abductor, abs, adductors, biceps, calves, cardiovascularSystem, delts, forearms, glutes, hamstrings, lats, levatorScapulae, pectorals, quads, serratusAnterior, spine, traps, triceps, upperBack, noCategory
     }
     
+    enum EquipmentOption: String, CaseIterable {
+        case assisted, band, barbell, bodyWeight, bosuBall, cable, dumbbell, ellipticalMachine, ezBarbell, hammer, kettlebell, leverageMachine, medicineBall, olympicBarbell, resistanceBand, roller, rope, skiergMachine, sledMachine, smithMachine, stabilityBall, stationaryBike, stepmillMachine, tire, trapBar, upperBodyErgometer, weighted, wheelRoller, customEquipment, noEquipment
+    }
+    
     func categorySelected(category: CategoryOption) async throws {
         self.selectedCategory = category
         self.getExercises()
