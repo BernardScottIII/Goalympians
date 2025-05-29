@@ -17,14 +17,17 @@ struct ExercisesView: View {
     @State private var searchText = ""
     @State private var selectedExerciseId: String?
     
+    @ObservedObject var activityViewModel: ActivityViewModel
     let workoutDataService: WorkoutManagerProtocol
     var workoutId: String
     
     init(
+        activityViewModel: ActivityViewModel,
         workoutDataService: WorkoutManagerProtocol,
         workoutId: String
     ) {
         _viewModel = StateObject(wrappedValue: ExercisesViewModel(dataService: workoutDataService))
+        self.activityViewModel = activityViewModel
         self.workoutDataService = workoutDataService
         self.workoutId = workoutId
     }
@@ -37,7 +40,15 @@ struct ExercisesView: View {
                 Spacer()
                 
                 Button("", systemImage: "plus") {
-                    viewModel.addWorkoutActivity(workoutId: workoutId, exerciseId: exercise.id!)
+                    if !activityViewModel.activities.contains(where: {$0.exercise.id == exercise.id}) {
+                        viewModel.addWorkoutActivity(workoutId: workoutId, exerciseId: exercise.id!)
+                    } else {
+                        guard let index = activityViewModel.activities.firstIndex(where: {$0.exercise.id == exercise.id}) else { return }
+                        activityViewModel.addActivitySet(
+                            workoutId: workoutId,
+                            activityId: activityViewModel.activities[index].workoutActivity.id
+                        )
+                    }
                     dismiss()
                 }
                 
@@ -90,7 +101,8 @@ struct ExercisesView: View {
 }
 
 #Preview {
+    @Previewable let workoutDataService = ProdWorkoutManager(workoutCollection: Firestore.firestore().collection("workouts"))
     NavigationStack {
-        ExercisesView(workoutDataService: ProdWorkoutManager(workoutCollection: Firestore.firestore().collection("workouts")), workoutId: "SampleId")
+        ExercisesView(activityViewModel: ActivityViewModel(dataService: workoutDataService), workoutDataService: workoutDataService, workoutId: "SampleId")
     }
 }

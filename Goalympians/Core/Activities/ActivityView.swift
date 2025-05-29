@@ -10,16 +10,17 @@ import FirebaseFirestore
 
 struct ActivityView: View {
     
-    @StateObject private var viewModel: ActivityViewModel
-
+    @ObservedObject var viewModel: ActivityViewModel
     let workoutDataService: WorkoutManagerProtocol
     var workoutId: String
     
     init(
+        viewModel: ActivityViewModel,
         workoutDataService: WorkoutManagerProtocol,
         workoutId: String
     ) {
-        _viewModel = StateObject(wrappedValue: ActivityViewModel(dataService: workoutDataService))
+//        _viewModel = StateObject(wrappedValue: ActivityViewModel(dataService: workoutDataService))
+        self.viewModel = viewModel
         self.workoutId = workoutId
         self.workoutDataService = workoutDataService
     }
@@ -63,10 +64,10 @@ struct ActivityView: View {
 }
 
 #Preview {
-    @Previewable @State var collection = Firestore.firestore().collection("workouts")
+    @Previewable let workoutDataService = ProdWorkoutManager(workoutCollection: Firestore.firestore().collection("workouts"))
     NavigationStack {
         ActivityView(
-            workoutDataService: ProdWorkoutManager(workoutCollection: collection),
+            viewModel: ActivityViewModel(dataService: workoutDataService), workoutDataService: workoutDataService,
             workoutId: "1"
         )
     }

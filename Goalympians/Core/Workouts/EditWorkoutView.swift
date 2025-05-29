@@ -11,6 +11,7 @@ import FirebaseFirestore
 struct EditWorkoutView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var modelContext
+    @StateObject private var activityViewModel: ActivityViewModel
     
     @Binding var workout: DBWorkout
     var workoutDataService: WorkoutManagerProtocol
@@ -20,6 +21,7 @@ struct EditWorkoutView: View {
         workoutDataService: WorkoutManagerProtocol
     ) {
         self._workout = workout
+        _activityViewModel = StateObject(wrappedValue: ActivityViewModel(dataService: workoutDataService))
         self.workoutDataService = workoutDataService
     }
     
@@ -30,7 +32,7 @@ struct EditWorkoutView: View {
                 TextField("desc", text: $workout.description, axis: .vertical)
                 DatePicker("date", selection: $workout.date)
                 
-                ActivityView(workoutDataService: workoutDataService, workoutId: workout.id)
+                ActivityView(viewModel: activityViewModel, workoutDataService: workoutDataService, workoutId: workout.id)
             }
         }
         .navigationTitle("Edit Workout")
@@ -38,7 +40,7 @@ struct EditWorkoutView: View {
         .navigationBarBackButtonHidden(true)
         .toolbar {
             NavigationLink("Add Exercise") {
-                ExercisesView(workoutDataService: workoutDataService, workoutId: workout.id)
+                ExercisesView(activityViewModel: activityViewModel, workoutDataService: workoutDataService, workoutId: workout.id)
             }
         }
         
