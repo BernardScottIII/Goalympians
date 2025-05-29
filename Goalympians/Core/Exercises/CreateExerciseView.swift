@@ -11,7 +11,8 @@ import SwiftData
 struct CreateExerciseView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var name: String = ""
-    @State private var desc: String = ""
+    @State private var instructions: [String] = [""]
+    @State private var numInstructions: Int = 1
     @State private var setType: SetType = SetType.resistanceSet
     @State private var targetMuscle: ExercisesViewModel.CategoryOption = ExercisesViewModel.CategoryOption.noCategory
     @State private var equipment: ExercisesViewModel.EquipmentOption = ExercisesViewModel.EquipmentOption.noEquipment
@@ -19,28 +20,52 @@ struct CreateExerciseView: View {
     
     var body: some View {
         Form {
-            TextField("Exercise Name", text: $name)
-            TextField("Exercise Description", text: $desc, axis: .vertical)
-            
-            Picker("Primary Muscle", selection: $targetMuscle) {
-                ForEach(ExercisesViewModel.CategoryOption.allCases, id: \.self) { muscle in
-                    Text(muscle.rawValue)
+            Section("Information") {
+                TextField("Exercise Name", text: $name)
+                
+                Picker("Primary Muscle", selection: $targetMuscle) {
+                    ForEach(ExercisesViewModel.CategoryOption.allCases, id: \.self) { muscle in
+                        Text(muscle.rawValue)
+                    }
+                }
+                
+                Picker("Type of Exercise", selection: $setType) {
+                    ForEach(SetType.allCases, id: \.self) { set_type in
+                        Text(set_type.rawValue)
+                    }
+                }
+                
+                Picker("Equipment Used", selection: $equipment) {
+                    ForEach(ExercisesViewModel.EquipmentOption.allCases, id: \.self) { equipment in
+                        Text(equipment.rawValue)
+                    }
+                }
+                if (equipment == ExercisesViewModel.EquipmentOption.customEquipment) {
+                    TextField("Custom Equipment Name", text: $customEquipment)
                 }
             }
             
-            Picker("Type of Exercise", selection: $setType) {
-                ForEach(SetType.allCases, id: \.self) { set_type in
-                    Text(set_type.rawValue)
+            Section("Instructions") {
+                HStack {
+                    Text("Number of Instructions: \(numInstructions)")
+                    Spacer()
+                    Button("", systemImage: "plus") {
+                        numInstructions += 1
+                        instructions.append("")
+                    }
+                    Button("", systemImage: "minus") {
+                        if (numInstructions > 0 ) {
+                            numInstructions -= 1
+                            instructions.removeLast()
+                        }
+                    }
+                    
                 }
-            }
-            
-            Picker("Equipment Used", selection: $equipment) {
-                ForEach(ExercisesViewModel.EquipmentOption.allCases, id: \.self) { equipment in
-                    Text(equipment.rawValue)
+                .buttonStyle(.plain)
+                
+                ForEach(0..<numInstructions, id:\.self) { step in
+                    TextField("Step #\(step+1)", text: $instructions[step])
                 }
-            }
-            if (equipment == ExercisesViewModel.EquipmentOption.customEquipment) {
-                TextField("Custom Equipment Name", text: $customEquipment)
             }
             
         }
@@ -56,7 +81,7 @@ struct CreateExerciseView: View {
                     equipment: savedEquipment,
                     target: targetMuscle.rawValue,
                     secondaryMuscles: ["No secondary muscles"],
-                    instructions: [desc],
+                    instructions: instructions,
                     gifUrl: "no url",
                     uuid: AuthenticationManager.shared.getAuthenticatedUser().uid
                 ))
