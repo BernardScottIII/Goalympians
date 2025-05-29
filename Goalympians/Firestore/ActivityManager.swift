@@ -122,6 +122,14 @@ enum SetType: String, Codable, CaseIterable {
     case resistanceSet = "resistance_set"
     case runSet = "run_set"
     case swimSet = "swim_set"
+    
+    var prettyString: String {
+        switch self {
+        case .resistanceSet: return "Resistance Exercise"
+        case .runSet: return "Walk/Jog/Run"
+        case .swimSet: return "Swimming"
+        }
+    }
 }
 
 struct DBActivityList: Codable {

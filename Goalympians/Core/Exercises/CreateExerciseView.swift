@@ -25,19 +25,19 @@ struct CreateExerciseView: View {
                 
                 Picker("Primary Muscle", selection: $targetMuscle) {
                     ForEach(ExercisesViewModel.CategoryOption.allCases, id: \.self) { muscle in
-                        Text(muscle.rawValue)
+                        Text(muscle.prettyString)
                     }
                 }
                 
                 Picker("Type of Exercise", selection: $setType) {
                     ForEach(SetType.allCases, id: \.self) { set_type in
-                        Text(set_type.rawValue)
+                        Text(set_type.prettyString)
                     }
                 }
                 
                 Picker("Equipment Used", selection: $equipment) {
                     ForEach(ExercisesViewModel.EquipmentOption.allCases, id: \.self) { equipment in
-                        Text(equipment.rawValue)
+                        Text(equipment.prettyString)
                     }
                 }
                 if (equipment == ExercisesViewModel.EquipmentOption.customEquipment) {

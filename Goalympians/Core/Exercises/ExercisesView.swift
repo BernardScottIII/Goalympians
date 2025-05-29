@@ -63,7 +63,7 @@ struct ExercisesView: View {
             ToolbarItem(placement: .topBarTrailing) {
                 Menu("Filter: \(viewModel.selectedFilter?.rawValue ?? "NONE")", systemImage: "arrow.up.arrow.down") {
                     ForEach(ExercisesViewModel.FilterOption.allCases, id: \.self) { option in
-                        Button(option.rawValue) {
+                        Button(option.prettyString) {
                             Task {
                                 try? await viewModel.filterSelectedOption(option: option)
                             }
@@ -74,7 +74,7 @@ struct ExercisesView: View {
             ToolbarItem(placement: .topBarTrailing) {
                 Menu("Category: \(viewModel.selectedCategory?.rawValue ?? "NONE")", systemImage: "figure.strengthtraining.traditional") {
                     ForEach(ExercisesViewModel.CategoryOption.allCases, id: \.self) { option in
-                        Button(option.rawValue) {
+                        Button(option.prettyString) {
                             Task {
                                 try? await viewModel.categorySelected(category: option)
                             }
