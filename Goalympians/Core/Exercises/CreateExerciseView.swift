@@ -17,6 +17,7 @@ struct CreateExerciseView: View {
     @State private var targetMuscle: ExercisesViewModel.CategoryOption = ExercisesViewModel.CategoryOption.noCategory
     @State private var equipment: ExercisesViewModel.EquipmentOption = ExercisesViewModel.EquipmentOption.noEquipment
     @State private var customEquipment: String = ""
+    @State private var instructionCountAlert: Bool = false
     
     var body: some View {
         Form {
@@ -50,11 +51,24 @@ struct CreateExerciseView: View {
                     Text("Number of Instructions: \(numInstructions)")
                     Spacer()
                     Button("", systemImage: "plus") {
-                        numInstructions += 1
-                        instructions.append("")
+                        if numInstructions < 10 {
+                            numInstructions += 1
+                            instructions.append("")
+                        } else {
+                            instructionCountAlert = true
+                        }
                     }
+                    .alert(
+                        "Too Many Instructions",
+                        isPresented: $instructionCountAlert
+                    ) {
+                        Button("Okay", action: {})
+                    } message: {
+                        Text("Exercises can have a maximum of ten instructions.")
+                    }
+                    
                     Button("", systemImage: "minus") {
-                        if (numInstructions > 0 ) {
+                        if (numInstructions > 1 ) {
                             numInstructions -= 1
                             instructions.removeLast()
                         }
