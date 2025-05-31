@@ -6,7 +6,7 @@
 //
 
 import XCTest
-@testable import Goalympians
+@testable import Goalympian
 
 final class SignInEmailViewModel_Tests: XCTestCase {
 

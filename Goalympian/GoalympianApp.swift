@@ -20,7 +20,7 @@ import FirebaseFirestore
 //}
 
 @main
-struct GoalympiansApp: App {
+struct GoalympianApp: App {
     
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
     @StateObject var healthManager = HealthManager()

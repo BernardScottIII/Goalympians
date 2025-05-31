@@ -8,7 +8,7 @@
 // Naming Structure: test_UnitOfWork_StateUnderTest_ExpectedBehavior
 
 import XCTest
-@testable import Goalympians
+@testable import Goalympian
 
 @MainActor
 final class WorkoutViewModel_Tests: XCTestCase {

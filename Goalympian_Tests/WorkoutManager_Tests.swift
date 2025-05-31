@@ -9,7 +9,7 @@
 
 import XCTest
 import FirebaseFirestore
-@testable import Goalympians
+@testable import Goalympian
 
 final class WorkoutManager_Tests: XCTestCase {
 

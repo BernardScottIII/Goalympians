@@ -6,7 +6,7 @@
 //
 
 import Foundation
-@testable import Goalympians
+@testable import Goalympian
 
 final class MockWorkoutManager: WorkoutManagerProtocol {
     func addWorkoutActivity(workoutId: String, exercise: APIExercise) async throws {
@@ -17,7 +17,7 @@ final class MockWorkoutManager: WorkoutManagerProtocol {
         
     }
     
-    func getAllWorkoutActivities(workoutId: String) async throws -> [Goalympians.DBActivity] {
+    func getAllWorkoutActivities(workoutId: String) async throws -> [Goalympian.DBActivity] {
         guard let result = activities[workoutId] else {
             throw MockWorkoutManagerError.invalidWorkoutId("WorkoutId not found.")
         }
@@ -32,14 +32,14 @@ final class MockWorkoutManager: WorkoutManagerProtocol {
         
     }
     
-    func getAllActivitySets(workoutId: String, activityId: String) async throws -> [any Goalympians.DBActivitySet] {
+    func getAllActivitySets(workoutId: String, activityId: String) async throws -> [any Goalympian.DBActivitySet] {
         guard let result = activitySets["\(workoutId)_\(activityId)"] else {
             throw MockWorkoutManagerError.invalidWorkoutId("WorkoutId or ActivityId not found.")
         }
         return result
     }
     
-    func getWorkoutActivity(workoutId: String, activityId: String) async throws -> Goalympians.DBActivity {
+    func getWorkoutActivity(workoutId: String, activityId: String) async throws -> Goalympian.DBActivity {
         guard let workoutActivities = activities[workoutId] else {
             throw MockWorkoutManagerError.invalidWorkoutId("WorkoutId not found.")
         }
@@ -52,11 +52,11 @@ final class MockWorkoutManager: WorkoutManagerProtocol {
         return result
     }
     
-    func updateActivitySet(workoutId: String, activity: Goalympians.DBActivity, set: any Goalympians.DBActivitySet) async throws {
+    func updateActivitySet(workoutId: String, activity: Goalympian.DBActivity, set: any Goalympian.DBActivitySet) async throws {
         
     }
     
-    func getActivitySet(workoutId: String, activity: Goalympians.DBActivity, setId: String) async throws -> any Goalympians.DBActivitySet {
+    func getActivitySet(workoutId: String, activity: Goalympian.DBActivity, setId: String) async throws -> any Goalympian.DBActivitySet {
         guard let workoutActivitySets = activitySets["\(workoutId)_\(activity.id)"] else {
             throw MockWorkoutManagerError.invalidWorkoutId("WorkoutId or ActivityId not found.")
         }
@@ -253,11 +253,11 @@ final class MockWorkoutManager: WorkoutManagerProtocol {
         ]
     }
     
-    func createNewWorkout(workout: Goalympians.DBWorkout) async throws {
+    func createNewWorkout(workout: Goalympian.DBWorkout) async throws {
         
     }
     
-    func getWorkout(workoutId: String) async throws -> Goalympians.DBWorkout {
+    func getWorkout(workoutId: String) async throws -> Goalympian.DBWorkout {
         for workout in workouts {
             if workout.id == workoutId {
                 return workout
@@ -266,11 +266,11 @@ final class MockWorkoutManager: WorkoutManagerProtocol {
         throw MockWorkoutManagerError.invalidWorkoutId("WorkoutId not found.")
     }
     
-    func getAllWorkouts() async throws -> [Goalympians.DBWorkout] {
+    func getAllWorkouts() async throws -> [Goalympian.DBWorkout] {
         return workouts
     }
     
-    func updateWorkout(workout: Goalympians.DBWorkout) async throws {
+    func updateWorkout(workout: Goalympian.DBWorkout) async throws {
         for (index, storedWorkout) in workouts.enumerated() {
             if storedWorkout.id == workout.id {
                 workouts[index] = workout

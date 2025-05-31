@@ -32,7 +32,7 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		37EF9A5A2DAAD083000B77C0 /* Exceptions for "Goalympians" folder in "Goalympian" target */ = {
+		375BB34C2DEAADD9009038F7 /* Exceptions for "Goalympian" folder in "Goalympian" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
@@ -42,17 +42,17 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		3720920B2DAAFC8D00C19D81 /* Goalympians_Tests */ = {
+		3720920B2DAAFC8D00C19D81 /* Goalympian_Tests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = Goalympians_Tests;
+			path = Goalympian_Tests;
 			sourceTree = "<group>";
 		};
-		37AE6E072D5D40810003C065 /* Goalympians */ = {
+		37AE6E072D5D40810003C065 /* Goalympian */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				37EF9A5A2DAAD083000B77C0 /* Exceptions for "Goalympians" folder in "Goalympian" target */,
+				375BB34C2DEAADD9009038F7 /* Exceptions for "Goalympian" folder in "Goalympian" target */,
 			);
-			path = Goalympians;
+			path = Goalympian;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -85,8 +85,8 @@
 		37AE6DFC2D5D40810003C065 = {
 			isa = PBXGroup;
 			children = (
-				37AE6E072D5D40810003C065 /* Goalympians */,
-				3720920B2DAAFC8D00C19D81 /* Goalympians_Tests */,
+				37AE6E072D5D40810003C065 /* Goalympian */,
+				3720920B2DAAFC8D00C19D81 /* Goalympian_Tests */,
 				37CDFC932D99DB5500A3226C /* Frameworks */,
 				37AE6E062D5D40810003C065 /* Products */,
 			);
@@ -125,7 +125,7 @@
 				3720920F2DAAFC8D00C19D81 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				3720920B2DAAFC8D00C19D81 /* Goalympians_Tests */,
+				3720920B2DAAFC8D00C19D81 /* Goalympian_Tests */,
 			);
 			name = Goalympian_Tests;
 			packageProductDependencies = (
@@ -147,7 +147,7 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				37AE6E072D5D40810003C065 /* Goalympians */,
+				37AE6E072D5D40810003C065 /* Goalympian */,
 			);
 			name = Goalympian;
 			packageProductDependencies = (
@@ -318,6 +318,7 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_ENTITLEMENTS = "";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -381,6 +382,7 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_ENTITLEMENTS = "";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
@@ -409,14 +411,15 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = Goalympians/Goalympians.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Goalympian/Goalympians.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"Goalympians/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "\"Goalympian/Preview Content\"";
 				DEVELOPMENT_TEAM = CL3NY4NNNY;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "/Users/bernardscott/syncthing/General School/Spring 2025/CMPS 490/Goalympians/Goalympians/Info.plist";
+				INFOPLIST_FILE = "";
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "Please allow access to step count information.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -428,8 +431,9 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.example.Goalympians;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.Goalympian;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -441,14 +445,15 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = Goalympians/Goalympians.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Goalympian/Goalympians.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"Goalympians/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "\"Goalympian/Preview Content\"";
 				DEVELOPMENT_TEAM = CL3NY4NNNY;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "/Users/bernardscott/syncthing/General School/Spring 2025/CMPS 490/Goalympians/Goalympians/Info.plist";
+				INFOPLIST_FILE = "";
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "Please allow access to step count information.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -460,8 +465,9 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.example.Goalympians;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.Goalympian;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

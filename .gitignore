@@ -1,15 +1,15 @@
-Goalympians/GoogleService-Info.plist
-Goalympians/Info.plist
+Goalympian/GoogleService-Info.plist
+Goalympian/Info.plist
 Cloud_Functions/Functions/node_modules
 .DS_Store
-Goalympians/.DS_Store
+Goalympian/.DS_Store
 Cloud_Functions/.DS_Store
-Goalympians.xcodeproj/project.xcworkspace/xcuserdata/bernardscott.xcuserdatad/UserInterfaceState.xcuserstate
+Goalympian.xcodeproj/project.xcworkspace/xcuserdata/bernardscott.xcuserdatad/UserInterfaceState.xcuserstate
 
 # Logs
 Cloud_Functions/logs
 *.log
-Cloud_Functions/npm-debug.log*
+Cloud_Functions/npm-debug.log*Goalympian
 Cloud_Functions/yarn-debug.log*
 Cloud_Functions/yarn-error.log*
 Cloud_Functions/firebase-debug.log*
