@@ -1,6 +1,6 @@
 //
-//  GoalympiansApp.swift
-//  Goalympians
+//  GoalympianApp.swift
+//  Goalympian
 //
 //  Created by Bernard Scott on 2/12/25.
 //
