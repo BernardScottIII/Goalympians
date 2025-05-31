@@ -40,6 +40,7 @@ struct ResistanceSetView: View {
     
     var body: some View {
         HStack {
+            Image(systemName: "scalemass.fill")
             TextField("Weight", value: $weight, format: .number)
                 .focused($weightFocused)
                 .onChange(of: weightFocused) { oldValue, newValue in
@@ -57,6 +58,7 @@ struct ResistanceSetView: View {
                     }
                 }
             Spacer()
+            Image(systemName: "pencil.and.list.clipboard")
             TextField("Repetitions", value: $repetitions, format: .number)
                 .focused($repetitionsFocused)
                 .onChange(of: repetitionsFocused) { oldValue, newValue in
