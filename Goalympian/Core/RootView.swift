@@ -1,6 +1,6 @@
 //
 //  RootView.swift
-//  Goalympians
+//  Goalympian
 //
 //  Created by Bernard Scott on 3/10/25.
 //
