@@ -9,7 +9,7 @@ import Foundation
 @testable import Goalympians
 
 final class MockWorkoutManager: WorkoutManagerProtocol {
-    func addWorkoutActivity(workoutId: String, exerciseId: String) async throws {
+    func addWorkoutActivity(workoutId: String, exercise: APIExercise) async throws {
         
     }
     
@@ -43,7 +43,7 @@ final class MockWorkoutManager: WorkoutManagerProtocol {
         guard let workoutActivities = activities[workoutId] else {
             throw MockWorkoutManagerError.invalidWorkoutId("WorkoutId not found.")
         }
-        var result: DBActivity = DBActivity(id: "", exerciseId: "", setType: .resistanceSet)
+        var result: DBActivity = DBActivity(id: "", exerciseId: "", setType: .resistanceSet, workoutIndex: -1)
         for workoutActivity in workoutActivities {
             if workoutActivity.id == activityId {
                 result = workoutActivity
@@ -89,39 +89,39 @@ final class MockWorkoutManager: WorkoutManagerProtocol {
         ]
         activities = [
             "workout1": [
-                DBActivity(id: "1", exerciseId: "0001", setType: .resistanceSet),
-                DBActivity(id: "2", exerciseId: "0002", setType: .resistanceSet),
-                DBActivity(id: "3", exerciseId: "0003", setType: .resistanceSet),
-                DBActivity(id: "4", exerciseId: "0006", setType: .resistanceSet),
-                DBActivity(id: "5", exerciseId: "0007", setType: .resistanceSet),
+                DBActivity(id: "1", exerciseId: "0001", setType: .resistanceSet, workoutIndex: 0),
+                DBActivity(id: "2", exerciseId: "0002", setType: .resistanceSet, workoutIndex: 1),
+                DBActivity(id: "3", exerciseId: "0003", setType: .resistanceSet, workoutIndex: 2),
+                DBActivity(id: "4", exerciseId: "0006", setType: .resistanceSet, workoutIndex: 3),
+                DBActivity(id: "5", exerciseId: "0007", setType: .resistanceSet, workoutIndex: 4),
             ],
             "workout2": [
-                DBActivity(id: "1", exerciseId: "0013", setType: .resistanceSet),
-                DBActivity(id: "2", exerciseId: "0014", setType: .resistanceSet),
-                DBActivity(id: "3", exerciseId: "0015", setType: .resistanceSet),
-                DBActivity(id: "4", exerciseId: "0016", setType: .resistanceSet),
-                DBActivity(id: "5", exerciseId: "0017", setType: .resistanceSet),
+                DBActivity(id: "1", exerciseId: "0013", setType: .resistanceSet, workoutIndex: 0),
+                DBActivity(id: "2", exerciseId: "0014", setType: .resistanceSet, workoutIndex: 1),
+                DBActivity(id: "3", exerciseId: "0015", setType: .resistanceSet, workoutIndex: 2),
+                DBActivity(id: "4", exerciseId: "0016", setType: .resistanceSet, workoutIndex: 3),
+                DBActivity(id: "5", exerciseId: "0017", setType: .resistanceSet, workoutIndex: 4),
             ],
             "workout3": [
-                DBActivity(id: "1", exerciseId: "0023", setType: .resistanceSet),
-                DBActivity(id: "2", exerciseId: "0024", setType: .resistanceSet),
-                DBActivity(id: "3", exerciseId: "0015", setType: .resistanceSet),
-                DBActivity(id: "4", exerciseId: "0026", setType: .resistanceSet),
-                DBActivity(id: "5", exerciseId: "0027", setType: .resistanceSet),
+                DBActivity(id: "1", exerciseId: "0023", setType: .resistanceSet, workoutIndex: 0),
+                DBActivity(id: "2", exerciseId: "0024", setType: .resistanceSet, workoutIndex: 1),
+                DBActivity(id: "3", exerciseId: "0015", setType: .resistanceSet, workoutIndex: 2),
+                DBActivity(id: "4", exerciseId: "0026", setType: .resistanceSet, workoutIndex: 3),
+                DBActivity(id: "5", exerciseId: "0027", setType: .resistanceSet, workoutIndex: 4),
             ],
             "workout4": [
-                DBActivity(id: "1", exerciseId: "0032", setType: .resistanceSet),
-                DBActivity(id: "2", exerciseId: "0033", setType: .resistanceSet),
-                DBActivity(id: "3", exerciseId: "0034", setType: .resistanceSet),
-                DBActivity(id: "4", exerciseId: "0035", setType: .resistanceSet),
-                DBActivity(id: "5", exerciseId: "0036", setType: .resistanceSet),
+                DBActivity(id: "1", exerciseId: "0032", setType: .resistanceSet, workoutIndex: 0),
+                DBActivity(id: "2", exerciseId: "0033", setType: .resistanceSet, workoutIndex: 1),
+                DBActivity(id: "3", exerciseId: "0034", setType: .resistanceSet, workoutIndex: 2),
+                DBActivity(id: "4", exerciseId: "0035", setType: .resistanceSet, workoutIndex: 3),
+                DBActivity(id: "5", exerciseId: "0036", setType: .resistanceSet, workoutIndex: 4),
             ],
             "workout5": [
-                DBActivity(id: "1", exerciseId: "0041", setType: .resistanceSet),
-                DBActivity(id: "2", exerciseId: "0042", setType: .resistanceSet),
-                DBActivity(id: "3", exerciseId: "0043", setType: .resistanceSet),
-                DBActivity(id: "4", exerciseId: "0044", setType: .resistanceSet),
-                DBActivity(id: "5", exerciseId: "0045", setType: .resistanceSet),
+                DBActivity(id: "1", exerciseId: "0041", setType: .resistanceSet, workoutIndex: 0),
+                DBActivity(id: "2", exerciseId: "0042", setType: .resistanceSet, workoutIndex: 1),
+                DBActivity(id: "3", exerciseId: "0043", setType: .resistanceSet, workoutIndex: 2),
+                DBActivity(id: "4", exerciseId: "0044", setType: .resistanceSet, workoutIndex: 3),
+                DBActivity(id: "5", exerciseId: "0045", setType: .resistanceSet, workoutIndex: 4),
             ],
         ]
         activitySets = [
