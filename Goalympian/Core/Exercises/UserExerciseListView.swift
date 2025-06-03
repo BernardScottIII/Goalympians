@@ -28,6 +28,8 @@ struct UserExerciseListView: View {
         List(viewModel.exercises, id: \.id) { exercise in
             HStack {
                 Text(exercise.name)
+                    .truncationMode(.tail)
+                    .lineLimit(1)
                 
                 Spacer()
                 

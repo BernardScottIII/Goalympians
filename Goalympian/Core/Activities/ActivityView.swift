@@ -35,6 +35,8 @@ struct ActivityView: View {
                     Section {
                         HStack {
                             Text(entry.exercise.name)
+                                .truncationMode(.tail)
+                                .lineLimit(1)
                             
                             Spacer()
                             
