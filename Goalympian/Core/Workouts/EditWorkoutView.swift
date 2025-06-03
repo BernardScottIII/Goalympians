@@ -12,6 +12,7 @@ struct EditWorkoutView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var modelContext
     @StateObject private var activityViewModel: ActivityViewModel
+    @State private var userId: String = ""
     
     @Binding var workout: DBWorkout
     var workoutDataService: WorkoutManagerProtocol
@@ -40,7 +41,15 @@ struct EditWorkoutView: View {
         .navigationBarBackButtonHidden(true)
         .toolbar {
             NavigationLink("Add Exercise") {
-                ExercisesView(activityViewModel: activityViewModel, workoutDataService: workoutDataService, workoutId: workout.id)
+                ExercisesView(activityViewModel: activityViewModel, workoutDataService: workoutDataService, workoutId: workout.id, userIds: [
+                    userId,
+                    "global"
+                ])
+            }
+        }
+        .onAppear {
+            Task {
+                self.userId = try AuthenticationManager.shared.getAuthenticatedUser().uid
             }
         }
         

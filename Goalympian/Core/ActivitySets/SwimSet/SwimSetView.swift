@@ -40,16 +40,19 @@ struct SwimSetView: View {
         HStack {
             Image(systemName: "point.bottomleft.forward.to.arrow.triangle.scurvepath.fill")
             TextField("Distance", value: $distance, format: .number)
+                .keyboardType(.decimalPad)
             
             Spacer()
             
             Image(systemName: "point.forward.to.point.capsulepath")
             TextField("Laps", value: $laps, format: .number)
+                .keyboardType(.numberPad)
             
             Spacer()
             
             Image(systemName: "stopwatch.fill")
             TextField("Duration", value: $duration, format: .number)
+                .keyboardType(.decimalPad)
             
             Spacer()
             

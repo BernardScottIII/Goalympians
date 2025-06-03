@@ -18,18 +18,24 @@ struct ExercisesView: View {
     @State private var selectedExerciseId: String?
     
     @ObservedObject var activityViewModel: ActivityViewModel
+    @State var navigationTitle: String
     let workoutDataService: WorkoutManagerProtocol
-    var workoutId: String
+    let workoutId: String
+    let userIds: [String]
     
     init(
         activityViewModel: ActivityViewModel,
         workoutDataService: WorkoutManagerProtocol,
-        workoutId: String
+        workoutId: String,
+        userIds: [String],
+        navigationTitle: String = "Exercises"
     ) {
         _viewModel = StateObject(wrappedValue: ExercisesViewModel(dataService: workoutDataService))
         self.activityViewModel = activityViewModel
         self.workoutDataService = workoutDataService
         self.workoutId = workoutId
+        self.userIds = userIds
+        self.navigationTitle = navigationTitle
     }
     
     var body: some View {
@@ -65,10 +71,12 @@ struct ExercisesView: View {
             }
             .buttonStyle(.plain)
         }
-        .navigationTitle("Exercises")
+        .navigationTitle(navigationTitle)
         .searchable(text: $searchText)
         .onAppear {
-            viewModel.getExercises()
+            Task {
+                try await viewModel.userIdsSelected(userIds: userIds)
+            }
         }
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
@@ -103,6 +111,9 @@ struct ExercisesView: View {
 #Preview {
     @Previewable let workoutDataService = ProdWorkoutManager(workoutCollection: Firestore.firestore().collection("workouts"))
     NavigationStack {
-        ExercisesView(activityViewModel: ActivityViewModel(dataService: workoutDataService), workoutDataService: workoutDataService, workoutId: "SampleId")
+        ExercisesView(activityViewModel: ActivityViewModel(dataService: workoutDataService), workoutDataService: workoutDataService, workoutId: "SampleId", userIds: [
+            UUID().uuidString,
+            "global"
+        ])
     }
 }

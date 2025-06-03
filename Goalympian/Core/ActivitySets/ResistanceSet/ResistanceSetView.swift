@@ -57,6 +57,7 @@ struct ResistanceSetView: View {
                         repetitions = snapshot.repetitions
                     }
                 }
+                .keyboardType(.decimalPad)
             Spacer()
             Image(systemName: "pencil.and.list.clipboard")
             TextField("Repetitions", value: $repetitions, format: .number)
@@ -68,6 +69,7 @@ struct ResistanceSetView: View {
                         }
                     }
                 }
+                .keyboardType(.numberPad)
             Button("", systemImage: "trash") {
                 Task {
                     try await viewModel.removeActivitySet(workoutId: workoutId, activityId: activity.id, setId: resistanceSet.id)

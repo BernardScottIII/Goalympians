@@ -82,9 +82,6 @@ final class ExerciseManager {
         exercisesCollection.document(exerciseId)
     }
     
-//    func uploadExercise(exercise: DBExercise) async throws {
-//        try exerciseDocument(exerciseId: String(exercise.id)).setData(from: exercise, merge: false)
-//    }
     func uploadExercise(exercise: APIExercise) async throws {
         try exerciseDocument(exerciseId: exercise.id!).setData(from: exercise, merge: false)
     }
@@ -100,6 +97,26 @@ final class ExerciseManager {
     private func getAllExercises() async throws -> [APIExercise] {
         try await exercisesCollection
             .whereField("uuid", in: [AuthenticationManager.shared.getAuthenticatedUser().uid, "global"])
+            .getDocuments(as: APIExercise.self)
+    }
+    
+    private func getAllExercisesByUser(userIds: [String]) async throws -> [APIExercise] {
+        try await exercisesCollection
+            .whereField("uuid", in: userIds)
+            .getDocuments(as: APIExercise.self)
+    }
+    
+    private func getAllExercisesByUserSorted(userIds: [String], descending: Bool) async throws -> [APIExercise] {
+        try await exercisesCollection
+            .order(by: APIExercise.CodingKeys.name.rawValue, descending: descending)
+            .whereField("uuid", in: userIds)
+            .getDocuments(as: APIExercise.self)
+    }
+    
+    private func getAllExercisesByUserCategorized(userIds: [String], category: String) async throws -> [APIExercise] {
+        try await exercisesCollection
+            .whereField("uuid", in: userIds)
+            .whereField(APIExercise.CodingKeys.target.rawValue, isEqualTo: category)
             .getDocuments(as: APIExercise.self)
     }
     
@@ -125,7 +142,29 @@ final class ExerciseManager {
             .getDocuments(as: APIExercise.self)
     }
     
-    func getAllExercises(nameDescending descending: Bool?, forCategory category: String?) async throws -> [APIExercise] {
+    private func getAllProductsByNameCategoryUser(descending: Bool, category: String, userIds: [String]) async throws -> [APIExercise] {
+        try await exercisesCollection
+            .order(by: APIExercise.CodingKeys.name.rawValue, descending: descending)
+            .whereField("uuid", in: userIds)
+            .whereField(APIExercise.CodingKeys.target.rawValue, isEqualTo: category)
+            .getDocuments(as: APIExercise.self)
+    }
+    
+    func getAllExercises(
+        nameDescending descending: Bool?,
+        forCategory category: String?,
+        userIds: [String]?
+    ) async throws -> [APIExercise] {
+        if let userIds, let descending, let category {
+            return try await getAllProductsByNameCategoryUser(descending: descending, category: category, userIds: userIds)
+        } else if let userIds, let descending {
+            return try await getAllExercisesByUserSorted(userIds: userIds, descending: descending)
+        } else if let userIds, let category {
+            return try await getAllExercisesByUserCategorized(userIds: userIds, category: category)
+        } else if let userIds {
+            return try await getAllExercisesByUser(userIds: userIds)
+        }
+        
         if let category {
             if category == ExercisesViewModel.CategoryOption.noCategory.rawValue {
                 if let descending {

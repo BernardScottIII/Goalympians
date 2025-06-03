@@ -1,10 +1,12 @@
 Goalympian/GoogleService-Info.plist
 Goalympian/Info.plist
+Goalympian/Info.plist
 Cloud_Functions/Functions/node_modules
 .DS_Store
 Goalympian/.DS_Store
 Cloud_Functions/.DS_Store
 Goalympian.xcodeproj/project.xcworkspace/xcuserdata/bernardscott.xcuserdatad/UserInterfaceState.xcuserstate
+Goalympian.xcodeproj/project.pbxproj
 
 # Logs
 Cloud_Functions/logs

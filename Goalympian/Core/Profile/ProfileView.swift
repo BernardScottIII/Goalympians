@@ -6,10 +6,14 @@
 //
 
 import SwiftUI
+import FirebaseFirestore
 
 struct ProfileView: View {
     @StateObject private var viewModel = ProfileViewModel()
+    @State private var userId: String = ""
+    
     @Binding var showSignInView: Bool
+    let workoutDataService: WorkoutManagerProtocol
     
     var body: some View {
         List {
@@ -25,10 +29,28 @@ struct ProfileView: View {
                 } label: {
                     Text("Using Dark Mode: \(user.usingDarkMode?.description.capitalized)")
                 }
+                
+                Section("Personal Content") {
+                    NavigationLink  {
+                        UserExerciseListView(
+                            viewModel: ExercisesViewModel(dataService: workoutDataService),
+                            userId: userId,
+                            workoutDataService: workoutDataService
+                        )
+                    } label: {
+                        Text("My Exercises")
+                    }
+
+                }
             }
         }
         .task {
             try? await viewModel.loadCurrentUser()
+        }
+        .onAppear {
+            Task {
+                self.userId = try AuthenticationManager.shared.getAuthenticatedUser().uid
+            }
         }
         .navigationTitle("Profile")
         .toolbar {
@@ -46,6 +68,9 @@ struct ProfileView: View {
 
 #Preview {
     NavigationStack {
-        ProfileView(showSignInView: .constant(false))
+        ProfileView(
+            showSignInView: .constant(false),
+            workoutDataService: ProdWorkoutManager(workoutCollection: Firestore.firestore().collection("workouts"))
+        )
     }
 }

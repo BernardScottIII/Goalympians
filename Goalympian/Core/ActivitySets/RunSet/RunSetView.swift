@@ -39,16 +39,19 @@ struct RunSetView: View {
         HStack {
             Image(systemName: "point.bottomleft.forward.to.arrow.triangle.scurvepath.fill")
             TextField("Distance", value: $distance, format: .number)
+                .keyboardType(.decimalPad)
             
             Spacer()
             
             Image(systemName: "barometer")
             TextField("Elevation", value: $elevation, format: .number)
+                .keyboardType(.decimalPad)
             
             Spacer()
             
             Image(systemName: "stopwatch.fill")
             TextField("Duration", value: $duration, format: .number)
+                .keyboardType(.decimalPad)
             
             Spacer()
             

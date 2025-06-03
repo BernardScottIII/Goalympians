@@ -28,7 +28,6 @@ struct TabbarView: View {
         showSignInView: Binding<Bool>
     ) {
         _showSignInView = showSignInView
-        
         self.workoutDataService = workoutDataService
     }
     
@@ -48,7 +47,7 @@ struct TabbarView: View {
             
             Tab("Profile", systemImage: "person", value: .profile) {
                 NavigationStack(path: $profileNavigationPath) {
-                    ProfileView(showSignInView: $showSignInView)
+                    ProfileView(showSignInView: $showSignInView, workoutDataService: workoutDataService)
                 }
             }
         }

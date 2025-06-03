@@ -14,6 +14,7 @@ final class ExercisesViewModel: ObservableObject {
     @Published private(set) var exercises: [APIExercise] = []
     @Published var selectedFilter: FilterOption? = nil
     @Published var selectedCategory: CategoryOption? = nil
+    @Published var userIds: [String]? = nil
     
     let dataService: WorkoutManagerProtocol
     
@@ -84,7 +85,7 @@ final class ExercisesViewModel: ObservableObject {
     }
     
     enum CategoryOption: String, CaseIterable {
-        case abductor, abs, adductors, biceps, calves, cardiovascularSystem, delts, forearms, glutes, hamstrings, lats, levatorScapulae, pectorals, quads, serratusAnterior, spine, traps, triceps, upperBack, noCategory
+        case noCategory, abductor, abs, adductors, biceps, calves, cardiovascularSystem, delts, forearms, glutes, hamstrings, lats, levatorScapulae, pectorals, quads, serratusAnterior, spine, traps, triceps, upperBack
         
         var prettyString: String {
             switch self {
@@ -113,7 +114,7 @@ final class ExercisesViewModel: ObservableObject {
     }
     
     enum EquipmentOption: String, CaseIterable {
-        case assisted, band, barbell, bodyWeight, bosuBall, cable, dumbbell, ellipticalMachine, ezBarbell, hammer, kettlebell, leverageMachine, medicineBall, olympicBarbell, resistanceBand, roller, rope, skiergMachine, sledMachine, smithMachine, stabilityBall, stationaryBike, stepmillMachine, tire, trapBar, upperBodyErgometer, weighted, wheelRoller, customEquipment, noEquipment
+        case noEquipment, assisted, band, barbell, bodyWeight, bosuBall, cable, dumbbell, ellipticalMachine, ezBarbell, hammer, kettlebell, leverageMachine, medicineBall, olympicBarbell, resistanceBand, roller, rope, skiergMachine, sledMachine, smithMachine, stabilityBall, stationaryBike, stepmillMachine, tire, trapBar, upperBodyErgometer, weighted, wheelRoller, customEquipment
         
         var prettyString: String {
             switch self{
@@ -156,9 +157,14 @@ final class ExercisesViewModel: ObservableObject {
         self.getExercises()
     }
     
+    func userIdsSelected(userIds: [String]) async throws {
+        self.userIds = userIds
+        self.getExercises()
+    }
+    
     func getExercises() {
         Task {
-            self.exercises = try await ExerciseManager.shared.getAllExercises(nameDescending: selectedFilter?.nameDescending, forCategory: selectedCategory?.rawValue)
+            self.exercises = try await ExerciseManager.shared.getAllExercises(nameDescending: selectedFilter?.nameDescending, forCategory: selectedCategory?.rawValue, userIds: userIds)
         }
     }
 }
