@@ -47,7 +47,9 @@ struct ActivityView: View {
                             
                             Button("", systemImage: "trash") {
                                 viewModel.removeFromWorkout(workoutId: workoutId, activityId: entry.workoutActivity.id)
-                                viewModel.getActivities(workoutId: workoutId)
+                                Task {
+                                    try await viewModel.getActivities(workoutId: workoutId)
+                                }
                             }
                         }
                         
@@ -59,7 +61,9 @@ struct ActivityView: View {
             }
         }
         .onAppear {
-            viewModel.getActivities(workoutId: workoutId)
+            Task {
+                try await viewModel.getActivities(workoutId: workoutId)
+            }
         }
     }
 }

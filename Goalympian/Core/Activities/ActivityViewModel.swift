@@ -18,19 +18,17 @@ final class ActivityViewModel: ObservableObject {
         self.dataService = dataService
     }
     
-    func getActivities(workoutId: String) {
-        Task {
-            let workoutActivities = try await dataService.getAllWorkoutActivities(workoutId: workoutId)
-            
-            var localArray: [(workoutActivity: DBActivity, exercise: APIExercise)] = []
-            for workoutActivity in workoutActivities {
-                if let exercise = try? await ExerciseManager.shared.getExercise(exerciseId: String(workoutActivity.exerciseId)) {
-                    localArray.append((workoutActivity, exercise))
-                }
+    func getActivities(workoutId: String) async throws  {
+        let workoutActivities = try await dataService.getAllWorkoutActivities(workoutId: workoutId)
+        
+        var localArray: [(workoutActivity: DBActivity, exercise: APIExercise)] = []
+        for workoutActivity in workoutActivities {
+            if let exercise = try? await ExerciseManager.shared.getExercise(exerciseId: String(workoutActivity.exerciseId)) {
+                localArray.append((workoutActivity, exercise))
             }
-            
-            self.activities = localArray
         }
+        
+        self.activities = localArray
     }
     
     func removeFromWorkout(workoutId: String, activityId: String) {
@@ -39,7 +37,7 @@ final class ActivityViewModel: ObservableObject {
                 try await dataService.removeWorkoutActivitySet(workoutId: workoutId, activityId: activityId, activitySetId: activitySet.id)
             }
             try await dataService.removeWorkoutActivity(workoutId: workoutId, activityId: activityId)
-            getActivities(workoutId: workoutId)
+            try await getActivities(workoutId: workoutId)
         }
     }
     

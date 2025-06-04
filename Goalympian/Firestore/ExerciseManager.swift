@@ -134,7 +134,7 @@ final class ExerciseManager {
             .getDocuments(as: APIExercise.self)
     }
     
-    private func getAllProductsByNameAndCategory(descending: Bool, category: String) async throws -> [APIExercise] {
+    private func getAllExercisesByNameAndCategory(descending: Bool, category: String) async throws -> [APIExercise] {
         try await exercisesCollection
             .order(by: APIExercise.CodingKeys.name.rawValue, descending: descending)
             .whereField("uuid", in: [AuthenticationManager.shared.getAuthenticatedUser().uid, "global"])
@@ -142,12 +142,22 @@ final class ExerciseManager {
             .getDocuments(as: APIExercise.self)
     }
     
-    private func getAllProductsByNameCategoryUser(descending: Bool, category: String, userIds: [String]) async throws -> [APIExercise] {
+    private func getAllExercisesByNameCategoryUser(descending: Bool, category: String, userIds: [String]) async throws -> [APIExercise] {
         try await exercisesCollection
             .order(by: APIExercise.CodingKeys.name.rawValue, descending: descending)
             .whereField("uuid", in: userIds)
             .whereField(APIExercise.CodingKeys.target.rawValue, isEqualTo: category)
             .getDocuments(as: APIExercise.self)
+    }
+    
+    func removeUserExercise(userId: String, exercise: APIExercise) async throws {
+        guard let exerciseId = exercise.id else {
+            return
+        }
+        
+        if exercise.uuid == userId {
+            try await exerciseDocument(exerciseId: exerciseId).delete()
+        }
     }
     
     func getAllExercises(
@@ -156,7 +166,7 @@ final class ExerciseManager {
         userIds: [String]?
     ) async throws -> [APIExercise] {
         if let userIds, let descending, let category {
-            return try await getAllProductsByNameCategoryUser(descending: descending, category: category, userIds: userIds)
+            return try await getAllExercisesByNameCategoryUser(descending: descending, category: category, userIds: userIds)
         } else if let userIds, let descending {
             return try await getAllExercisesByUserSorted(userIds: userIds, descending: descending)
         } else if let userIds, let category {
@@ -176,7 +186,7 @@ final class ExerciseManager {
         }
         
         if let descending, let category {
-            return try await getAllProductsByNameAndCategory(descending: descending, category: category)
+            return try await getAllExercisesByNameAndCategory(descending: descending, category: category)
         } else if let descending {
             return try await getAllExercisesSortedByName(descending: descending)
         } else if let category {

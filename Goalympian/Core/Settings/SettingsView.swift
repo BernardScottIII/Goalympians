@@ -10,6 +10,8 @@ import SwiftUI
 struct SettingsView: View {
     
     @StateObject private var viewModel = SettingsViewModel()
+    @Environment(\.dismiss) private var dismiss
+    
     @Binding var showSignInView: Bool
     
     var body: some View {
@@ -45,6 +47,9 @@ struct SettingsView: View {
         .onAppear {
             viewModel.loadAuthProviders()
             viewModel.loadAuthUser()
+        }
+        .onChange(of: showSignInView) {
+            dismiss()
         }
     }
 }

@@ -167,4 +167,8 @@ final class ExercisesViewModel: ObservableObject {
             self.exercises = try await ExerciseManager.shared.getAllExercises(nameDescending: selectedFilter?.nameDescending, forCategory: selectedCategory?.rawValue, userIds: userIds)
         }
     }
+    
+    func removeUserExercise(exercise: APIExercise) async throws {
+        try await ExerciseManager.shared.removeUserExercise(userId: AuthenticationManager.shared.getAuthenticatedUser().uid, exercise: exercise)
+    }
 }
