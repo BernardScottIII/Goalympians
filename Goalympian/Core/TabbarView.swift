@@ -14,7 +14,6 @@ struct TabbarView: View {
     }
     
     @State private var selectedTab: TabbarTab = .workouts
-    @State private var previousTab: TabbarTab = .workouts
     
     @State private var workoutNavigationPath = NavigationPath()
     @State private var insightNavigationPath = NavigationPath()

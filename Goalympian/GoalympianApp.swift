@@ -29,7 +29,7 @@ struct GoalympianApp: App {
     var body: some Scene {
         WindowGroup {
 //            DBExerciseView()
-            RootView()
+            ContentView()
                 .modelContainer(for: DevExercise.self)
                 .environmentObject(healthManager)
         }

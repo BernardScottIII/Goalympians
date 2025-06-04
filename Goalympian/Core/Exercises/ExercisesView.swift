@@ -39,39 +39,43 @@ struct ExercisesView: View {
     }
     
     var body: some View {
-        List(viewModel.exercises, id: \.id) { exercise in
-            HStack {
-                Text(exercise.name)
-                    .truncationMode(.tail)
-                    .lineLimit(1)
-                
-                Spacer()
-                
-                Button("", systemImage: "plus") {
-                    if !activityViewModel.activities.contains(where: {$0.exercise.id == exercise.id}) {
-                        viewModel.addWorkoutActivity(workoutId: workoutId, exercise: exercise)
-                    } else {
-                        guard let index = activityViewModel.activities.firstIndex(where: {$0.exercise.id == exercise.id}) else { return }
-                        activityViewModel.addActivitySet(
-                            workoutId: workoutId,
-                            activityId: activityViewModel.activities[index].workoutActivity.id
-                        )
+        List {
+            ForEach(viewModel.exercises.filter{
+                searchText.isEmpty ? true : $0.name.localizedStandardContains(searchText)
+            }, id: \.id) { exercise in
+                HStack {
+                    Text(exercise.name)
+                        .truncationMode(.tail)
+                        .lineLimit(1)
+                    
+                    Spacer()
+                    
+                    Button("", systemImage: "plus") {
+                        if !activityViewModel.activities.contains(where: {$0.exercise.id == exercise.id}) {
+                            viewModel.addWorkoutActivity(workoutId: workoutId, exercise: exercise)
+                        } else {
+                            guard let index = activityViewModel.activities.firstIndex(where: {$0.exercise.id == exercise.id}) else { return }
+                            activityViewModel.addActivitySet(
+                                workoutId: workoutId,
+                                activityId: activityViewModel.activities[index].workoutActivity.id
+                            )
+                        }
+                        dismiss()
                     }
-                    dismiss()
-                }
-                
-                // "It's good enough"
-                ZStack(alignment: .trailing) {
-                    NavigationLink {
-                        ExerciseDetailsView(exercise: exercise)
-                    } label: {
-                        Image(systemName: "info.circle")
-                            .foregroundStyle(.blue)
+                    
+                    // "It's good enough"
+                    ZStack(alignment: .trailing) {
+                        NavigationLink {
+                            ExerciseDetailsView(exercise: exercise)
+                        } label: {
+                            Image(systemName: "info.circle")
+                                .foregroundStyle(.blue)
+                        }
+                        .scaledToFit()
                     }
-                    .scaledToFit()
                 }
+                .buttonStyle(.plain)
             }
-            .buttonStyle(.plain)
         }
         .navigationTitle(navigationTitle)
         .searchable(text: $searchText)
@@ -105,7 +109,7 @@ struct ExercisesView: View {
             }
         }
         NavigationLink("Create New Exercise") {
-            CreateExerciseView()
+            CreateExerciseView(viewModel: viewModel)
         }
     }
 }

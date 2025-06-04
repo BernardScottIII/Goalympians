@@ -8,7 +8,7 @@
 import SwiftUI
 import FirebaseFirestore
 
-struct RootView: View {
+struct ContentView: View {
     
     @EnvironmentObject private var healthManager: HealthManager
     @State private var showSignInView: Bool = false
@@ -33,6 +33,6 @@ struct RootView: View {
 
 #Preview {
     @Previewable @StateObject var healthManager = HealthManager()
-    RootView()
+    ContentView()
         .environmentObject(healthManager)
 }

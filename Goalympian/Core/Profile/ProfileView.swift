@@ -27,20 +27,11 @@ struct ProfileView: View {
                 Button {
                     viewModel.toggleDarkMode()
                 } label: {
-                    Text("Using Dark Mode: \(user.usingDarkMode?.description.capitalized)")
+                    Text("Using Dark Mode: \(user.usingDarkMode?.description.capitalized ?? "No Data")")
                 }
                 
                 Section("Personal Content") {
-                    NavigationLink  {
-                        UserExerciseListView(
-                            viewModel: ExercisesViewModel(dataService: workoutDataService),
-                            userId: userId,
-                            workoutDataService: workoutDataService
-                        )
-                    } label: {
-                        Text("My Exercises")
-                    }
-
+                    NavigationLink("My Exercises", value: "")
                 }
             }
         }
@@ -53,6 +44,13 @@ struct ProfileView: View {
             }
         }
         .navigationTitle("Profile")
+        .navigationDestination(for: String.self) { _ in
+            UserExerciseListView(
+                viewModel: ExercisesViewModel(dataService: workoutDataService),
+                userId: userId,
+                workoutDataService: workoutDataService
+            )
+        }
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 NavigationLink {

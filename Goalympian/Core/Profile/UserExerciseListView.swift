@@ -13,6 +13,7 @@ struct UserExerciseListView: View {
     @State private var removeExerciseAlert: Bool = false
     @State private var removalCandidateExercise: APIExercise?
     @State private var editMode = EditMode.inactive
+    @State private var searchText = ""
     @StateObject private var workoutViewModel: WorkoutViewModel
     @StateObject private var activityViewModel: ActivityViewModel
     
@@ -34,7 +35,9 @@ struct UserExerciseListView: View {
     
     var body: some View {
         List {
-            ForEach(viewModel.exercises, id: \.id) { exercise in
+            ForEach(viewModel.exercises.filter{
+                searchText.isEmpty ? true : $0.name.localizedStandardContains(searchText)
+            }, id: \.id) { exercise in
                 HStack {
                     Text(exercise.name)
                         .truncationMode(.tail)
@@ -64,6 +67,7 @@ struct UserExerciseListView: View {
             }
             .deleteDisabled(!self.editMode.isEditing)
         }
+        .searchable(text: $searchText)
         .onAppear {
             Task {
                 try await viewModel.userIdsSelected(userIds: [userId])

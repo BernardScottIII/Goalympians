@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-import SwiftData
+import FirebaseFirestore
 
 struct CreateExerciseView: View {
     @Environment(\.dismiss) private var dismiss
@@ -18,6 +18,10 @@ struct CreateExerciseView: View {
     @State private var equipment: ExercisesViewModel.EquipmentOption = ExercisesViewModel.EquipmentOption.noEquipment
     @State private var customEquipment: String = ""
     @State private var instructionCountAlert: Bool = false
+    @State private var duplicateExerciseAlert: Bool = false
+    @State private var missingTitleAlert: Bool = false
+    
+    @ObservedObject var viewModel: ExercisesViewModel
     
     var body: some View {
         Form {
@@ -83,29 +87,57 @@ struct CreateExerciseView: View {
             }
             
         }
+        .onAppear {
+            viewModel.getExercises()
+        }
+        .alert(
+            "Error Creating Exercise",
+            isPresented: $missingTitleAlert
+        ) {
+            Button("Okay", action: {})
+        }
         .navigationTitle("Create Exercise")
+        .alert(
+            "Error Creating Exercise",
+            isPresented: $duplicateExerciseAlert
+        ) {
+            Button("Okay", action: {})
+        } message: {
+            Text("Exercise with this name already exists, try a new name.")
+        }
+        
         Button("Save New Exercise") {
-            Task {
-                let savedEquipment = equipment != ExercisesViewModel.EquipmentOption.customEquipment ? equipment.rawValue : customEquipment
-                
-                try await ExerciseManager.shared.uploadExercise(exercise: APIExercise(
-                    id: UUID().uuidString,
-                    name: name,
-                    bodyPart: "unknown_part",
-                    equipment: savedEquipment,
-                    target: targetMuscle.rawValue,
-                    secondaryMuscles: ["No secondary muscles"],
-                    instructions: instructions,
-                    gifUrl: "no url",
-                    uuid: AuthenticationManager.shared.getAuthenticatedUser().uid,
-                    setType: setType
-                ))
+            var exerciseNames: [String] = []
+            viewModel.exercises.forEach { exercise in
+                exerciseNames.append(exercise.name)
             }
-            dismiss()
+            
+            duplicateExerciseAlert = exerciseNames.contains(name)
+            
+            if !duplicateExerciseAlert {
+                Task {
+                    let savedEquipment = equipment != ExercisesViewModel.EquipmentOption.customEquipment ? equipment.rawValue : customEquipment
+                    
+                    try await ExerciseManager.shared.uploadExercise(exercise: APIExercise(
+                        id: UUID().uuidString,
+                        name: name,
+                        bodyPart: "unknown_part",
+                        equipment: savedEquipment,
+                        target: targetMuscle.rawValue,
+                        secondaryMuscles: ["No secondary muscles"],
+                        instructions: instructions,
+                        gifUrl: "no url",
+                        uuid: AuthenticationManager.shared.getAuthenticatedUser().uid,
+                        setType: setType
+                    ))
+                }
+                dismiss()
+            }
         }
     }
 }
 
 #Preview {
-    CreateExerciseView()
+    @Previewable let dataService = ProdWorkoutManager(workoutCollection: Firestore.firestore().collection("workouts"))
+    CreateExerciseView(viewModel: ExercisesViewModel(dataService: dataService))
 }
