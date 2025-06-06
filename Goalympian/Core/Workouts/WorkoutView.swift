@@ -47,9 +47,13 @@ struct WorkoutView: View {
             try? await viewModel.getAllWorkouts()
         }
         .toolbar {
-            EditButton()
-            NavigationLink("Add Workout") {
-                CreateWorkoutView(workoutDataService: viewModel.workoutDataService)
+            ToolbarItem(placement: .topBarLeading) {
+                EditButton()
+            }
+            ToolbarItem(placement: .topBarTrailing) {
+                NavigationLink("Add Workout") {
+                    CreateWorkoutView(workoutDataService: viewModel.workoutDataService)
+                }
             }
         }
         .alert(

@@ -38,14 +38,6 @@ final class ProdWorkoutManager: WorkoutManagerProtocol {
         workoutCollection.document(workoutId)
     }
     
-    private func workoutActivityDocument(workoutId: String, activityId: String) -> DocumentReference {
-        workoutActivityCollection(workoutId: workoutId).document(activityId)
-    }
-    
-    private func workoutActivityCollection(workoutId: String) -> CollectionReference {
-        workoutDocument(workoutId: workoutId).collection("activities")
-    }
-    
     func createNewWorkout(workout: DBWorkout) async throws {
         try workoutDocument(workoutId: workout.id).setData(from: workout, merge: false)
     }
@@ -62,6 +54,22 @@ final class ProdWorkoutManager: WorkoutManagerProtocol {
     
     func updateWorkout(workout: DBWorkout) async throws {
         try workoutDocument(workoutId: workout.id).setData(from: workout, merge: true)
+    }
+    
+    func removeWorkout(workoutId: String) async throws {
+        try await workoutDocument(workoutId: workoutId).delete()
+    }
+}
+
+// MARK: Workout Activity
+extension ProdWorkoutManager {
+    
+    private func workoutActivityDocument(workoutId: String, activityId: String) -> DocumentReference {
+        workoutActivityCollection(workoutId: workoutId).document(activityId)
+    }
+    
+    private func workoutActivityCollection(workoutId: String) -> CollectionReference {
+        workoutDocument(workoutId: workoutId).collection("activities")
     }
     
     func addWorkoutActivity(workoutId: String, exercise: APIExercise) async throws {
@@ -92,13 +100,18 @@ final class ProdWorkoutManager: WorkoutManagerProtocol {
             .getDocuments(as: DBActivity.self)
     }
     
-    func removeWorkout(workoutId: String) async throws {
-        try await workoutDocument(workoutId: workoutId).delete()
+    func updateWorkoutActivity(workoutId: String, activity: DBActivity) async throws {
+        try workoutActivityDocument(workoutId: workoutId, activityId: activity.id).setData(from: activity, merge: true)
+    }
+    
+    func getWorkoutActivity(workoutId: String, activityId: String) async throws -> DBActivity {
+        try await workoutActivityDocument(workoutId: workoutId, activityId: activityId).getDocument(as: DBActivity.self)
     }
 }
 
 // MARK: Activity Set
 extension ProdWorkoutManager {
+    
     private func activitySetCollection(workoutId: String, activityId: String) -> CollectionReference {
         workoutActivityDocument(workoutId: workoutId, activityId: activityId).collection("activity_sets")
     }
@@ -155,10 +168,6 @@ extension ProdWorkoutManager {
         case .swimSet:
             try await activitySetCollection(workoutId: workoutId, activityId: activityId).getDocuments(as: DBSwimSet.self)
         }
-    }
-    
-    func getWorkoutActivity(workoutId: String, activityId: String) async throws -> DBActivity {
-        try await workoutActivityDocument(workoutId: workoutId, activityId: activityId).getDocument(as: DBActivity.self)
     }
     
     func updateActivitySet(workoutId: String, activity: DBActivity, set: DBActivitySet) async throws {

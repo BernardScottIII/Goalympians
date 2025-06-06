@@ -39,11 +39,18 @@ struct EditWorkoutView: View {
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(true)
         .toolbar {
-            NavigationLink("Add Exercise") {
-                ExercisesView(activityViewModel: activityViewModel, workoutDataService: workoutDataService, workoutId: workout.id, userIds: [
-                    userId,
-                    "global"
-                ])
+            ToolbarItem(placement: .topBarLeading) {
+                NavigationLink("Edit Order") {
+                    WorkoutActivityOrderView(activityViewModel: activityViewModel, workoutId: workout.id)
+                }
+            }
+            ToolbarItem(placement: .topBarTrailing){
+                NavigationLink("Add Exercise") {
+                    ExercisesView(activityViewModel: activityViewModel, workoutDataService: workoutDataService, workoutId: workout.id, userIds: [
+                        userId,
+                        "global"
+                    ])
+                }
             }
         }
         .onAppear {

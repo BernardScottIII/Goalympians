@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import FirebaseFirestore
 
 @MainActor
 final class ActivityViewModel: ObservableObject {
@@ -44,6 +45,36 @@ final class ActivityViewModel: ObservableObject {
     func addActivitySet(workoutId: String, activityId: String) {
         Task {
             try await dataService.addWorkoutActivitySet(workoutId: workoutId, activityId: activityId)
+        }
+    }
+    
+    func updateActivity(workoutId: String, activity: DBActivity) async throws {
+        try await dataService.updateWorkoutActivity(workoutId: workoutId, activity: activity)
+    }
+    
+    func moveActivity(workoutId: String, fromOffsets source: IndexSet, toOffset destination: Int) async throws {
+        var modifiedActivities = activities
+        modifiedActivities.move(fromOffsets: source, toOffset: destination)
+        
+        for (idx, entry) in modifiedActivities.enumerated() {
+            let oldActivity = entry.workoutActivity
+            let newActivity = DBActivity(id: oldActivity.id, exerciseId: oldActivity.exerciseId, setType: oldActivity.setType, workoutIndex: idx)
+            modifiedActivities[idx] = (workoutActivity: newActivity, exercise: entry.exercise)
+        }
+        
+        let batch = Firestore.firestore().batch()
+        for entry in modifiedActivities {
+            let id = entry.workoutActivity.id
+            let doc = Firestore.firestore().collection("workouts").document(workoutId).collection("activities").document(id)
+            batch.updateData([DBActivity.CodingKeys.workoutIndex.rawValue: entry.workoutActivity.workoutIndex], forDocument: doc)
+        }
+        
+        do {
+            
+            try await batch.commit()
+            try await getActivities(workoutId: workoutId)
+        } catch {
+            print("Error updating indices: \(error.localizedDescription)")
         }
     }
 }

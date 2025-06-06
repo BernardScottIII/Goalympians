@@ -12,7 +12,7 @@ struct ActivityView: View {
     
     @ObservedObject var viewModel: ActivityViewModel
     let workoutDataService: WorkoutManagerProtocol
-    var workoutId: String
+    let workoutId: String
     
     init(
         viewModel: ActivityViewModel,
@@ -31,7 +31,7 @@ struct ActivityView: View {
                     Text("No Exercises in Workout")
                 }
             } else {
-                ForEach(viewModel.activities, id: \.workoutActivity.id.self) { entry in
+                ForEach(viewModel.activities, id: \.workoutActivity.id) { entry in
                     Section {
                         HStack {
                             Text(entry.exercise.name)
