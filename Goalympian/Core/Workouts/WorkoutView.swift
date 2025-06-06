@@ -11,6 +11,9 @@ import FirebaseFirestore
 struct WorkoutView: View {
     
     @StateObject private var viewModel: WorkoutViewModel
+    @State private var removalCandidateWorkout: DBWorkout?
+    @State private var removeWorkoutAlert: Bool = false
+    @State private var editMode = EditMode.inactive
     
     let workoutDataService: WorkoutManagerProtocol
     
@@ -26,6 +29,13 @@ struct WorkoutView: View {
             ForEach(viewModel.workouts) { workout in
                 NavigationLink(workout.name, value: workout)
             }
+            .onDelete { indexSet in
+                removeWorkoutAlert = true
+                for index in indexSet {
+                    removalCandidateWorkout = viewModel.workouts[index]
+                }
+            }
+            .deleteDisabled(!self.editMode.isEditing)
         }
         .navigationDestination(for: DBWorkout.self) { workout in
             EditWorkoutView(
@@ -37,9 +47,31 @@ struct WorkoutView: View {
             try? await viewModel.getAllWorkouts()
         }
         .toolbar {
+            EditButton()
             NavigationLink("Add Workout") {
                 CreateWorkoutView(workoutDataService: viewModel.workoutDataService)
             }
+        }
+        .alert(
+            "Remove Workout",
+            isPresented: $removeWorkoutAlert
+        ) {
+            Button("Remove Workout", role: .destructive, action: removeWorkout)
+            Button("Cancel", role: .cancel, action: {})
+        } message: {
+            Text("Are you sure you want to remove this workout? Removing it will delete all sets and exercises recorded in this workout.")
+        }
+        .environment(\.editMode, $editMode)
+    }
+    
+    private func removeWorkout() {
+        guard let removalCandidateWorkout else {
+            return
+        }
+        
+        Task {
+            try await viewModel.removeWorkout(workoutId: removalCandidateWorkout.id)
+            try await viewModel.getAllWorkouts()
         }
     }
 }

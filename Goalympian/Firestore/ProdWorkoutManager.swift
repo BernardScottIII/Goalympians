@@ -91,6 +91,10 @@ final class ProdWorkoutManager: WorkoutManagerProtocol {
             .order(by: DBActivity.CodingKeys.workoutIndex.rawValue)
             .getDocuments(as: DBActivity.self)
     }
+    
+    func removeWorkout(workoutId: String) async throws {
+        try await workoutDocument(workoutId: workoutId).delete()
+    }
 }
 
 // MARK: Activity Set

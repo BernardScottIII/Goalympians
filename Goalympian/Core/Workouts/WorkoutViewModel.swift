@@ -33,4 +33,8 @@ final class WorkoutViewModel: ObservableObject {
             set: {self.workouts[index] = $0}
         )
     }
+    
+    func removeWorkout(workoutId: String) async throws {
+        try await workoutDataService.removeWorkout(workoutId: workoutId)
+    }
 }

@@ -20,6 +20,8 @@ protocol WorkoutManagerProtocol {
     
     func getAllWorkoutActivities(workoutId: String) async throws -> [DBActivity]
     
+    func removeWorkout(workoutId: String) async throws
+    
     // MARK: ActivitySet Protocol
     func addWorkoutActivitySet(workoutId: String, activityId: String) async throws
     

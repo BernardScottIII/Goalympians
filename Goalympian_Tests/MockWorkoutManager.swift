@@ -9,6 +9,10 @@ import Foundation
 @testable import Goalympian
 
 final class MockWorkoutManager: WorkoutManagerProtocol {
+    func removeWorkout(workoutId: String) async throws {
+        
+    }
+    
     func addWorkoutActivity(workoutId: String, exercise: APIExercise) async throws {
         
     }
