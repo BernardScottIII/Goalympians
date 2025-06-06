@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import SwiftData
 import FirebaseCore
 import FirebaseFirestore
 
@@ -28,9 +27,7 @@ struct GoalympianApp: App {
 
     var body: some Scene {
         WindowGroup {
-//            DBExerciseView()
             ContentView()
-                .modelContainer(for: DevExercise.self)
                 .environmentObject(healthManager)
         }
     }

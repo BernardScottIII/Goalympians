@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import SwiftData
 import FirebaseFirestore
 
 struct UserExerciseListView: View {
@@ -82,6 +81,7 @@ struct UserExerciseListView: View {
         } message: {
             Text("Are you sure you want to delete this exercise? Doing so will remove all sets from every workout of this exercise. This action may take a moment.")
         }
+        .withExercisesToolbar(viewModel: viewModel)
         .toolbar {
             EditButton()
         }
@@ -111,7 +111,7 @@ struct UserExerciseListView: View {
 }
 
 #Preview {
-    @Previewable let dataService: WorkoutManagerProtocol = Firestore.firestore().collection("workouts") as! WorkoutManagerProtocol
+    @Previewable let dataService = ProdWorkoutManager(workoutCollection: Firestore.firestore().collection("workouts"))
     NavigationStack {
         UserExerciseListView(viewModel: ExercisesViewModel(dataService: dataService), userId: UUID().uuidString, workoutDataService: dataService)
     }

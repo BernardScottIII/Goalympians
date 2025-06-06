@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import SwiftData
 import FirebaseFirestore
 
 struct ExercisesView: View {
@@ -84,30 +83,8 @@ struct ExercisesView: View {
                 try await viewModel.userIdsSelected(userIds: userIds)
             }
         }
-        .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
-                Menu("Filter: \(viewModel.selectedFilter?.rawValue ?? "NONE")", systemImage: "arrow.up.arrow.down") {
-                    ForEach(ExercisesViewModel.FilterOption.allCases, id: \.self) { option in
-                        Button(option.prettyString) {
-                            Task {
-                                try? await viewModel.filterSelectedOption(option: option)
-                            }
-                        }
-                    }
-                }
-            }
-            ToolbarItem(placement: .topBarTrailing) {
-                Menu("Category: \(viewModel.selectedCategory?.rawValue ?? "NONE")", systemImage: "figure.strengthtraining.traditional") {
-                    ForEach(ExercisesViewModel.CategoryOption.allCases, id: \.self) { option in
-                        Button(option.prettyString) {
-                            Task {
-                                try? await viewModel.categorySelected(category: option)
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        .withExercisesToolbar(viewModel: viewModel)
+        
         NavigationLink("Create New Exercise") {
             CreateExerciseView(viewModel: viewModel)
         }

@@ -10,7 +10,6 @@ import FirebaseFirestore
 
 struct EditWorkoutView: View {
     @Environment(\.dismiss) private var dismiss
-    @Environment(\.modelContext) private var modelContext
     @StateObject private var activityViewModel: ActivityViewModel
     @State private var userId: String = ""
     

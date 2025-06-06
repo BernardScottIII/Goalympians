@@ -26,10 +26,14 @@ struct ExerciseDetailsView: View {
                 }
             }
             Section("Equipment") {
-                Text(exercise.equipment)
+                if let equipmentValue = EquipmentOption(rawValue: exercise.equipment) {
+                    Text(equipmentValue.prettyString)
+                } else {
+                    Text("Bad Equipment Value, report this issue.")
+                }
             }
             Section("Target Muscle") {
-                Text(exercise.target)
+                Text(exercise.target.prettyString)
             }
             Section("Secondary Muscles") {
                 ForEach(exercise.secondaryMuscles, id: \.self) { muscle in
@@ -46,9 +50,8 @@ struct ExerciseDetailsView: View {
             ExerciseDetailsView(exercise: APIExercise(
                 id: UUID().uuidString,
                 name: "Sample Exercise",
-                bodyPart: "Head",
                 equipment: "Keyboard and Mouse",
-                target: "Brain",
+                target: .noCategory,
                 secondaryMuscles: ["Forehead", "Fingers", "eyes"],
                 instructions: ["Sit down at keyboard", "start typing", "nothing works", "cry"],
                 gifUrl: "google.com",

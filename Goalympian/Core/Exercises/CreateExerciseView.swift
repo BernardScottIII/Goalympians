@@ -14,12 +14,12 @@ struct CreateExerciseView: View {
     @State private var instructions: [String] = [""]
     @State private var numInstructions: Int = 1
     @State private var setType: SetType = SetType.resistanceSet
-    @State private var targetMuscle: ExercisesViewModel.CategoryOption = ExercisesViewModel.CategoryOption.noCategory
-    @State private var equipment: ExercisesViewModel.EquipmentOption = ExercisesViewModel.EquipmentOption.noEquipment
+    @State private var targetMuscle: CategoryOption = CategoryOption.noCategory
+    @State private var equipment: EquipmentOption = EquipmentOption.noEquipment
     @State private var customEquipment: String = ""
     @State private var instructionCountAlert: Bool = false
     @State private var duplicateExerciseAlert: Bool = false
-    @State private var missingTitleAlert: Bool = false
+    @State private var missingNameAlert: Bool = false
     
     @ObservedObject var viewModel: ExercisesViewModel
     
@@ -29,7 +29,7 @@ struct CreateExerciseView: View {
                 TextField("Exercise Name", text: $name)
                 
                 Picker("Primary Muscle", selection: $targetMuscle) {
-                    ForEach(ExercisesViewModel.CategoryOption.allCases, id: \.self) { muscle in
+                    ForEach(CategoryOption.allCases, id: \.self) { muscle in
                         Text(muscle.prettyString)
                     }
                 }
@@ -41,11 +41,11 @@ struct CreateExerciseView: View {
                 }
                 
                 Picker("Equipment Used", selection: $equipment) {
-                    ForEach(ExercisesViewModel.EquipmentOption.allCases, id: \.self) { equipment in
+                    ForEach(EquipmentOption.allCases, id: \.self) { equipment in
                         Text(equipment.prettyString)
                     }
                 }
-                if (equipment == ExercisesViewModel.EquipmentOption.customEquipment) {
+                if (equipment == EquipmentOption.customEquipment) {
                     TextField("Custom Equipment Name", text: $customEquipment)
                 }
             }
@@ -90,13 +90,15 @@ struct CreateExerciseView: View {
         .onAppear {
             viewModel.getExercises()
         }
+        .navigationTitle("Create Exercise")
         .alert(
             "Error Creating Exercise",
-            isPresented: $missingTitleAlert
+            isPresented: $missingNameAlert
         ) {
             Button("Okay", action: {})
+        } message: {
+            Text("Exercises must have a name to be saved. Please enter a unique name.")
         }
-        .navigationTitle("Create Exercise")
         .alert(
             "Error Creating Exercise",
             isPresented: $duplicateExerciseAlert
@@ -113,17 +115,17 @@ struct CreateExerciseView: View {
             }
             
             duplicateExerciseAlert = exerciseNames.contains(name)
+            missingNameAlert = name == ""
             
-            if !duplicateExerciseAlert {
+            if !duplicateExerciseAlert && !missingNameAlert {
                 Task {
-                    let savedEquipment = equipment != ExercisesViewModel.EquipmentOption.customEquipment ? equipment.rawValue : customEquipment
+                    let savedEquipment = equipment != EquipmentOption.customEquipment ? equipment.rawValue : customEquipment
                     
                     try await ExerciseManager.shared.uploadExercise(exercise: APIExercise(
                         id: UUID().uuidString,
                         name: name,
-                        bodyPart: "unknown_part",
                         equipment: savedEquipment,
-                        target: targetMuscle.rawValue,
+                        target: targetMuscle,
                         secondaryMuscles: ["No secondary muscles"],
                         instructions: instructions,
                         gifUrl: "no url",
