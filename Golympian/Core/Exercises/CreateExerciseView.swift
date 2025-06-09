@@ -20,6 +20,7 @@ struct CreateExerciseView: View {
     @State private var instructionCountAlert: Bool = false
     @State private var duplicateExerciseAlert: Bool = false
     @State private var missingNameAlert: Bool = false
+    @FocusState private var keyboardFocused: Bool
     
     @ObservedObject var viewModel: ExercisesViewModel
     
@@ -27,6 +28,8 @@ struct CreateExerciseView: View {
         Form {
             Section("Information") {
                 TextField("Exercise Name", text: $name)
+                    .focused($keyboardFocused)
+                    .textInputAutocapitalization(.words)
                 
                 Picker("Primary Muscle", selection: $targetMuscle) {
                     ForEach(CategoryOption.allCases, id: \.self) { muscle in
@@ -47,6 +50,7 @@ struct CreateExerciseView: View {
                 }
                 if (equipment == EquipmentOption.customEquipment) {
                     TextField("Custom Equipment Name", text: $customEquipment)
+                        .textInputAutocapitalization(.words)
                 }
             }
             
@@ -83,12 +87,14 @@ struct CreateExerciseView: View {
                 
                 ForEach(0..<numInstructions, id:\.self) { step in
                     TextField("Step #\(step+1)", text: $instructions[step])
+                        .textInputAutocapitalization(.sentences)
                 }
             }
             
         }
         .onAppear {
             viewModel.getExercises()
+            keyboardFocused = true
         }
         .navigationTitle("Create Exercise")
         .alert(
@@ -108,33 +114,35 @@ struct CreateExerciseView: View {
             Text("Exercise with this name already exists, try a new name.")
         }
         
-        Button("Save New Exercise") {
-            var exerciseNames: [String] = []
-            viewModel.exercises.forEach { exercise in
-                exerciseNames.append(exercise.name)
+        BottomActionButton(label: "Save New Exercise", action: saveExercise)
+    }
+    
+    private func saveExercise() {
+        var exerciseNames: [String] = []
+        viewModel.exercises.forEach { exercise in
+            exerciseNames.append(exercise.name)
+        }
+        
+        duplicateExerciseAlert = exerciseNames.contains(name)
+        missingNameAlert = name == ""
+        
+        if !duplicateExerciseAlert && !missingNameAlert {
+            Task {
+                let savedEquipment = equipment != EquipmentOption.customEquipment ? equipment.rawValue : customEquipment
+                
+                try await ExerciseManager.shared.uploadExercise(exercise: APIExercise(
+                    id: UUID().uuidString,
+                    name: name,
+                    equipment: savedEquipment,
+                    target: targetMuscle,
+                    secondaryMuscles: ["No secondary muscles"],
+                    instructions: instructions,
+                    gifUrl: "no url",
+                    uuid: AuthenticationManager.shared.getAuthenticatedUser().uid,
+                    setType: setType
+                ))
             }
-            
-            duplicateExerciseAlert = exerciseNames.contains(name)
-            missingNameAlert = name == ""
-            
-            if !duplicateExerciseAlert && !missingNameAlert {
-                Task {
-                    let savedEquipment = equipment != EquipmentOption.customEquipment ? equipment.rawValue : customEquipment
-                    
-                    try await ExerciseManager.shared.uploadExercise(exercise: APIExercise(
-                        id: UUID().uuidString,
-                        name: name,
-                        equipment: savedEquipment,
-                        target: targetMuscle,
-                        secondaryMuscles: ["No secondary muscles"],
-                        instructions: instructions,
-                        gifUrl: "no url",
-                        uuid: AuthenticationManager.shared.getAuthenticatedUser().uid,
-                        setType: setType
-                    ))
-                }
-                dismiss()
-            }
+            dismiss()
         }
     }
 }

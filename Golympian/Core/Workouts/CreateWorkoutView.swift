@@ -15,6 +15,8 @@ struct CreateWorkoutView: View {
     @State private var name: String = ""
     @State private var description: String = ""
     @State private var date: Date = Date.now
+    @State private var missingNameAlert: Bool = false
+    @FocusState private var keyboardFocused: Bool
     
     let workoutDataService: WorkoutManagerProtocol
     
@@ -25,11 +27,31 @@ struct CreateWorkoutView: View {
     var body: some View {
         Form {
             TextField("Workout Name", text: $name)
+                .focused($keyboardFocused)
+                .textInputAutocapitalization(.words)
+            
             TextField("Workout Description", text: $description)
+                .textInputAutocapitalization(.sentences)
+            
             DatePicker("Date", selection: $date)
         }
         .navigationTitle("Create Workout")
-        Button("Create Workout") {
+        .onAppear {
+            keyboardFocused = true
+        }
+        .alert("Error Creating New Workout", isPresented: $missingNameAlert) {
+            Button("Okay", role: .cancel, action: {})
+        } message: {
+            Text("New workouts must be created with a name. Please enter a name for this workout.")
+        }
+        
+        BottomActionButton(label: "Create New Workout", action: createWorkout)
+    }
+    
+    private func createWorkout() {
+        missingNameAlert = name == ""
+        
+        if !missingNameAlert {
             Task {
                 try await workoutDataService.createNewWorkout(workout: DBWorkout(
                     id: UUID().uuidString,

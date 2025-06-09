@@ -82,7 +82,6 @@ struct WorkoutView: View {
 
 #Preview {
     let dataService = ProdWorkoutManager(workoutCollection: Firestore.firestore().collection("workouts"))
-    let viewModel = WorkoutViewModel(workoutDataService: dataService)
     NavigationStack {
         WorkoutView(workoutDataService: dataService)
     }

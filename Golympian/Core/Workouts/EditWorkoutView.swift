@@ -29,7 +29,11 @@ struct EditWorkoutView: View {
         VStack{
             Form {
                 TextField("name", text: $workout.name)
+                    .textInputAutocapitalization(.words)
+                
                 TextField("desc", text: $workout.description, axis: .vertical)
+                    .textInputAutocapitalization(.sentences)
+                
                 DatePicker("date", selection: $workout.date)
                 
                 ActivityView(viewModel: activityViewModel, workoutDataService: workoutDataService, workoutId: workout.id)
@@ -59,13 +63,15 @@ struct EditWorkoutView: View {
             }
         }
         
-        Button("Save Changes") {
-            Task {
-                try await workoutDataService.updateWorkout(workout: DBWorkout(id: workout.id, userId: workout.userId, name: workout.name, description: workout.description, date: workout.date))
-                /// I think this is fine because it's not forcing the main thread to wait, and instead will be called when
-                /// the WorkoutManager is finished updating the workout
-                dismiss()
-            }
+        BottomActionButton(label: "Save Changes", action: saveWorkout)
+    }
+    
+    private func saveWorkout() {
+        Task {
+            try await workoutDataService.updateWorkout(workout: DBWorkout(id: workout.id, userId: workout.userId, name: workout.name, description: workout.description, date: workout.date))
+            /// I think this is fine because it's not forcing the main thread to wait, and instead will be called when
+            /// the WorkoutManager is finished updating the workout
+            dismiss()
         }
     }
 }

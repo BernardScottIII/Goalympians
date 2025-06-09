@@ -88,6 +88,11 @@ struct ExercisesView: View {
         NavigationLink("Create New Exercise") {
             CreateExerciseView(viewModel: viewModel)
         }
+        .padding()
+        .background(.purple)
+        .clipShape(.buttonBorder)
+        .foregroundStyle(.white)
+        .fontWeight(.bold)
     }
 }
 
