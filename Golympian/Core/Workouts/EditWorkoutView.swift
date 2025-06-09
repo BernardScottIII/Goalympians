@@ -40,7 +40,7 @@ struct EditWorkoutView: View {
         .navigationBarBackButtonHidden(true)
         .toolbar {
             ToolbarItem(placement: .topBarLeading) {
-                NavigationLink("Edit Order") {
+                NavigationLink("Reorder") {
                     WorkoutActivityOrderView(activityViewModel: activityViewModel, workoutId: workout.id)
                 }
             }

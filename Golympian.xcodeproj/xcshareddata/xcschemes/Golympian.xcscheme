@@ -16,9 +16,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "37AE6E042D5D40810003C065"
-               BuildableName = "Goalympian.app"
-               BlueprintName = "Goalympian"
-               ReferencedContainer = "container:Goalympian.xcodeproj">
+               BuildableName = "Golympian.app"
+               BlueprintName = "Golympian"
+               ReferencedContainer = "container:Golympian.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -36,9 +36,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "372092092DAAFC8D00C19D81"
-               BuildableName = "Goalympian_Tests.xctest"
-               BlueprintName = "Goalympian_Tests"
-               ReferencedContainer = "container:Goalympian.xcodeproj">
+               BuildableName = "Golympian_Tests.xctest"
+               BlueprintName = "Golympian_Tests"
+               ReferencedContainer = "container:Golympian.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -58,9 +58,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "37AE6E042D5D40810003C065"
-            BuildableName = "Goalympian.app"
-            BlueprintName = "Goalympian"
-            ReferencedContainer = "container:Goalympian.xcodeproj">
+            BuildableName = "Golympian.app"
+            BlueprintName = "Golympian"
+            ReferencedContainer = "container:Golympian.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -75,9 +75,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "37AE6E042D5D40810003C065"
-            BuildableName = "Goalympian.app"
-            BlueprintName = "Goalympian"
-            ReferencedContainer = "container:Goalympian.xcodeproj">
+            BuildableName = "Golympian.app"
+            BlueprintName = "Golympian"
+            ReferencedContainer = "container:Golympian.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
