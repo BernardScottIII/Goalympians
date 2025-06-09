@@ -31,28 +31,15 @@
 		37AE6E052D5D40810003C065 /* Golympian.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Golympian.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
-/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		375BB34C2DEAADD9009038F7 /* Exceptions for "Goalympian" folder in "Golympian" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				Info.plist,
-			);
-			target = 37AE6E042D5D40810003C065 /* Golympian */;
-		};
-/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
-
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		3720920B2DAAFC8D00C19D81 /* Goalympian_Tests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = Goalympian_Tests;
 			sourceTree = "<group>";
 		};
-		37AE6E072D5D40810003C065 /* Goalympian */ = {
+		37AE6E072D5D40810003C065 /* Golympian */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				375BB34C2DEAADD9009038F7 /* Exceptions for "Goalympian" folder in "Golympian" target */,
-			);
-			path = Goalympian;
+			path = Golympian;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -85,7 +72,7 @@
 		37AE6DFC2D5D40810003C065 = {
 			isa = PBXGroup;
 			children = (
-				37AE6E072D5D40810003C065 /* Goalympian */,
+				37AE6E072D5D40810003C065 /* Golympian */,
 				3720920B2DAAFC8D00C19D81 /* Goalympian_Tests */,
 				37CDFC932D99DB5500A3226C /* Frameworks */,
 				37AE6E062D5D40810003C065 /* Products */,
@@ -147,7 +134,7 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				37AE6E072D5D40810003C065 /* Goalympian */,
+				37AE6E072D5D40810003C065 /* Golympian */,
 			);
 			name = Golympian;
 			packageProductDependencies = (
