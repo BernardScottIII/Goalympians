@@ -130,6 +130,14 @@ enum SetType: String, Codable, CaseIterable {
         case .swimSet: return "Swimming"
         }
     }
+    
+    var keys: [String] {
+        switch self {
+        case .resistanceSet: return ["weight", "repetitions"]
+        case .runSet: return ["distance", "elevation", "duration"]
+        case .swimSet: return ["distance", "laps", "duration"]
+        }
+    }
 }
 
 struct DBActivityList: Codable {
@@ -142,13 +150,41 @@ struct DBActivity: Identifiable, Codable {
     let exerciseId: String
     let setType: SetType
     let workoutIndex: Int
+    let activitySets: [[String:Any]]
+    
+    var activitySetsHash: Int {
+        activitySets.flatMap { dict in
+            dict.map { "\($0.key):\($0.value)"}
+        }
+        .joined(separator: ",")
+        .hashValue
+    }
     
     func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(self.id, forKey: .id)
-        try container.encode(self.exerciseId, forKey: .exerciseId)
-        try container.encode(self.setType, forKey: .setType)
-        try container.encode(self.workoutIndex, forKey: .workoutIndex)
+        try container.encode(id, forKey: .id)
+        try container.encode(exerciseId, forKey: .exerciseId)
+        try container.encode(setType, forKey: .setType)
+        try container.encode(workoutIndex, forKey: .workoutIndex)
+        
+        var activitySetListContainer = container.nestedUnkeyedContainer(forKey: .activitySets)
+        for set in activitySets {
+            var activitySetContainer = activitySetListContainer.nestedContainer(keyedBy: DynamicKey.self)
+            
+            for (key, value) in set {
+                let dynamicKey = DynamicKey(stringValue: key)!
+                
+                if let stringValue = value as? String {
+                    try activitySetContainer.encode(stringValue, forKey: dynamicKey)
+                } else if let intValue = value as? Int {
+                    try activitySetContainer.encode(intValue, forKey: dynamicKey)
+                } else if let doubleValue = value as? Double {
+                    try activitySetContainer.encode(doubleValue, forKey: dynamicKey)
+                } else {
+                    print("Unknown type for key: \(key)")
+                }
+            }
+        }
     }
     
     enum CodingKeys: String, CodingKey {
@@ -156,6 +192,7 @@ struct DBActivity: Identifiable, Codable {
         case exerciseId = "exercise_id"
         case setType = "set_type"
         case workoutIndex = "workout_index"
+        case activitySets = "activity_sets"
     }
     
     init(from decoder: any Decoder) throws {
@@ -164,18 +201,56 @@ struct DBActivity: Identifiable, Codable {
         self.exerciseId = try container.decode(String.self, forKey: .exerciseId)
         self.setType = try container.decode(SetType.self, forKey: .setType)
         self.workoutIndex = try container.decode(Int.self, forKey: .workoutIndex)
+
+        var tempSetList: [[String:Any]] = []
+        
+        var activitySetListContainer = try container.nestedUnkeyedContainer(forKey: .activitySets)
+        
+        while !activitySetListContainer.isAtEnd {
+            let activitySetContainer = try activitySetListContainer.nestedContainer(keyedBy: DynamicKey.self)
+            var setData: [String:Any] = [:]
+            
+            for key in activitySetContainer.allKeys {
+                if let stringValue = try? activitySetContainer.decode(String.self, forKey: key) {
+                    setData[key.stringValue] = stringValue
+                } else if let intValue = try? activitySetContainer.decode(Int.self, forKey: key) {
+                    setData[key.stringValue] = intValue
+                } else if let doubleValue = try? activitySetContainer.decode(Double.self, forKey: key) {
+                    setData[key.stringValue] = doubleValue
+                } else {
+                    print("Unknown type for key: \(key.stringValue)")
+                }
+            }
+            
+            tempSetList.append(setData)
+        }
+        
+        self.activitySets = tempSetList
+    }
+    
+    struct DynamicKey: CodingKey {
+        var stringValue: String
+        init?(stringValue: String) { self.stringValue = stringValue }
+        
+        var intValue: Int? { return nil }
+        init?(intValue: Int) { return nil }
+        
+        var doubleValue: Double? { return nil }
+        init?(doubleValue: Double) { return nil }
     }
     
     init(
         id: String,
         exerciseId: String,
         setType: SetType,
-        workoutIndex: Int
+        workoutIndex: Int,
+        activitySets: [[String:Any]]
     ) {
         self.id = id
         self.exerciseId = exerciseId
         self.setType = setType
         self.workoutIndex = workoutIndex
+        self.activitySets = activitySets
     }
 }
 

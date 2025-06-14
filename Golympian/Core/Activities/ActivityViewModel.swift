@@ -5,13 +5,12 @@
 //  Created by Bernard Scott on 4/7/25.
 //
 
-import Foundation
+import SwiftUI
 import FirebaseFirestore
 
 @MainActor
 final class ActivityViewModel: ObservableObject {
     @Published private(set) var activities: [(workoutActivity: DBActivity, exercise: APIExercise)] = []
-    @Published var updatedActivityId: String = ""
     
     let dataService: WorkoutManagerProtocol
     
@@ -19,17 +18,30 @@ final class ActivityViewModel: ObservableObject {
         self.dataService = dataService
     }
     
-    func getActivities(workoutId: String) async throws  {
-        let workoutActivities = try await dataService.getAllWorkoutActivities(workoutId: workoutId)
-        
-        var localArray: [(workoutActivity: DBActivity, exercise: APIExercise)] = []
-        for workoutActivity in workoutActivities {
-            if let exercise = try? await ExerciseManager.shared.getExercise(exerciseId: String(workoutActivity.exerciseId)) {
-                localArray.append((workoutActivity, exercise))
+    func getAllActivities(workoutId: String) {
+        Task {
+            let workoutActivities = try await dataService.getAllWorkoutActivities(workoutId: workoutId)
+            
+            var localArray: [(workoutActivity: DBActivity, exercise: APIExercise)] = []
+            for workoutActivity in workoutActivities {
+                if let exercise = try? await ExerciseManager.shared.getExercise(exerciseId: String(workoutActivity.exerciseId)) {
+                    localArray.append((workoutActivity, exercise))
+                }
             }
+            
+            self.activities = localArray
+        }
+    }
+    
+    func binding(for activityId: String) -> Binding<DBActivity>? {
+        guard let index = activities.firstIndex(where: {$0.workoutActivity.id == activityId }) else {
+            return nil
         }
         
-        self.activities = localArray
+        return Binding(
+            get: {self.activities[index].workoutActivity},
+            set: {self.activities[index] = ($0, self.activities[index].exercise)}
+        )
     }
     
     func removeFromWorkout(workoutId: String, activityId: String) {
@@ -38,7 +50,7 @@ final class ActivityViewModel: ObservableObject {
                 try await dataService.removeWorkoutActivitySet(workoutId: workoutId, activityId: activityId, activitySetId: activitySet.id)
             }
             try await dataService.removeWorkoutActivity(workoutId: workoutId, activityId: activityId)
-            try await getActivities(workoutId: workoutId)
+            getAllActivities(workoutId: workoutId)
         }
     }
     
@@ -58,7 +70,7 @@ final class ActivityViewModel: ObservableObject {
         
         for (idx, entry) in modifiedActivities.enumerated() {
             let oldActivity = entry.workoutActivity
-            let newActivity = DBActivity(id: oldActivity.id, exerciseId: oldActivity.exerciseId, setType: oldActivity.setType, workoutIndex: idx)
+            let newActivity = DBActivity(id: oldActivity.id, exerciseId: oldActivity.exerciseId, setType: oldActivity.setType, workoutIndex: idx, activitySets: oldActivity.activitySets)
             modifiedActivities[idx] = (workoutActivity: newActivity, exercise: entry.exercise)
         }
         
@@ -72,9 +84,25 @@ final class ActivityViewModel: ObservableObject {
         do {
             
             try await batch.commit()
-            try await getActivities(workoutId: workoutId)
+            getAllActivities(workoutId: workoutId)
         } catch {
             print("Error updating indices: \(error.localizedDescription)")
+        }
+    }
+    
+    func addEmptyActivitySet(workoutId: String, activity: DBActivity) {
+        Task {
+            try await dataService.addEmptyActivitySet(workoutId: workoutId, activity: activity)
+        }
+    }
+    
+    func addActivitySet(workoutId: String, activityId: String, set: [String:Any]) async throws {
+        try await dataService.addActivitySet(workoutId: workoutId, activityId: activityId, set: set)
+    }
+    
+    func removeActivitySet(workoutId: String, activityId: String, set: [String:Any]) {
+        Task {
+            try await dataService.removeActivitySet(workoutId: workoutId, activityId: activityId, set: set)
         }
     }
 }

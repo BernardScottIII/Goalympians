@@ -35,36 +35,41 @@ struct ActivityView: View {
                     Section {
                         HStack {
                             Text(entry.exercise.name)
-                                .truncationMode(.tail)
-                                .lineLimit(1)
                             
                             Spacer()
                             
                             Button("", systemImage: "plus") {
-                                viewModel.addActivitySet(workoutId: workoutId, activityId: entry.workoutActivity.id)
-                                viewModel.updatedActivityId = entry.workoutActivity.id
+                                if viewModel.activities.count < 10 {
+                                    viewModel.addEmptyActivitySet(workoutId: workoutId, activity: entry.workoutActivity)
+                                    viewModel.getAllActivities(workoutId: workoutId)
+                                }
                             }
-                            
-                            Button("", systemImage: "trash") {
-                                viewModel.removeFromWorkout(workoutId: workoutId, activityId: entry.workoutActivity.id)
-                                Task {
-                                    try await viewModel.getActivities(workoutId: workoutId)
+                            Button("", systemImage: "minus") {
+                                if viewModel.activities.count > 0 {
+                                    removeActivitySet(activity: entry.workoutActivity)
+                                    viewModel.getAllActivities(workoutId: workoutId)
                                 }
                             }
                         }
+                        .buttonStyle(.plain)
                         
-                        ActivitySetView(workoutDataService: workoutDataService, workoutId: workoutId, activityId: entry.workoutActivity.id)
-                            .environmentObject(viewModel)
+                        ActivitySetsView(
+                            viewModel: viewModel,
+                            workoutId: workoutId,
+                            activity: viewModel.binding(for: entry.workoutActivity.id)!
+                        )
                     }
-                    .buttonStyle(.plain)
                 }
             }
         }
         .onAppear {
-            Task {
-                try await viewModel.getActivities(workoutId: workoutId)
-            }
+            viewModel.getAllActivities(workoutId: workoutId)
         }
+    }
+    
+    private func removeActivitySet(activity: DBActivity) {
+        guard let lastSet = activity.activitySets.last else { return }
+        viewModel.removeActivitySet(workoutId: workoutId, activityId: activity.id, set: lastSet)
     }
 }
 

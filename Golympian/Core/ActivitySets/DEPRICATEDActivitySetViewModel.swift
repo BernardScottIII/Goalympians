@@ -7,7 +7,7 @@
 import Foundation
 
 @MainActor
-final class ActivitySetViewModel: ObservableObject {
+final class DEPRICATEDActivitySetViewModel: ObservableObject {
     @Published private(set) var sets: [(activitySet: DBActivitySet, workoutActivity: DBActivity)] = []
     let workoutDataService: WorkoutManagerProtocol
     

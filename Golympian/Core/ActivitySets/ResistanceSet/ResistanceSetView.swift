@@ -14,7 +14,7 @@ struct ResistanceSetView: View {
     let workoutId: String
     let activity: DBActivity
     let workoutDataService: WorkoutManagerProtocol
-    @ObservedObject var activitySetViewModel: ActivitySetViewModel
+    @ObservedObject var activitySetViewModel: DEPRICATEDActivitySetViewModel
     
     // Maybe I should move some of these into the ViewModel?
     @State private var weight: Double? = nil
@@ -28,7 +28,7 @@ struct ResistanceSetView: View {
         resistanceSet: DBActivitySet,
         workoutId: String,
         activity: DBActivity,
-        activitySetViewModel: ActivitySetViewModel
+        activitySetViewModel: DEPRICATEDActivitySetViewModel
     ) {
         self.workoutDataService = workoutDataService
         _viewModel = StateObject(wrappedValue: ResistanceSetViewModel(workoutDataService: workoutDataService))
@@ -85,7 +85,7 @@ private func previewFunc() {}
 #Preview {
     NavigationStack {
         Form {
-            ResistanceSetView(workoutDataService: ProdWorkoutManager(workoutCollection: Firestore.firestore().collection("workouts")), resistanceSet: DBResistanceSet(id: "iP1wvEqnL3YdoTGDlvyv", weight: 0.0, repetitions: 0), workoutId: "49F6D3AB-C3A6-4B9C-84DF-ECF5E4ECEC3D", activity: DBActivity(id: "GzTwAOOgE40xBv6bFZ9Z", exerciseId: UUID().uuidString, setType: .resistanceSet, workoutIndex: 0), activitySetViewModel: ActivitySetViewModel(workoutDataService: ProdWorkoutManager(workoutCollection: Firestore.firestore().collection("workouts"))))
+            ResistanceSetView(workoutDataService: ProdWorkoutManager(workoutCollection: Firestore.firestore().collection("workouts")), resistanceSet: DBResistanceSet(id: "iP1wvEqnL3YdoTGDlvyv", weight: 0.0, repetitions: 0), workoutId: "49F6D3AB-C3A6-4B9C-84DF-ECF5E4ECEC3D", activity: DBActivity(id: "GzTwAOOgE40xBv6bFZ9Z", exerciseId: UUID().uuidString, setType: .resistanceSet, workoutIndex: 0, activitySets: []), activitySetViewModel: DEPRICATEDActivitySetViewModel(workoutDataService: ProdWorkoutManager(workoutCollection: Firestore.firestore().collection("workouts"))))
         }
     }
 }

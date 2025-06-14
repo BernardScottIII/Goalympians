@@ -18,14 +18,14 @@ struct RunSetView: View {
     let activity: DBActivity
     let runSet: DBActivitySet
     let workoutDataService: WorkoutManagerProtocol
-    @ObservedObject var activitySetViewModel: ActivitySetViewModel
+    @ObservedObject var activitySetViewModel: DEPRICATEDActivitySetViewModel
     
     init(
         workoutId: String,
         activity: DBActivity,
         runSet: DBActivitySet,
         workoutDataService: WorkoutManagerProtocol,
-        activitySetViewModel: ActivitySetViewModel
+        activitySetViewModel: DEPRICATEDActivitySetViewModel
     ) {
         self.workoutId = workoutId
         self.activity = activity
@@ -75,7 +75,8 @@ struct RunSetView: View {
                     id: UUID().uuidString,
                     exerciseId: UUID().uuidString,
                     setType: .runSet,
-                    workoutIndex: -1
+                    workoutIndex: -1,
+                    activitySets: []
                 ),
                 runSet: DBRunSet(
                     id: UUID().uuidString,
@@ -84,7 +85,7 @@ struct RunSetView: View {
                     duration: 0.0
                 ),
                 workoutDataService: workoutDataService,
-                activitySetViewModel: ActivitySetViewModel(
+                activitySetViewModel: DEPRICATEDActivitySetViewModel(
                     workoutDataService: workoutDataService
                 )
             )

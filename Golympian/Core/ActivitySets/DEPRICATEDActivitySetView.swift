@@ -8,9 +8,9 @@
 import SwiftUI
 import FirebaseFirestore
 
-struct ActivitySetView: View {
+struct DEPRICATEDActivitySetView: View {
     
-    @StateObject private var viewModel: ActivitySetViewModel
+    @StateObject private var viewModel: DEPRICATEDActivitySetViewModel
     @EnvironmentObject private var activityViewModel: ActivityViewModel
     
     let workoutDataService: WorkoutManagerProtocol
@@ -22,7 +22,7 @@ struct ActivitySetView: View {
         workoutId: String,
         activityId: String
     ) {
-        _viewModel = StateObject(wrappedValue: ActivitySetViewModel(workoutDataService: workoutDataService))
+        _viewModel = StateObject(wrappedValue: DEPRICATEDActivitySetViewModel(workoutDataService: workoutDataService))
         self.workoutId = workoutId
         self.activityId = activityId
         self.workoutDataService = workoutDataService
@@ -66,11 +66,11 @@ struct ActivitySetView: View {
         .onAppear {
             viewModel.getActivitySets(workoutId: workoutId, activityId: activityId)
         }
-        .onChange(of: activityViewModel.updatedActivityId) { oldValue, newValue in
-            if newValue == activityId {
-                viewModel.getActivitySets(workoutId: workoutId, activityId: activityId)
-            }
-        }
+//        .onChange(of: activityViewModel.updatedActivityId) { oldValue, newValue in
+//            if newValue == activityId {
+//                viewModel.getActivitySets(workoutId: workoutId, activityId: activityId)
+//            }
+//        }
     }
 }
 
@@ -78,7 +78,7 @@ struct ActivitySetView: View {
     @Previewable var workoutCollection = Firestore.firestore().collection("workouts")
     NavigationStack {
         Form {
-            ActivitySetView(workoutDataService: ProdWorkoutManager(workoutCollection: workoutCollection), workoutId: "49F6D3AB-C3A6-4B9C-84DF-ECF5E4ECEC3D", activityId: "GzTwAOOgE40xBv6bFZ9Z")
+            DEPRICATEDActivitySetView(workoutDataService: ProdWorkoutManager(workoutCollection: workoutCollection), workoutId: "49F6D3AB-C3A6-4B9C-84DF-ECF5E4ECEC3D", activityId: "GzTwAOOgE40xBv6bFZ9Z")
         }
     }
 }

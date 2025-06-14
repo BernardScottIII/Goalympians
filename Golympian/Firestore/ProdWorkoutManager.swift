@@ -78,13 +78,36 @@ extension ProdWorkoutManager {
         let exerciseCount = workoutActivityCollection(workoutId: workoutId).count
         let snapshot = try await exerciseCount.getAggregation(source: .server)
         
-        
+        var newSet:[String:Any] = [:]
+        switch exercise.setType {
+        case .resistanceSet:
+            newSet = [
+                "set_index": 0,
+                "weight": 0,
+                "repetitions": 0
+            ]
+        case .runSet:
+            newSet = [
+                "set_index": 0,
+                "distance": 0,
+                "elevation": 0,
+                "duration": 0
+            ]
+        case .swimSet:
+            newSet = [
+                "set_index": 0,
+                "distance": 0,
+                "laps": 0,
+                "duration": 0
+            ]
+        }
         
         let data: [String:Any] = [
             DBActivity.CodingKeys.id.rawValue: documentId,
             DBActivity.CodingKeys.exerciseId.rawValue: exercise.id!,
             DBActivity.CodingKeys.setType.rawValue: exercise.setType.rawValue,
-            DBActivity.CodingKeys.workoutIndex.rawValue: snapshot.count// 1 + the number of documents in the activities collection
+            DBActivity.CodingKeys.workoutIndex.rawValue: snapshot.count, // 1 + the number of documents in the activities collection
+            DBActivity.CodingKeys.activitySets.rawValue: [newSet]
         ]
         
         try await document.setData(data, merge: false)
@@ -106,6 +129,50 @@ extension ProdWorkoutManager {
     
     func getWorkoutActivity(workoutId: String, activityId: String) async throws -> DBActivity {
         try await workoutActivityDocument(workoutId: workoutId, activityId: activityId).getDocument(as: DBActivity.self)
+    }
+    
+    func addEmptyActivitySet(workoutId: String, activity: DBActivity) async throws {
+        var newSet:[String:Any] = [:]
+        switch activity.setType {
+        case .resistanceSet:
+            newSet = [
+                "set_index": activity.activitySets.count,
+                "weight": 0,
+                "repetitions": 0
+            ]
+        case .runSet:
+            newSet = [
+                "set_index": activity.activitySets.count,
+                "distance": 0,
+                "elevation": 0,
+                "duration": 0
+            ]
+        case .swimSet:
+            newSet = [
+                "set_index": activity.activitySets.count,
+                "distance": 0,
+                "laps": 0,
+                "duration": 0
+            ]
+        }
+        
+        try await addActivitySet(workoutId: workoutId, activityId: activity.id, set: newSet)
+    }
+    
+    func addActivitySet(workoutId: String, activityId: String, set: [String:Any]) async throws {
+        let data: [String:Any] = [
+            DBActivity.CodingKeys.activitySets.rawValue : FieldValue.arrayUnion([set])
+        ]
+        
+        try await workoutActivityDocument(workoutId: workoutId, activityId: activityId).updateData(data)
+    }
+    
+    func removeActivitySet(workoutId: String, activityId: String, set: [String:Any]) async throws {
+        let data: [String:Any] = [
+            DBActivity.CodingKeys.activitySets.rawValue : FieldValue.arrayRemove([set])
+        ]
+        
+        try await workoutActivityDocument(workoutId: workoutId, activityId: activityId).updateData(data)
     }
 }
 

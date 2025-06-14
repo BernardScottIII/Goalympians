@@ -19,14 +19,14 @@ struct SwimSetView: View {
     let activity: DBActivity
     let swimSet: DBActivitySet
     let workoutDataService: WorkoutManagerProtocol
-    @ObservedObject var activitySetViewModel: ActivitySetViewModel
+    @ObservedObject var activitySetViewModel: DEPRICATEDActivitySetViewModel
     
     init(
         workoutId: String,
         activity: DBActivity,
         swimSet: DBActivitySet,
         workoutDataService: WorkoutManagerProtocol,
-        activitySetViewModel: ActivitySetViewModel
+        activitySetViewModel: DEPRICATEDActivitySetViewModel
     ) {
         _viewModel = StateObject(wrappedValue: SwimSetViewModel(workoutDataService: workoutDataService))
         self.workoutId = workoutId
@@ -76,7 +76,8 @@ struct SwimSetView: View {
                     id: UUID().uuidString,
                     exerciseId: UUID().uuidString,
                     setType: .swimSet,
-                    workoutIndex: -1
+                    workoutIndex: -1,
+                    activitySets: []
                 ),
                 swimSet: DBSwimSet(
                     id: UUID().uuidString,
@@ -85,7 +86,7 @@ struct SwimSetView: View {
                     duration: 0.0
                 ),
                 workoutDataService: workoutDataService,
-                activitySetViewModel: ActivitySetViewModel(
+                activitySetViewModel: DEPRICATEDActivitySetViewModel(
                     workoutDataService: workoutDataService
                 )
             )

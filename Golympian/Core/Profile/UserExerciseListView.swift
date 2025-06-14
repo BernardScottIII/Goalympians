@@ -96,7 +96,7 @@ struct UserExerciseListView: View {
         Task {
             try await workoutViewModel.getAllWorkouts()
             for workout in workoutViewModel.workouts {
-                try await activityViewModel.getActivities(workoutId: workout.id)
+                try await activityViewModel.getAllActivities(workoutId: workout.id)
                 for activity in activityViewModel.activities {
                     if activity.exercise.id! == removalCandidateExercise.id {
                         activityViewModel.removeFromWorkout(workoutId: workout.id, activityId: activity.workoutActivity.id)

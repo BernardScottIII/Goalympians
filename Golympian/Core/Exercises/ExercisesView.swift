@@ -52,6 +52,7 @@ struct ExercisesView: View {
                     Button("", systemImage: "plus") {
                         if !activityViewModel.activities.contains(where: {$0.exercise.id == exercise.id}) {
                             viewModel.addWorkoutActivity(workoutId: workoutId, exercise: exercise)
+//                            activityViewModel.addActivitySet(workoutId: workoutId, activityId: activity)
                         } else {
                             guard let index = activityViewModel.activities.firstIndex(where: {$0.exercise.id == exercise.id}) else { return }
                             activityViewModel.addActivitySet(
