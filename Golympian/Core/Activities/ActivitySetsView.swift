@@ -45,25 +45,49 @@ struct ActivitySetsView: View {
                     ))
                     .keyboardType(.decimalPad)
                 }
+                Button("", systemImage: "trash") {
+                    removeActivitySet(at: index)
+                }
             }
+            .buttonStyle(.plain)
         }
         .onChange(of: setValues) { oldValue, newValue in
-            Task {
-                try await viewModel.updateActivity(
-                    workoutId: workoutId,
-                    activity: DBActivity(
-                        id: activity.id,
-                        exerciseId: activity.exerciseId,
-                        setType: activity.setType,
-                        workoutIndex: activity.workoutIndex,
-                        activitySets: mapActivitySetValues()
-                    )
+            viewModel.updateActivity(
+                workoutId: workoutId,
+                activity: DBActivity(
+                    id: activity.id,
+                    exerciseId: activity.exerciseId,
+                    setType: activity.setType,
+                    workoutIndex: activity.workoutIndex,
+                    activitySets: mapActivitySetValues()
                 )
-            }
+            )
         }
         .onChange(of: activity.activitySetsHash) { oldValue, newValue in
             setValues = mapSetValues()
         }
+    }
+    
+    private func removeActivitySet(at index: Int) {
+        viewModel.removeActivitySet(workoutId: workoutId, activityId: activity.id, set: activity.activitySets[index])
+        var reorderedSets = activity.activitySets
+        reorderedSets.remove(at: index)
+        // There's certainly a better way to write this loop
+        for (idx, _) in reorderedSets.enumerated() {
+            print(reorderedSets[idx])
+            reorderedSets[idx]["set_index"] = idx
+        }
+        viewModel.updateActivity(
+            workoutId: workoutId,
+            activity: DBActivity(
+                id: activity.id,
+                exerciseId: activity.exerciseId,
+                setType: activity.setType,
+                workoutIndex: activity.workoutIndex,
+                activitySets: reorderedSets
+            )
+        )
+        viewModel.getAllActivities(workoutId: workoutId)
     }
     
     private func mapSetValues() -> [[String:String]] {

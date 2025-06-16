@@ -10,6 +10,9 @@ import FirebaseFirestore
 
 struct ActivityView: View {
     
+    @State private var removeActivityAlert: Bool = false
+    @State private var targetActivityId: String? = nil
+    
     @ObservedObject var viewModel: ActivityViewModel
     let workoutDataService: WorkoutManagerProtocol
     let workoutId: String
@@ -44,12 +47,16 @@ struct ActivityView: View {
                                     viewModel.getAllActivities(workoutId: workoutId)
                                 }
                             }
-                            Button("", systemImage: "minus") {
-                                if viewModel.activities.count > 0 {
-                                    removeActivitySet(activity: entry.workoutActivity)
-                                    viewModel.getAllActivities(workoutId: workoutId)
-                                }
+                            Button("", systemImage: "trash") {
+                                removeActivityAlert = true
+                                targetActivityId = entry.workoutActivity.id
                             }
+//                            Button("", systemImage: "minus") {
+//                                if viewModel.activities.count > 0 {
+//                                    removeActivitySet(activity: entry.workoutActivity)
+//                                    viewModel.getAllActivities(workoutId: workoutId)
+//                                }
+//                            }
                         }
                         .buttonStyle(.plain)
                         
@@ -64,6 +71,16 @@ struct ActivityView: View {
         }
         .onAppear {
             viewModel.getAllActivities(workoutId: workoutId)
+        }
+        .alert("Remove Exercise?", isPresented: $removeActivityAlert) {
+            Button("Cancel", role: .cancel) {
+                targetActivityId = nil
+            }
+            Button("Remove", role: .destructive) {
+                viewModel.removeFromWorkout(workoutId: workoutId, activityId: targetActivityId!)
+            }
+        } message: {
+            Text("Removing exercise will remove all sets recorded for exercise. Are you sure you want to continue?")
         }
     }
     

@@ -46,9 +46,6 @@ final class ActivityViewModel: ObservableObject {
     
     func removeFromWorkout(workoutId: String, activityId: String) {
         Task {
-            for activitySet in try await dataService.getAllActivitySets(workoutId: workoutId, activityId: activityId) {
-                try await dataService.removeWorkoutActivitySet(workoutId: workoutId, activityId: activityId, activitySetId: activitySet.id)
-            }
             try await dataService.removeWorkoutActivity(workoutId: workoutId, activityId: activityId)
             getAllActivities(workoutId: workoutId)
         }
@@ -60,8 +57,10 @@ final class ActivityViewModel: ObservableObject {
         }
     }
     
-    func updateActivity(workoutId: String, activity: DBActivity) async throws {
-        try await dataService.updateWorkoutActivity(workoutId: workoutId, activity: activity)
+    func updateActivity(workoutId: String, activity: DBActivity) {
+        Task {
+            try await dataService.updateWorkoutActivity(workoutId: workoutId, activity: activity)
+        }
     }
     
     func moveActivity(workoutId: String, fromOffsets source: IndexSet, toOffset destination: Int) async throws {

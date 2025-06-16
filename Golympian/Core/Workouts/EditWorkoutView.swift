@@ -54,6 +54,9 @@ struct EditWorkoutView: View {
                         userId,
                         "global"
                     ])
+                    .onDisappear {
+                        activityViewModel.getAllActivities(workoutId: workout.id)
+                    }
                 }
             }
         }
