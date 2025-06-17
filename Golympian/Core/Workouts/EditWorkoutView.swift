@@ -42,6 +42,7 @@ struct EditWorkoutView: View {
         .navigationTitle("Edit Workout")
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(true)
+        .scrollDismissesKeyboard(.immediately)
         .toolbar {
             ToolbarItem(placement: .topBarLeading) {
                 NavigationLink("Reorder") {

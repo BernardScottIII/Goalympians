@@ -67,10 +67,8 @@ struct UserExerciseListView: View {
             .deleteDisabled(!self.editMode.isEditing)
         }
         .searchable(text: $searchText)
-        .onAppear {
-            Task {
-                try await viewModel.userIdsSelected(userIds: [userId])
-            }
+        .task {
+            try? await viewModel.userIdsSelected(userIds: [userId])
         }
         .alert(
             "Remove Custom Exercise",

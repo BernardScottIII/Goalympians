@@ -78,10 +78,8 @@ struct ExercisesView: View {
         }
         .navigationTitle(navigationTitle)
         .searchable(text: $searchText)
-        .onAppear {
-            Task {
-                try await viewModel.userIdsSelected(userIds: userIds)
-            }
+        .task {
+            try? await viewModel.userIdsSelected(userIds: userIds)
         }
         .withExercisesToolbar(viewModel: viewModel)
         

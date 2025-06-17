@@ -51,12 +51,6 @@ struct ActivityView: View {
                                 removeActivityAlert = true
                                 targetActivityId = entry.workoutActivity.id
                             }
-//                            Button("", systemImage: "minus") {
-//                                if viewModel.activities.count > 0 {
-//                                    removeActivitySet(activity: entry.workoutActivity)
-//                                    viewModel.getAllActivities(workoutId: workoutId)
-//                                }
-//                            }
                         }
                         .buttonStyle(.plain)
                         
