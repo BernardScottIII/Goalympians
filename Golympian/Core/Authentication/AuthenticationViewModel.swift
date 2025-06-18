@@ -13,8 +13,16 @@ final class AuthenticationViewModel: ObservableObject {
         let helper = SignInGoogleHelper()
         let tokens = try await helper.signIn()
         let authDataResult = try await AuthenticationManager.shared.signInWithGoogle(tokens: tokens)
-        let user = DBUser(auth: authDataResult)
-        try await UserManager.shared.createNewUser(user: user)
+        
+        // If google user already exists, don't create new user
+        // User creation will re-run profile initialization code and cause
+        // unexpected behavior.
+        do {
+            _ = try await UserManager.shared.getUser(userId: authDataResult.uid)
+        } catch {
+            let user = DBUser(auth: authDataResult)
+            try await UserManager.shared.createNewUser(user: user)
+        }
     }
     
     func signInAnonymous() async throws {

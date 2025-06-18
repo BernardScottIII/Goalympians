@@ -71,22 +71,6 @@ final class UserManager {
         userCollection.document(userId)
     }
     
-    private func userInsightCollection(userId: String) -> CollectionReference {
-        userDocument(userId: userId).collection("insights")
-    }
-    
-    private func userInsightDocument(userId: String, insightId: String) -> DocumentReference {
-        userInsightCollection(userId: userId).document(insightId)
-    }
-    
-    private func preloadUserInsights(userId: String) async throws {
-        try await addUserInsight(
-            userId: userId,
-            insightName: "workout_count",
-            insightData: ["count":0])
-//        try await addUserInsight(userId: userId, insightName: <#T##String#>, insightData: <#T##[String : Any]#>)
-    }
-    
     func createNewUser(user: DBUser) async throws {
         try userDocument(userId: user.userId).setData(from: user, merge: false)
         
@@ -103,6 +87,24 @@ final class UserManager {
         ]
         
         try await userDocument(userId: userId).updateData(data)
+    }
+}
+
+// MARK: Insights
+extension UserManager {
+    private func userInsightCollection(userId: String) -> CollectionReference {
+        userDocument(userId: userId).collection("insights")
+    }
+    
+    private func userInsightDocument(userId: String, insightId: String) -> DocumentReference {
+        userInsightCollection(userId: userId).document(insightId)
+    }
+    
+    private func preloadUserInsights(userId: String) async throws {
+        try await addUserInsight(
+            userId: userId,
+            insightName: "workout_count",
+            insightData: ["count":0])
     }
     
     func addUserInsight(userId: String, insightName: String, insightData: [String:Any]) async throws {

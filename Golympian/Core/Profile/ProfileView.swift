@@ -40,9 +40,15 @@ struct ProfileView: View {
         }
         .onAppear {
             Task {
-                self.userId = try AuthenticationManager.shared.getAuthenticatedUser().uid
+                userId = try AuthenticationManager.shared.getAuthenticatedUser().uid
             }
         }
+        .onChange(of: showSignInView, { oldValue, newValue in
+            Task {
+                try? await viewModel.loadCurrentUser()
+                userId = try AuthenticationManager.shared.getAuthenticatedUser().uid
+            }
+        })
         .navigationTitle("Profile")
         .navigationDestination(for: String.self) { _ in
             UserExerciseListView(

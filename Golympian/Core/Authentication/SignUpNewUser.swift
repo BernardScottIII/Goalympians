@@ -1,40 +1,49 @@
 //
-//  SignInEmailView.swift
-//  Goalympians
+//  SignUpNewUser.swift
+//  Golympian
 //
-//  Created by Bernard Scott on 3/10/25.
+//  Created by Bernard Scott on 6/18/25.
 //
 
 import SwiftUI
+import GoogleSignIn
+import GoogleSignInSwift
 
-struct SignInEmailView: View {
-    @StateObject private var viewModel = SignInEmailViewModel()
+struct SignUpNewUser: View {
+    
+    @ObservedObject var emailViewModel = SignInEmailViewModel()
+    @ObservedObject var authenticationViewModel = AuthenticationViewModel()
     @Binding var showSignInView: Bool
     
     var body: some View {
         VStack {
-            TextField("Email", text: $viewModel.email)
+            TextField("Email", text: $emailViewModel.email)
                 .padding()
                 .background(Color.gray.opacity(0.4))
                 .clipShape(.buttonBorder)
             
-            SecureField("Password", text: $viewModel.password)
+            SecureField("Password", text: $emailViewModel.password)
                 .padding()
                 .background(Color.gray.opacity(0.4))
                 .clipShape(.buttonBorder)
+            
+            GoogleSignInButton(viewModel: GoogleSignInButtonViewModel(scheme: .dark, style: .wide, state: .normal)) {
+                Task {
+                    do {
+                        try await authenticationViewModel.signInGoogle()
+                        showSignInView = false
+                    } catch {
+                        print(error)
+                    }
+                }
+            }
+            
+            Spacer()
             
             Button {
                 Task {
                     do {
-                        try await viewModel.signUp()
-                        showSignInView = false
-                        return
-                    } catch {
-                        print(error)
-                    }
-                    
-                    do {
-                        try await viewModel.signIn()
+                        try await emailViewModel.signUp()
                         showSignInView = false
                         return
                     } catch {
@@ -42,7 +51,7 @@ struct SignInEmailView: View {
                     }
                 }
             } label: {
-                Text("Sign in")
+                Text("Finish Creating Account")
                     .font(.headline)
                     .foregroundStyle(Color.white)
                     .frame(height: 55)
@@ -50,15 +59,14 @@ struct SignInEmailView: View {
                     .background(Color.blue)
                     .clipShape(.buttonBorder)
             }
-            Spacer()
         }
         .padding()
-        .navigationTitle("Sign in with email")
+        .navigationTitle("Create New Account")
     }
 }
 
 #Preview {
     NavigationStack {
-        SignInEmailView(showSignInView: .constant(false))
+        SignUpNewUser(showSignInView: .constant(false))
     }
 }
