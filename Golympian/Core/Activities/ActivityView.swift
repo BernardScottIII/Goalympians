@@ -60,6 +60,7 @@ struct ActivityView: View {
                             activity: viewModel.binding(for: entry.workoutActivity.id)!
                         )
                     }
+                    .id(entry.workoutActivity.workoutIndex)
                 }
             }
         }

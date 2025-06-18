@@ -12,6 +12,7 @@ struct EditWorkoutView: View {
     @Environment(\.dismiss) private var dismiss
     @StateObject private var activityViewModel: ActivityViewModel
     @State private var userId: String = ""
+    @State private var scrollTargetActivity: Int? = nil
     
     @Binding var workout: DBWorkout
     var workoutDataService: WorkoutManagerProtocol
@@ -27,16 +28,27 @@ struct EditWorkoutView: View {
     
     var body: some View {
         VStack{
-            Form {
-                TextField("name", text: $workout.name)
-                    .textInputAutocapitalization(.words)
-                
-                TextField("desc", text: $workout.description, axis: .vertical)
-                    .textInputAutocapitalization(.sentences)
-                
-                DatePicker("date", selection: $workout.date)
-                
-                ActivityView(viewModel: activityViewModel, workoutDataService: workoutDataService, workoutId: workout.id)
+            ScrollViewReader { value in
+                Form {
+                    TextField("name", text: $workout.name)
+                        .textInputAutocapitalization(.words)
+                    
+                    TextField("desc", text: $workout.description, axis: .vertical)
+                        .textInputAutocapitalization(.sentences)
+                    
+                    DatePicker("date", selection: $workout.date)
+                    
+                    ActivityView(viewModel: activityViewModel, workoutDataService: workoutDataService, workoutId: workout.id)
+                }
+                .onAppear {
+                    if scrollTargetActivity != nil {
+                        withAnimation {
+                            value.scrollTo(scrollTargetActivity, anchor: .top)
+                        }
+                        
+                        scrollTargetActivity = nil
+                    }
+                }
             }
         }
         .navigationTitle("Edit Workout")
@@ -51,10 +63,13 @@ struct EditWorkoutView: View {
             }
             ToolbarItem(placement: .topBarTrailing){
                 NavigationLink("Add Exercise") {
-                    ExercisesView(activityViewModel: activityViewModel, workoutDataService: workoutDataService, workoutId: workout.id, userIds: [
-                        userId,
-                        "global"
-                    ])
+                    ExercisesView(
+                        activityViewModel: activityViewModel,
+                        workoutDataService: workoutDataService,
+                        workoutId: workout.id,
+                        userIds: [userId, "global"],
+                        scrollTargetActivity: $scrollTargetActivity
+                    )
                     .onDisappear {
                         activityViewModel.getAllActivities(workoutId: workout.id)
                     }

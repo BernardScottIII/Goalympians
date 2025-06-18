@@ -18,6 +18,7 @@ struct ExercisesView: View {
     
     @ObservedObject var activityViewModel: ActivityViewModel
     @State var navigationTitle: String
+    @Binding var scrollTargetActivity: Int?
     let workoutDataService: WorkoutManagerProtocol
     let workoutId: String
     let userIds: [String]
@@ -27,7 +28,8 @@ struct ExercisesView: View {
         workoutDataService: WorkoutManagerProtocol,
         workoutId: String,
         userIds: [String],
-        navigationTitle: String = "Exercises"
+        navigationTitle: String = "Exercises",
+        scrollTargetActivity: Binding<Int?> = .constant(nil)
     ) {
         _viewModel = StateObject(wrappedValue: ExercisesViewModel(dataService: workoutDataService))
         self.activityViewModel = activityViewModel
@@ -35,6 +37,7 @@ struct ExercisesView: View {
         self.workoutId = workoutId
         self.userIds = userIds
         self.navigationTitle = navigationTitle
+        self._scrollTargetActivity = scrollTargetActivity
     }
     
     var body: some View {
@@ -54,11 +57,13 @@ struct ExercisesView: View {
                             viewModel.addWorkoutActivity(workoutId: workoutId, exercise: exercise)
                         } else {
                             guard let index = activityViewModel.activities.firstIndex(where: {$0.exercise.id == exercise.id}) else { return }
-                            activityViewModel.addActivitySet(
+                            activityViewModel.addEmptyActivitySet(
                                 workoutId: workoutId,
-                                activityId: activityViewModel.activities[index].workoutActivity.id
+                                activity: activityViewModel.activities[index].workoutActivity
                             )
+                            scrollTargetActivity = index
                         }
+                        activityViewModel.getAllActivities(workoutId: workoutId)
                         dismiss()
                     }
                     
