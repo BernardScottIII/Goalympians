@@ -63,7 +63,6 @@ struct ExercisesView: View {
                             )
                             scrollTargetActivity = index
                         }
-                        activityViewModel.getAllActivities(workoutId: workoutId)
                         dismiss()
                     }
                     

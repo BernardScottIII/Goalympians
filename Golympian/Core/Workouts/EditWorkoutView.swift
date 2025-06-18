@@ -56,13 +56,15 @@ struct EditWorkoutView: View {
         .navigationBarBackButtonHidden(true)
         .scrollDismissesKeyboard(.immediately)
         .toolbar {
-            ToolbarItem(placement: .topBarLeading) {
-                NavigationLink("Reorder") {
+            ToolbarItem(placement: .topBarTrailing) {
+                NavigationLink {
                     WorkoutActivityOrderView(activityViewModel: activityViewModel, workoutId: workout.id)
+                } label: {
+                    Image(systemName: "arrow.up.and.line.horizontal.and.arrow.down")
                 }
             }
             ToolbarItem(placement: .topBarTrailing){
-                NavigationLink("Add Exercise") {
+                NavigationLink {
                     ExercisesView(
                         activityViewModel: activityViewModel,
                         workoutDataService: workoutDataService,
@@ -73,7 +75,13 @@ struct EditWorkoutView: View {
                     .onDisappear {
                         activityViewModel.getAllActivities(workoutId: workout.id)
                     }
+                } label: {
+                    Image("custom.dumbbell.badge.plus")
+                    
                 }
+            }
+            ToolbarItem(placement: .topBarLeading) {
+                Button("Save Changes", action: saveWorkout)
             }
         }
         .onAppear {
@@ -82,7 +90,7 @@ struct EditWorkoutView: View {
             }
         }
         
-        BottomActionButton(label: "Save Changes", action: saveWorkout)
+//        BottomActionButton(label: "Save Changes", action: saveWorkout)
     }
     
     private func saveWorkout() {
