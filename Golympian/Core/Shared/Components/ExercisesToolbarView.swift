@@ -17,9 +17,16 @@ struct ExercisesToolbarViewModifier: ViewModifier {
                 ToolbarItem(placement: .topBarTrailing) {
                     Menu("Filter: \(viewModel.selectedFilter?.rawValue ?? "NONE")", systemImage: "arrow.up.arrow.down") {
                         ForEach(FilterOption.allCases, id: \.self) { option in
-                            Button(option.prettyString) {
+                            Button {
                                 Task {
                                     try? await viewModel.filterSelectedOption(option: option)
+                                }
+                            } label: {
+                                HStack {
+                                    if viewModel.selectedFilter == option {
+                                        Image(systemName: "checkmark")
+                                    }
+                                    Text(option.prettyString)
                                 }
                             }
                         }
@@ -28,9 +35,16 @@ struct ExercisesToolbarViewModifier: ViewModifier {
                 ToolbarItem(placement: .topBarTrailing) {
                     Menu("Category: \(viewModel.selectedCategory?.rawValue ?? "NONE")", systemImage: "figure.strengthtraining.traditional") {
                         ForEach(CategoryOption.allCases, id: \.self) { option in
-                            Button(option.prettyString) {
+                            Button {
                                 Task {
                                     try? await viewModel.categorySelected(category: option)
+                                }
+                            } label: {
+                                HStack {
+                                    if viewModel.selectedCategory == option {
+                                        Image(systemName: "checkmark")
+                                    }
+                                    Text(option.prettyString)
                                 }
                             }
                         }
@@ -39,9 +53,16 @@ struct ExercisesToolbarViewModifier: ViewModifier {
                 ToolbarItem(placement: .topBarTrailing) {
                     Menu("Equipment: \(viewModel.selectedEquipment?.rawValue ?? "NONE")", systemImage: "dumbbell.fill") {
                         ForEach(EquipmentOption.allCases, id: \.self) { option in
-                            Button(option.prettyString) {
+                            Button {
                                 Task {
                                     try? await viewModel.filterEquipmentOption(equipment: option)
+                                }
+                            } label: {
+                                HStack {
+                                    if viewModel.selectedEquipment == option {
+                                        Image(systemName: "checkmark")
+                                    }
+                                    Text(option.prettyString)
                                 }
                             }
                         }

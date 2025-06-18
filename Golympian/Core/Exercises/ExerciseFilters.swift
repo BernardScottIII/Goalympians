@@ -70,7 +70,7 @@ enum EquipmentOption: String, Codable, CaseIterable {
         case .weighted: return "Weighted"
         case .wheelRoller: return "Wheel Roller"
         case .customEquipment: return "Special/Custom Equipment"
-        case .noEquipment: return "No Equipment"
+        case .noEquipment: return "All Equipment"
         }
     }
 }

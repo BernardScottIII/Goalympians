@@ -12,9 +12,9 @@ import FirebaseFirestore
 final class ExercisesViewModel: ObservableObject {
     
     @Published private(set) var exercises: [APIExercise] = []
-    @Published var selectedFilter: FilterOption? = nil
-    @Published var selectedCategory: CategoryOption? = nil
-    @Published var selectedEquipment: EquipmentOption? = nil
+    @Published var selectedFilter: FilterOption? = .noFilter
+    @Published var selectedCategory: CategoryOption? = .noCategory
+    @Published var selectedEquipment: EquipmentOption? = .noEquipment
     @Published var userIds: [String]? = nil
     
     let dataService: WorkoutManagerProtocol
