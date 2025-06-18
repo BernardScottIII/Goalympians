@@ -79,27 +79,9 @@ extension ProdWorkoutManager {
         let snapshot = try await exerciseCount.getAggregation(source: .server)
         
         var newSet:[String:Any] = [:]
-        switch exercise.setType {
-        case .resistanceSet:
-            newSet = [
-                "set_index": 0,
-                "weight": 0,
-                "repetitions": 0
-            ]
-        case .runSet:
-            newSet = [
-                "set_index": 0,
-                "distance": 0,
-                "elevation": 0,
-                "duration": 0
-            ]
-        case .swimSet:
-            newSet = [
-                "set_index": 0,
-                "distance": 0,
-                "laps": 0,
-                "duration": 0
-            ]
+        newSet["set_index"] = 0
+        for key in exercise.setType.keys {
+            newSet[key] = ""
         }
         
         let data: [String:Any] = [
@@ -133,27 +115,9 @@ extension ProdWorkoutManager {
     
     func addEmptyActivitySet(workoutId: String, activity: DBActivity) async throws {
         var newSet:[String:Any] = [:]
-        switch activity.setType {
-        case .resistanceSet:
-            newSet = [
-                "set_index": activity.activitySets.count,
-                "weight": 0,
-                "repetitions": 0
-            ]
-        case .runSet:
-            newSet = [
-                "set_index": activity.activitySets.count,
-                "distance": 0,
-                "elevation": 0,
-                "duration": 0
-            ]
-        case .swimSet:
-            newSet = [
-                "set_index": activity.activitySets.count,
-                "distance": 0,
-                "laps": 0,
-                "duration": 0
-            ]
+        newSet["set_index"] = activity.activitySets.count
+        for key in activity.setType.keys {
+            newSet[key] = ""
         }
         
         try await addActivitySet(workoutId: workoutId, activityId: activity.id, set: newSet)

@@ -31,9 +31,6 @@ struct ActivitySetsView: View {
     }
     
     var body: some View {
-//        let myType = SetType.resistanceSet
-//        let myImage = myType.keySymbols["weight"]
-//        Image(systemName: myImage)
         ForEach(activity.activitySets.indices, id: \.self) { index in
             HStack {
                 ForEach(activity.setType.keys, id: \.self) {key in
@@ -120,7 +117,7 @@ struct ActivitySetsView: View {
                 } else if let intValue = Int(set[key]!) {
                     tempDict[key] = intValue
                 } else {
-                    tempDict[key] = "Error Decoding Type"
+                    tempDict[key] = ""
                 }
             }
             result.append(tempDict)
