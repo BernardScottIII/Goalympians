@@ -138,6 +138,25 @@ enum SetType: String, Codable, CaseIterable {
         case .swimSet: return ["distance", "laps", "duration"]
         }
     }
+    
+    var keySymbols: [String:String] {
+        switch self {
+        case .resistanceSet: return [
+            "weight": "scalemass.fill",
+            "repetitions": "pencil.and.list.clipboard"
+        ]
+        case .runSet: return [
+            "distance": "point.bottomleft.forward.to.arrow.triangle.scurvepath.fill",
+            "elevation": "barometer",
+            "duration": "stopwatch.fill"
+        ]
+        case .swimSet: return [
+            "distance": "point.bottomleft.forward.to.arrow.triangle.scurvepath.fill",
+            "laps": "point.forward.to.point.capsulepath",
+            "duration": "stopwatch.fill"
+        ]
+        }
+    }
 }
 
 struct DBActivityList: Codable {

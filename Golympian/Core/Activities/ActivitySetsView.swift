@@ -31,11 +31,14 @@ struct ActivitySetsView: View {
     }
     
     var body: some View {
+//        let myType = SetType.resistanceSet
+//        let myImage = myType.keySymbols["weight"]
+//        Image(systemName: myImage)
         ForEach(activity.activitySets.indices, id: \.self) { index in
             HStack {
                 ForEach(activity.setType.keys, id: \.self) {key in
-                    Text(key)
-                    TextField("value", text: Binding(
+                    Image(systemName: activity.setType.keySymbols[key]!)
+                    TextField(key, text: Binding(
                         get: {
                             setValues[index][key] ?? ""
                         },
