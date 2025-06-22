@@ -34,7 +34,8 @@ struct TabbarView: View {
         TabView(selection: $selectedTab) {
             Tab("Workouts", systemImage: "dumbbell", value: .workouts) {
                 NavigationStack(path: $workoutNavigationPath) {
-                    WorkoutView(workoutDataService: workoutDataService)
+//                    WorkoutsView(workoutDataService: workoutDataService)
+                    UserWorkoutsView(workoutDataService: workoutDataService)
                 }
             }
             

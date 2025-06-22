@@ -48,6 +48,13 @@ const admin = __importStar(require("firebase-admin"));
 const firestore_1 = require("firebase-admin/firestore");
 admin.initializeApp();
 const db = admin.firestore();
+function currentAndNextMonthStart(date) {
+    const currentYear = date.getUTCFullYear();
+    const currentMonth = date.getUTCMonth();
+    const currentMonthStart = new Date(Date.UTC(currentYear, currentMonth, 1));
+    const nextMonthStart = new Date(Date.UTC(currentYear, currentMonth + 1, 1));
+    return { currentMonthStart, nextMonthStart };
+}
 exports.updateWorkoutCount = v2.firestore
     .onDocumentCreated("/workouts/{id}", async (event) => {
     try {
@@ -56,20 +63,27 @@ exports.updateWorkoutCount = v2.firestore
         if (!snapshot)
             return;
         const newWorkout = snapshot.data();
-        // Navigate to users/{user_id}/insights/
-        //  where {insight_id}.name == workout_count
-        const insightSnapshot = await db.collection(`users/${newWorkout.userId}/insights`)
-            .where("name", "==", "workout_count")
+        // Conversion of Firestore Timestamp to JS Date
+        const date = newWorkout.date.toDate();
+        // Define the specific month whose data we're interested in updating
+        const { currentMonthStart, nextMonthStart } = currentAndNextMonthStart(date);
+        const startCurrentMonth = firestore_1.Timestamp.fromDate(currentMonthStart);
+        const startNextMonth = firestore_1.Timestamp.fromDate(nextMonthStart);
+        // Navigate to users/{user_id}/workout_insights
+        //  where {workout_insight_id}.date.month == newWorkout.date.month
+        const insightSnapshot = await db.collection(`users/${newWorkout.userId}/workout_insights`)
+            .where("date", ">=", startCurrentMonth)
+            .where("date", "<", startNextMonth)
             .get();
         if (insightSnapshot.empty) {
             console.log("No matching documents");
             return;
         }
         const updatePromises = [];
-        // data.count += 1
+        // data.workout_count += 1
         insightSnapshot.forEach((doc) => {
             const updatePromise = doc.ref.update({
-                "data.count": firestore_1.FieldValue.increment(1),
+                "workout_count": firestore_1.FieldValue.increment(1),
             });
             updatePromises.push(updatePromise);
         });

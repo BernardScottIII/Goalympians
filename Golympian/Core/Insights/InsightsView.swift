@@ -9,24 +9,6 @@ import SwiftUI
 import Charts
 import FirebaseFirestore
 
-@MainActor
-final class InsightsViewModel: ObservableObject {
-    @Published private(set) var exercises: [APIExercise] = []
-    @Published private(set) var insights: [Insight] = []
-    
-    func getInsights() async throws {
-        let authDataResult = try AuthenticationManager.shared.getAuthenticatedUser()
-        self.insights = try await UserManager.shared.getAllUserInsights(userId: authDataResult.uid)
-    }
-    
-    func addUserInsight(insightName: String, insightData: [String:Any]) {
-        Task {
-            let authDataResult = try AuthenticationManager.shared.getAuthenticatedUser()
-            try? await UserManager.shared.addUserInsight(userId: authDataResult.uid, insightName: insightName, insightData: insightData)
-        }
-    }
-}
-
 struct Insight: Identifiable, Codable {
     let id: String
     let name: String
@@ -71,7 +53,6 @@ struct HKInsight {
 }
 
 struct InsightsView: View {
-//    @ObservedObject var activityViewModel: ActivityViewModel
     
     @State private var currentInsight: String?
     @EnvironmentObject private var healthManager: HealthManager
@@ -87,53 +68,14 @@ struct InsightsView: View {
     
     var body: some View {
         ScrollView {
+            InsightCardView(viewModel: viewModel)
+            
             LazyVGrid(columns: Array(repeating: GridItem(spacing: 20), count: 2)){
                 ForEach(healthManager.hkInsights.sorted(by: { $0.value.id < $1.value.id }), id: \.key) { insight in
                     HKInsightCard(hkInsight: insight.value)
                 }
             }
             .padding(.horizontal)
-//            Chart {
-//                ForEach(ActivityInsight.mockData, id: \.id) { insight in
-//                    BarMark(
-//                        x: .value("Total Number of Repetitions", insight.totalRepetitionsRecorded),
-//                        y: .value("Exercise Name", insight.exerciseName)
-//                    )
-//                    .foregroundStyle(
-//                        by: .value("Exercise Type", insight.setType.rawValue)
-//                    )
-//                    .opacity(currentInsight == nil || insight.id == selectedInsight?.id ? 1.0 : 0.3)
-//                }
-//                if let selectedInsight {
-//                    RuleMark(
-//                        xStart: .value("Total Number of Repetitions", selectedInsight.totalRepetitionsRecorded),
-//                        xEnd: .value("Max Number of Repetitions", 150),
-//                        y: .value("Exercise Name", selectedInsight.exerciseName)
-//                    )
-//                    .foregroundStyle(.secondary.opacity(0.3))
-//                    .annotation(position: .overlay, overflowResolution: .init(x: .fit(to: .chart), y: .fit(to: .chart))) {
-//                        VStack {
-//                            Text(selectedInsight.exerciseName)
-//                            Text("\(selectedInsight.totalRepetitionsRecorded)")
-//                        }
-//                        .foregroundStyle(.white)
-//                        .padding(12)
-//                        .frame(width: 120)
-//                        .background(RoundedRectangle(cornerRadius: 10).fill(.purple.gradient))
-//                    }
-//                }
-//            }
-//            .frame(height: 480)
-//            .chartYSelection(value: $currentInsight.animation(.easeInOut))
-////            .chartYScale(domain: 0...50)
-//            .chartXAxisLabel("Exercise Name")
-//            .chartYAxisLabel("Total Number of Repetitions")
-//            .chartForegroundStyleScale([
-//                SetType.resistanceSet.rawValue: .blue,
-//                SetType.runSet.rawValue: .red,
-//                SetType.swimSet.rawValue: .green
-//            ])
-//            .padding()
             
             // "It works"
             // We should set up a listener so it updates in real time and doesn't require refresh
@@ -145,7 +87,6 @@ struct InsightsView: View {
                 // Why force-unwrap? Trust me bro, the key is there.
                 Text("Number of workouts created: \(Int(insight.data["count"]!))")
             }
-            
         }
         .navigationTitle("Insights Page")
         .onAppear {

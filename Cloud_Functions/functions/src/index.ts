@@ -10,7 +10,7 @@
 import * as v2 from "firebase-functions/v2";
 // import * as v1 from "firebase-functions/v1";
 import * as admin from "firebase-admin";
-import {FieldValue} from "firebase-admin/firestore";
+import {FieldValue, Timestamp} from "firebase-admin/firestore";
 
 admin.initializeApp();
 const db = admin.firestore();
@@ -20,7 +20,21 @@ type Workout = {
   userId: string;
   name: string;
   description: string;
-  date: Date;
+  date: Timestamp;
+}
+
+function currentAndNextMonthStart(date: Date): {
+  currentMonthStart: Date;
+  nextMonthStart: Date;
+} {
+  const currentYear = date.getUTCFullYear();
+  const currentMonth = date.getUTCMonth();
+
+  const currentMonthStart = new Date(Date.UTC(currentYear, currentMonth, 1));
+
+  const nextMonthStart = new Date(Date.UTC(currentYear, currentMonth+1, 1));
+
+  return { currentMonthStart, nextMonthStart };
 }
 
 export const updateWorkoutCount = v2.firestore
@@ -32,11 +46,21 @@ export const updateWorkoutCount = v2.firestore
 
       const newWorkout = snapshot.data() as Workout;
 
-      // Navigate to users/{user_id}/insights/
-      //  where {insight_id}.name == workout_count
+      // Conversion of Firestore Timestamp to JS Date
+      const date = newWorkout.date.toDate();
+
+      // Define the specific month whose data we're interested in updating
+      const { currentMonthStart, nextMonthStart } = currentAndNextMonthStart(date);
+
+      const startCurrentMonth = Timestamp.fromDate(currentMonthStart);
+      const startNextMonth = Timestamp.fromDate(nextMonthStart);
+
+      // Navigate to users/{user_id}/workout_insights
+      //  where {workout_insight_id}.date.month == newWorkout.date.month
       const insightSnapshot =
-      await db.collection(`users/${newWorkout.userId}/insights`)
-        .where("name", "==", "workout_count")
+      await db.collection(`users/${newWorkout.userId}/workout_insights`)
+        .where("date", ">=", startCurrentMonth)
+        .where("date", "<", startNextMonth)
         .get();
 
       if (insightSnapshot.empty) {
@@ -46,10 +70,10 @@ export const updateWorkoutCount = v2.firestore
 
       const updatePromises: Promise<FirebaseFirestore.WriteResult>[] = [];
 
-      // data.count += 1
+      // data.workout_count += 1
       insightSnapshot.forEach((doc) => {
         const updatePromise = doc.ref.update({
-          "data.count": FieldValue.increment(1),
+          "workout_count": FieldValue.increment(1),
         });
         updatePromises.push(updatePromise);
       });

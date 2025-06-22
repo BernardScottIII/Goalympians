@@ -15,6 +15,8 @@ struct DBUser: Codable {
     let photoURL: String?
     let dateCreated: Date?
     var usingDarkMode: Bool?
+    let streakData: [String:Int]
+    let streakValidDays: [String:Bool]
     
     init(auth: AuthDataResultModel) {
         self.userId = auth.uid
@@ -23,6 +25,19 @@ struct DBUser: Codable {
         self.photoURL = auth.photoURL
         self.dateCreated = Date()
         self.usingDarkMode = false
+        self.streakData = [
+            StreakDataKeys.streakThreshold.rawValue:3,
+            StreakDataKeys.currentStreak.rawValue:0
+        ]
+        self.streakValidDays = [
+            StreakValidDayKeys.sunday.rawValue:false,
+            StreakValidDayKeys.monday.rawValue:false,
+            StreakValidDayKeys.tuesday.rawValue:false,
+            StreakValidDayKeys.wednesday.rawValue:false,
+            StreakValidDayKeys.thursday.rawValue:false,
+            StreakValidDayKeys.friday.rawValue:false,
+            StreakValidDayKeys.saturday.rawValue:false
+        ]
     }
     
     enum CodingKeys: String, CodingKey {
@@ -32,6 +47,8 @@ struct DBUser: Codable {
         case photoURL = "photo_url"
         case dateCreated = "date_created"
         case usingDarkMode = "using_dark_mode"
+        case streakData = "streak_data"
+        case streakValidDays = "streak_valid_days"
     }
     
     init(from decoder: any Decoder) throws {
@@ -42,6 +59,8 @@ struct DBUser: Codable {
         self.photoURL = try container.decodeIfPresent(String.self, forKey: .photoURL)
         self.dateCreated = try container.decodeIfPresent(Date.self, forKey: .dateCreated)
         self.usingDarkMode = try container.decodeIfPresent(Bool.self, forKey: .usingDarkMode)
+        self.streakData = try container.decode([String:Int].self, forKey: .streakData)
+        self.streakValidDays = try container.decode([String:Bool].self, forKey: .streakValidDays)
     }
     
     func encode(to encoder: any Encoder) throws {
@@ -52,11 +71,22 @@ struct DBUser: Codable {
         try container.encodeIfPresent(self.photoURL, forKey: .photoURL)
         try container.encodeIfPresent(self.dateCreated, forKey: .dateCreated)
         try container.encodeIfPresent(self.usingDarkMode, forKey: .usingDarkMode)
+        try container.encode(self.streakData, forKey: .streakData)
+        try container.encode(self.streakValidDays, forKey: .streakValidDays)
     }
     
     mutating func toggleDarkMode() {
         let currentValue = usingDarkMode ?? false
         self.usingDarkMode = !currentValue
+    }
+    
+    enum StreakDataKeys: String, CodingKey, CaseIterable {
+        case streakThreshold = "streak_threshold"
+        case currentStreak = "current_streak"
+    }
+    
+    enum StreakValidDayKeys: String, CodingKey, CaseIterable {
+        case sunday, monday, tuesday, wednesday, thursday, friday, saturday
     }
 }
 
@@ -74,7 +104,7 @@ final class UserManager {
     func createNewUser(user: DBUser) async throws {
         try userDocument(userId: user.userId).setData(from: user, merge: false)
         
-        try await preloadUserInsights(userId: user.userId)
+        try await initUserWorkoutInsights(userId: user.userId)
     }
     
     func getUser(userId: String) async throws -> DBUser {
@@ -87,45 +117,5 @@ final class UserManager {
         ]
         
         try await userDocument(userId: userId).updateData(data)
-    }
-}
-
-// MARK: Insights
-extension UserManager {
-    private func userInsightCollection(userId: String) -> CollectionReference {
-        userDocument(userId: userId).collection("insights")
-    }
-    
-    private func userInsightDocument(userId: String, insightId: String) -> DocumentReference {
-        userInsightCollection(userId: userId).document(insightId)
-    }
-    
-    private func preloadUserInsights(userId: String) async throws {
-        try await addUserInsight(
-            userId: userId,
-            insightName: "workout_count",
-            insightData: ["count":0])
-    }
-    
-    func addUserInsight(userId: String, insightName: String, insightData: [String:Any]) async throws {
-        
-        let document = userInsightCollection(userId: userId).document()
-        let documentId = document.documentID
-        
-        let data: [String:Any] = [
-            "id": documentId,
-            "name": insightName,
-            "data": insightData
-        ]
-        
-        try await document.setData(data, merge: false)
-    }
-    
-    func removeUserInsight(userId: String, insightId: String) async throws {
-        try await userInsightDocument(userId: userId, insightId: insightId).delete()
-    }
-    
-    func getAllUserInsights(userId: String) async throws -> [Insight] {
-        try await userInsightCollection(userId: userId).getDocuments(as: Insight.self)
     }
 }

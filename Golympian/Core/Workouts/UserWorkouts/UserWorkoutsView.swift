@@ -8,12 +8,14 @@
 import SwiftUI
 import FirebaseFirestore
 
-struct WorkoutView: View {
+struct UserWorkoutsView: View {
     
     @StateObject private var viewModel: WorkoutViewModel
     @State private var removalCandidateWorkout: DBWorkout?
     @State private var removeWorkoutAlert: Bool = false
     @State private var editMode = EditMode.inactive
+    
+//    @ObservedObject var viewModel: WorkoutViewModel
     
     let workoutDataService: WorkoutManagerProtocol
     
@@ -81,8 +83,9 @@ struct WorkoutView: View {
 }
 
 #Preview {
-    let dataService = ProdWorkoutManager(workoutCollection: Firestore.firestore().collection("workouts"))
+    @Previewable @StateObject var viewModel = WorkoutViewModel(workoutDataService: ProdWorkoutManager(workoutCollection: Firestore.firestore().collection("workouts")))
     NavigationStack {
-        WorkoutView(workoutDataService: dataService)
+//        UserWorkoutsView(viewModel: viewModel)
+        UserWorkoutsView(workoutDataService: ProdWorkoutManager(workoutCollection: Firestore.firestore().collection("workouts")))
     }
 }
