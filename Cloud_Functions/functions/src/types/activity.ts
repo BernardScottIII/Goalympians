@@ -7,7 +7,7 @@ export type WorkoutActivity = {
 }
 
 export type ActivitySet = {
-    setIndex: number;
+    set_index: number;
 }
 
 export type ResistanceSet = ActivitySet & {

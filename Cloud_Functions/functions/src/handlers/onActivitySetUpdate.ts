@@ -4,6 +4,9 @@ import { FieldValue, Timestamp } from "firebase-admin/firestore";
 import { Workout } from "../types/workout"
 import { currentAndNextMonthStart } from "../utils/currentAndNextMonthStart";
 import { ResistanceSet, RunSet, SwimSet, WorkoutActivity } from "../types/activity";
+import { sumResistanceSetFields, sumRunSetFields, sumSwimSetFields } from "../utils/setSummation";
+import { WorkoutInsight } from "../types/insight";
+import { validateResistanceSetInsights, validateRunSetInsights, validateSwimSetInsights } from "../utils/calcHighestSetValue";
 
 const db = admin.firestore();
 
@@ -16,8 +19,8 @@ export const updateTotalSets = v2.firestore
             const previousData = previous?.data() as WorkoutActivity;
             const currentData = current?.data() as WorkoutActivity;
 
-            console.log(previousData);
-            console.log(currentData);
+            // console.log(previousData);
+            // console.log(currentData);
 
             // subtract current.data.activity_sets.count - previous.data.activity_sets.count
             const numActivitySetsDifference = currentData.activity_sets.length - previousData.activity_sets.length;
@@ -70,30 +73,6 @@ export const updateTotalWeight = v2.firestore
                 return;
             }
 
-            var insightUpdates: ResistanceSet | RunSet | SwimSet;
-
-            // Use the set_type in the parent workout to find which set type to use
-            switch (currentData.set_type) {
-                case "resistance_set": 
-                    insightUpdates = sumResistanceSetFields(
-                        previousData.activity_sets as [ResistanceSet],
-                        currentData.activity_sets as [ResistanceSet]
-                    ) as ResistanceSet;
-                    break;
-                case "run_set": 
-                    insightUpdates = sumRunSetFields(
-                        previousData.activity_sets as [RunSet],
-                        currentData.activity_sets as [RunSet]
-                    ) as RunSet;
-                    break;
-                case "swim_set": 
-                    insightUpdates = sumSwimSetFields(
-                        previousData.activity_sets as [SwimSet],
-                        currentData.activity_sets as [SwimSet]
-                    ) as SwimSet;
-                    break;
-            }
-
             // sum up all vals in all sets of previous.activity_sets
             // sum up all vals in all sets of current.activity_sets
 
@@ -121,28 +100,76 @@ export const updateTotalWeight = v2.firestore
             // take the difference (positive or negative) and add it to user/{user_id}/workout_insights/{insight_id}.total_sets
             insightSnapshot.forEach((doc) => {
                 var updatePromise: Promise<admin.firestore.WriteResult>
+                var currentInsight = doc.data() as WorkoutInsight;
+                var insightUpdates: ResistanceSet | RunSet | SwimSet;
+
                 switch (currentData.set_type) {
                     case "resistance_set":
-                        insightUpdates = insightUpdates as ResistanceSet;
+                        insightUpdates = sumResistanceSetFields(
+                            previousData.activity_sets as ResistanceSet[],
+                            currentData.activity_sets as ResistanceSet[]
+                        ) as ResistanceSet;
+                        validateResistanceSetInsights(
+                            currentInsight,
+                            currentData
+                        );
                         updatePromise = doc.ref.update({
                             "total_weight": FieldValue.increment(insightUpdates.weight),
-                            "total_repetitions": FieldValue.increment(insightUpdates.repetitions)
+                            "highest_weight_value": currentInsight.highest_weight_value,
+                            "highest_weight_set_index": currentInsight.highest_weight_set_index,
+                            "activity_id_most_weight": currentInsight.activity_id_most_weight,
+                            "total_repetitions": FieldValue.increment(insightUpdates.repetitions),
+                            "highest_repetitions_value": currentInsight.highest_repetitions_value,
+                            "highest_repetitions_set_index": currentInsight.highest_repetitions_set_index,
+                            "activity_id_most_repetitions": currentInsight.activity_id_most_repetitions
                         });
                         break;
                     case "run_set":
-                        insightUpdates = insightUpdates as RunSet;
+                        insightUpdates = sumRunSetFields(
+                            previousData.activity_sets as RunSet[],
+                            currentData.activity_sets as RunSet[]
+                        ) as RunSet;
+                        validateRunSetInsights(
+                            currentInsight,
+                            currentData
+                        )
                         updatePromise = doc.ref.update({
                             "total_run_distance": FieldValue.increment(insightUpdates.distance),
+                            "highest_run_distance_value": currentInsight.highest_run_distance_value,
+                            "highest_run_distance_set_index": currentInsight.highest_run_distance_set_index,
+                            "activity_id_most_run_distance": currentInsight.activity_id_most_run_distance,
                             "total_elevation": FieldValue.increment(insightUpdates.elevation),
+                            "highest_elevation_value": currentInsight.highest_elevation_value,
+                            "highest_elevation_set_index": currentInsight.highest_elevation_set_index,
+                            "activity_id_most_elevation": currentInsight.activity_id_most_elevation,
                             "total_run_duration": FieldValue.increment(insightUpdates.duration),
+                            "highest_run_duration_value": currentInsight.highest_run_duration_value,
+                            "highest_run_duration_set_index": currentInsight.highest_run_duration_set_index,
+                            "activity_id_most_run_duration": currentInsight.activity_id_most_run_duration,
                         });
                         break;
                     case "swim_set":
-                        insightUpdates = insightUpdates as SwimSet;
+                        insightUpdates = sumSwimSetFields(
+                            previousData.activity_sets as SwimSet[],
+                            currentData.activity_sets as SwimSet[]
+                        ) as SwimSet;
+                        validateSwimSetInsights(
+                            currentInsight,
+                            currentData
+                        )
                         updatePromise = doc.ref.update({
                             "total_swim_distance": FieldValue.increment(insightUpdates.distance),
+                            "highest_swim_distance_value": currentInsight.highest_swim_distance_value,
+                            "highest_swim_distance_set_index": currentInsight.highest_swim_distance_set_index,
+                            "activity_id_most_swim_distance": currentInsight.activity_id_most_swim_distance,
                             "total_laps": FieldValue.increment(insightUpdates.laps),
+                            "highest_laps_value": currentInsight.highest_laps_value,
+                            "highest_laps_set_index": currentInsight.highest_laps_set_index,
+                            "activity_id_most_laps": currentInsight.activity_id_most_laps,
                             "total_swim_duration": FieldValue.increment(insightUpdates.duration),
+                            "highest_swim_duration_value": currentInsight.highest_swim_duration_value,
+                            "highest_swim_duration_set_index": currentInsight.highest_swim_duration_set_index,
+                            "activity_id_most_swim_duration": currentInsight.activity_id_most_swim_duration,
                         });
                         break;
                     default: 
@@ -159,71 +186,3 @@ export const updateTotalWeight = v2.firestore
             console.log(error);
         }
     });
-
-function sumResistanceSetFields(previous_sets: ResistanceSet[], current_sets: ResistanceSet[]): ResistanceSet {
-    var weightDifference = 0;
-    var repetitionsDifference = 0;
-
-    current_sets.forEach((set) => {
-        weightDifference += set.weight
-        repetitionsDifference += set.repetitions
-    });
-
-    previous_sets.forEach((set) => {
-        weightDifference -= set.weight
-        repetitionsDifference -= set.repetitions
-    });
-
-    // send the update
-    return { setIndex: -1, weight: weightDifference, repetitions: repetitionsDifference } as ResistanceSet;
-}
-
-function sumRunSetFields(previous_sets: RunSet[], current_sets: RunSet[]): RunSet {
-    var distanceDifference = 0;
-    var elevationDifference = 0;
-    var durationDifference = 0;
-
-    current_sets.forEach((set) => {
-        distanceDifference += set.distance
-        elevationDifference += set.elevation
-        durationDifference += set.duration
-    });
-
-    previous_sets.forEach((set) => {
-        distanceDifference -= set.distance
-        elevationDifference -= set.elevation
-        durationDifference -= set.duration
-    });
-
-    return { 
-        setIndex: -1, 
-        distance: distanceDifference, 
-        elevation: elevationDifference, 
-        duration: durationDifference 
-    } as RunSet;
-}
-
-function sumSwimSetFields(previous_sets: SwimSet[], current_sets: SwimSet[]): SwimSet {
-    var distanceDifference = 0;
-    var lapsDifference = 0;
-    var durationDifference = 0;
-
-    current_sets.forEach((set) => {
-        distanceDifference += set.distance
-        lapsDifference += set.laps
-        durationDifference += set.duration
-    });
-
-    previous_sets.forEach((set) => {
-        distanceDifference -= set.distance
-        lapsDifference -= set.laps
-        durationDifference -= set.duration
-    });
-
-    return { 
-        setIndex: -1, 
-        distance: distanceDifference, 
-        laps: lapsDifference, 
-        duration: durationDifference 
-    } as SwimSet;
-}
