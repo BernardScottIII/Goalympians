@@ -173,6 +173,92 @@ struct WorkoutInsight: Codable {
         case activityIdMostRepetitions = "activity_id_most_repetitions"
         case highestRepetitionsValue = "highest_repetitions_value"
         case highestRepetitionsSetIndex = "highest_repetitions_set_index"
+        
+        static var allCases: [CodingKeys] {
+            return [
+                .id,
+                .date,
+                .workoutCount,
+                .totalSets,
+                .totalWeight,
+                .totalRepetitions,
+                .totalRunSetDistance,
+                .totalRunSetDuration,
+                .totalSwimSetDistance,
+                .totalSwimSetDuration,
+                .totalLaps,
+                .totalElevation,
+                .activityIdMostWeight,
+                .highestWeightValue,
+                .highestWeightSetIndex,
+                .exerciseIdMostActivities,
+                .exerciseOccurrenceCounts,
+                .activityIdMostLaps,
+                .highestLapsValue,
+                .highestLapsSetIndex,
+                .activityIdMostRunDistance,
+                .activityIdMostSwimDistance,
+                .highestRunDistanceValue,
+                .highestRunDistanceSetIndex,
+                .highestSwimDistanceValue,
+                .highestSwimDistancesetIndex,
+                .activityIdMostElevation,
+                .highestElevationValue,
+                .highestElevationSetIndex,
+                .activityIdMostRunDuration,
+                .activityIdMostSwimDuration,
+                .highestRunDurationValue,
+                .highestRunDurationSetIndex,
+                .highestSwimDurationValue,
+                .highestSwimDurationSetIndex,
+                .activityIdMostRepetitions,
+                .highestRepetitionsValue,
+                .highestRepetitionsSetIndex,
+            ]
+        }
+    }
+    
+    var properties: [(key: String, value: String)] {
+        [
+            ("id", "\(self.id)"),
+            ("date", "\(self.date)"),
+            ("workoutCount", "\(self.workoutCount)"),
+            ("totalSets", "\(self.totalSets)"),
+            ("totalWeight", "\(self.totalWeight)"),
+            ("totalRepetitions", "\(self.totalRepetitions)"),
+            ("totalRunSetDistance", "\(self.totalRunSetDistance)"),
+            ("totalRunSetDuration", "\(self.totalRunSetDuration)"),
+            ("totalSwimSetDistance", "\(self.totalSwimSetDistance)"),
+            ("totalSwimSetDuration", "\(self.totalSwimSetDuration)"),
+            ("totalLaps", "\(self.totalLaps)"),
+            ("totalElevation", "\(self.totalElevation)"),
+            ("activityIdMostWeight", "\(self.activityIdMostWeight)"),
+            ("highestWeightValue", "\(self.highestWeightValue)"),
+            ("highestWeightSetIndex", "\(self.highestWeightSetIndex)"),
+            ("exerciseIdMostActivities", "\(self.exerciseIdMostActivities)"),
+            ("exerciseOccurrenceCounts", "\(self.exerciseOccurrenceCounts)"),
+            ("activityIdMostLaps", "\(self.activityIdMostLaps)"),
+            ("highestLapsValue", "\(self.highestLapsValue)"),
+            ("highestLapsSetIndex", "\(self.highestLapsSetIndex)"),
+            ("activityIdMostRunDistance", "\(self.activityIdMostRunDistance)"),
+            ("activityIdMostSwimDistance", "\(self.activityIdMostSwimDistance)"),
+            ("highestRunDistanceValue", "\(self.highestRunDistanceValue)"),
+            ("highestRunDistanceSetIndex", "\(self.highestRunDistanceSetIndex)"),
+            ("highestSwimDistanceValue", "\(self.highestSwimDistanceValue)"),
+            ("highestSwimDistancesetIndex", "\(self.highestSwimDistancesetIndex)"),
+            ("activityIdMostElevation", "\(self.activityIdMostElevation)"),
+            ("highestElevationValue", "\(self.highestElevationValue)"),
+            ("highestElevationSetIndex", "\(self.highestElevationSetIndex)"),
+            ("activityIdMostRunDuration", "\(self.activityIdMostRunDuration)"),
+            ("activityIdMostSwimDuration", "\(self.activityIdMostSwimDuration)"),
+            ("highestRunDurationValue", "\(self.highestRunDurationValue)"),
+            ("highestRunDurationSetIndex", "\(self.highestRunDurationSetIndex)"),
+            ("highestSwimDurationValue", "\(self.highestSwimDurationValue)"),
+            ("highestSwimDurationSetIndex", "\(self.highestSwimDurationSetIndex)"),
+            ("activityIdMostRepetitions", "\(self.activityIdMostRepetitions)"),
+            ("highestRepetitionsValue", "\(self.highestRepetitionsValue)"),
+            ("highestRepetitionsSetIndex", "\(self.highestRepetitionsSetIndex)"),
+        ]
     }
     
     init(from decoder: any Decoder) throws {
@@ -218,29 +304,57 @@ struct WorkoutInsight: Codable {
     }
 }
 
-extension UserManager {
-    private func userWorkoutInsightCollection(userId: String) -> CollectionReference {
-        Firestore.firestore().collection("users").document(userId).collection("workout_insights")
-    }
-    
-    private func userWorkoutInsightDocument(userId: String, insightId: String) -> DocumentReference {
-        userWorkoutInsightCollection(userId: userId).document(insightId)
-    }
-    
-    func initUserWorkoutInsights(userId: String) async throws {
-        let document = userWorkoutInsightCollection(userId: userId).document()
-        let documentId = document.documentID
-        
-        let components = Calendar.current.dateComponents([.year, .month], from: Date())
-        
-        // Leaving all other dateComponents nil will set them to default values,
-        // which is desireable when trying to get the first of the current month
-        let newInsight = WorkoutInsight(
-            id: documentId,
-            date: Calendar.current.date(from: components)!
-        )
-        
-        try document.setData(from: newInsight, merge: false)
-    }
-}
+//extension UserManager {
+//    private func userWorkoutInsightCollection(userId: String) -> CollectionReference {
+//        Firestore.firestore().collection("users").document(userId).collection("workout_insights")
+//    }
+//    
+//    private func userWorkoutInsightDocument(userId: String, insightId: String) -> DocumentReference {
+//        userWorkoutInsightCollection(userId: userId).document(insightId)
+//    }
+//    
+//    func initUserWorkoutInsights(userId: String) async throws {
+//        let document = userWorkoutInsightCollection(userId: userId).document()
+//        let documentId = document.documentID
+//        
+//        var calendar = Calendar.current
+//        calendar.timeZone = TimeZone(abbreviation: "GMT")!
+//        let components = calendar.dateComponents([.year, .month], from: Date())
+//        
+//        // Leaving all other dateComponents nil will set them to default values,
+//        // which is desireable when trying to get the first of the current month
+//        let newInsight = WorkoutInsight(
+//            id: documentId,
+//            date: Calendar.current.date(from: components)!
+//        )
+//        
+//        try document.setData(from: newInsight, merge: false)
+//    }
+//    
+//    func getCurrMonthUserWorkoutInsight(userId: String) async throws -> [WorkoutInsight] {
+//        
+//        var calendar = Calendar.current
+//        calendar.timeZone = TimeZone(abbreviation: "GMT")!
+//        let components = calendar.dateComponents([.year, .month], from: Date())
+//        let fromDate = calendar.date(from: components)!
+//        let _ = calendar.date(byAdding: .month, value: 1, to: fromDate)!
+//        
+//        let myUser = try await UserManager.shared.getUser(userId: userId)
+//        print(myUser.streakData)
+//
+////        print(Timestamp(date: fromDate))
+////        print(Timestamp(date: toDate))
+//        return try await userWorkoutInsightCollection(userId: userId)
+//            .getDocuments(as: WorkoutInsight.self)
+////            .whereField("date", isGreaterThanOrEqualTo: Timestamp(date: fromDate))
+////            .whereField("date", isLessThan: Timestamp(date: toDate))
+//        
+////        print("result count: \(result.count)")
+////        
+////        if result.count > 1 {
+////            throw DecodingError.typeMismatch(WorkoutInsight.self, DecodingError.Context(codingPath: [], debugDescription: "More than one workout insight for the current month found."))
+////        }
+////        return result.first!
+//    }
+//}
 

@@ -10,8 +10,8 @@
 import * as v2 from "firebase-functions/v2";
 import * as admin from "firebase-admin";
 import {FieldValue, Timestamp} from "firebase-admin/firestore";
-import { currentAndNextMonthStart } from "../utils/currentAndNextMonthStart";
-import { Workout } from "../types/workout"
+import {currentAndNextMonthStart} from "../utils/currentAndNextMonthStart";
+import {Workout} from "../types/workout";
 
 const db = admin.firestore();
 
@@ -28,7 +28,10 @@ export const updateWorkoutCount = v2.firestore
       // Conversion of Firestore Timestamp to JS Date
       const date = newWorkout.date.toDate();
 
-      const { currentMonthStart, nextMonthStart } = currentAndNextMonthStart(date);
+      const {
+        currentMonthStart,
+        nextMonthStart,
+      } = currentAndNextMonthStart(date);
 
       const startCurrentMonth = Timestamp.fromDate(currentMonthStart);
       const startNextMonth = Timestamp.fromDate(nextMonthStart);

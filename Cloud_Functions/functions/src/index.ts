@@ -10,5 +10,5 @@
 import * as admin from "firebase-admin";
 admin.initializeApp();
 
-export * from "./handlers/onUserWorkoutCreate"
-export * from "./handlers/onActivitySetUpdate"
+export * from "./handlers/onUserWorkoutCreate";
+export * from "./handlers/onActivitySetUpdate";

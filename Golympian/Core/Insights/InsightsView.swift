@@ -68,6 +68,10 @@ struct InsightsView: View {
     
     var body: some View {
         ScrollView {
+//            Button("Add new insight") {
+//                viewModel.initUserNewInsight()
+//            }
+            
             InsightCardView(viewModel: viewModel)
             
             LazyVGrid(columns: Array(repeating: GridItem(spacing: 20), count: 2)){
@@ -77,16 +81,18 @@ struct InsightsView: View {
             }
             .padding(.horizontal)
             
+            InsightMetricView(viewModel: viewModel)
+            
             // "It works"
             // We should set up a listener so it updates in real time and doesn't require refresh
             // Ooh I should also learn how to implement refreshes
             // We shouldn't use state because I'd need potentially infinite # of state vars
-            Text("List of insights")
-            ForEach(viewModel.insights) {insight in
-                Text("New insight:")
-                // Why force-unwrap? Trust me bro, the key is there.
-                Text("Number of workouts created: \(Int(insight.data["count"]!))")
-            }
+//            Text("List of insights")
+//            ForEach(viewModel.insights) {insight in
+//                Text("New insight:")
+//                // Why force-unwrap? Trust me bro, the key is there.
+//                Text("Number of workouts created: \(Int(insight.data["count"]!))")
+//            }
         }
         .navigationTitle("Insights Page")
         .onAppear {

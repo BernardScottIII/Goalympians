@@ -119,3 +119,46 @@ final class UserManager {
         try await userDocument(userId: userId).updateData(data)
     }
 }
+
+// MARK: USER INSIGHTS
+extension UserManager {
+    private func userWorkoutInsightCollection(userId: String) -> CollectionReference {
+        userDocument(userId: userId).collection("workout_insights")
+    }
+    
+    private func userWorkoutInsightDocument(userId: String, insightId: String) -> DocumentReference {
+        userWorkoutInsightCollection(userId: userId).document(insightId)
+    }
+    
+    func initUserWorkoutInsights(userId: String) async throws {
+        let document = userWorkoutInsightCollection(userId: userId).document()
+        let documentId = document.documentID
+        
+        var calendar = Calendar.current
+        calendar.timeZone = TimeZone(abbreviation: "GMT")!
+        let components = calendar.dateComponents([.year, .month], from: Date())
+        
+        // Leaving all other dateComponents nil will set them to default values,
+        // which is desireable when trying to get the first of the current month
+        let newInsight = WorkoutInsight(
+            id: documentId,
+            date: Calendar.current.date(from: components)!
+        )
+        
+        try document.setData(from: newInsight, merge: false)
+    }
+    
+    func getCurrMonthUserWorkoutInsight(userId: String) async throws -> [WorkoutInsight] {
+        
+        var calendar = Calendar.current
+        calendar.timeZone = TimeZone(abbreviation: "GMT")!
+        let components = calendar.dateComponents([.year, .month], from: Date())
+        let fromDate = calendar.date(from: components)!
+        let toDate = calendar.date(byAdding: .month, value: 1, to: fromDate)!
+        
+        return try await userWorkoutInsightCollection(userId: userId)
+            .whereField("date", isGreaterThanOrEqualTo: Timestamp(date: fromDate))
+            .whereField("date", isLessThan: Timestamp(date: toDate))
+            .getDocuments(as: WorkoutInsight.self)
+    }
+}
