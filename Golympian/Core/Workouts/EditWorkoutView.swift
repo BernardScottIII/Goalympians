@@ -89,8 +89,6 @@ struct EditWorkoutView: View {
                 self.userId = try AuthenticationManager.shared.getAuthenticatedUser().uid
             }
         }
-        
-//        BottomActionButton(label: "Save Changes", action: saveWorkout)
     }
     
     private func saveWorkout() {

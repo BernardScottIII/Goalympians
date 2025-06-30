@@ -66,13 +66,6 @@ struct ActivitySetsView: View {
         .onChange(of: activity.activitySetsHash) { oldValue, newValue in
             setValues = mapSetValues()
         }
-//        .toolbar {
-//            ToolbarItem(placement.keyboard) {
-//                Button("Done") {
-//                    
-//                }
-//            }
-//        }
     }
     
     private func removeActivitySet(at index: Int) {

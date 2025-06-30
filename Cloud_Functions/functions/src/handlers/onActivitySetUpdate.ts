@@ -141,6 +141,7 @@ export const updateTotalWeight = v2.firestore
             ) as ResistanceSet;
             validateResistanceSetInsights(
               currentInsight,
+              previousData,
               currentData,
             );
             updatePromise = doc.ref.update({
@@ -169,6 +170,7 @@ export const updateTotalWeight = v2.firestore
             ) as RunSet;
             validateRunSetInsights(
               currentInsight,
+              previousData,
               currentData,
             );
             updatePromise = doc.ref.update({
@@ -205,6 +207,7 @@ export const updateTotalWeight = v2.firestore
             ) as SwimSet;
             validateSwimSetInsights(
               currentInsight,
+              previousData,
               currentData,
             );
             updatePromise = doc.ref.update({
