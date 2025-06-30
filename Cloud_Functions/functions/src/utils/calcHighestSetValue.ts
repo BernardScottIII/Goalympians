@@ -11,6 +11,8 @@ import {WorkoutInsight} from "../types/insight";
  * currentActivity.set_type is ResistanceSet
  * @param {WorkoutInsight} currentInsight - The user's insight document for the
  * current month
+ * @param {WorkoutActivity} previousActivity - The activity before the update.
+ * Used to maintain insight integrity.
  * @param {WorkoutActivity} currentActivity - The activity to be analyzed
  */
 export function validateResistanceSetInsights(
@@ -36,7 +38,8 @@ export function validateResistanceSetInsights(
     // set set_index to -1
     // set id to ""
 
-    if (!currSets.includes(prevSets[currentInsight.highest_weight_set_index])) {
+    if (!currSets
+      .includes(prevSets[currentInsight.highest_weight_set_index])) {
       // The drawback with this is that if the PR exists in another workout,
       // this function won't be able to see it
       currentInsight.activity_id_most_weight = "";
@@ -44,7 +47,8 @@ export function validateResistanceSetInsights(
       currentInsight.highest_weight_set_index = -1;
     }
 
-    if (!currSets.includes(prevSets[currentInsight.highest_repetitions_set_index])) {
+    if (!currSets
+      .includes(prevSets[currentInsight.highest_repetitions_set_index])) {
       currentInsight.activity_id_most_repetitions = "";
       currentInsight.highest_repetitions_value = -1;
       currentInsight.highest_repetitions_set_index = -1;
@@ -71,6 +75,8 @@ export function validateResistanceSetInsights(
  * currentActivity.set_type is RunSet
  * @param {WorkoutInsight} currentInsight - The user's insight document for the
  * current month
+ * @param {WorkoutActivity} previousActivity - The activity before the update.
+ * Used to maintain insight integrity.
  * @param {WorkoutActivity} currentActivity - The activity to be analyzed
  */
 export function validateRunSetInsights(
@@ -86,19 +92,22 @@ export function validateRunSetInsights(
     currentActivity.id == currentInsight.activity_id_most_elevation ||
     currentActivity.id == currentInsight.activity_id_most_run_duration
   ) {
-    if (!currSets.includes(prevSets[currentInsight.highest_run_distance_set_index])) {
+    if (!currSets
+      .includes(prevSets[currentInsight.highest_run_distance_set_index])) {
       currentInsight.activity_id_most_run_distance = "";
       currentInsight.highest_run_distance_value = -1;
       currentInsight.highest_run_distance_set_index = -1;
     }
 
-    if (!currSets.includes(prevSets[currentInsight.highest_elevation_set_index])) {
+    if (!currSets
+      .includes(prevSets[currentInsight.highest_elevation_set_index])) {
       currentInsight.activity_id_most_elevation = "";
       currentInsight.highest_elevation_value = -1;
       currentInsight.highest_elevation_set_index = -1;
     }
 
-    if (!currSets.includes(prevSets[currentInsight.highest_run_duration_set_index])) {
+    if (!currSets
+      .includes(prevSets[currentInsight.highest_run_duration_set_index])) {
       currentInsight.activity_id_most_run_duration = "";
       currentInsight.highest_run_duration_value = -1;
       currentInsight.highest_run_duration_set_index = -1;
@@ -131,6 +140,8 @@ export function validateRunSetInsights(
  * currentActivity.set_type is SwimSet
  * @param {WorkoutInsight} currentInsight - The user's insight document for the
  * current month
+ * @param {WorkoutActivity} previousActivity - The activity before the update.
+ * Used to maintain insight integrity.
  * @param {WorkoutActivity} currentActivity - The activity to be analyzed
  */
 export function validateSwimSetInsights(
@@ -146,19 +157,22 @@ export function validateSwimSetInsights(
     currentActivity.id == currentInsight.activity_id_most_laps ||
     currentActivity.id == currentInsight.activity_id_most_swim_duration
   ) {
-    if (!currSets.includes(prevSets[currentInsight.highest_swim_distance_set_index])) {
+    if (!currSets
+      .includes(prevSets[currentInsight.highest_swim_distance_set_index])) {
       currentInsight.activity_id_most_swim_distance = "";
       currentInsight.highest_swim_distance_value = -1;
       currentInsight.highest_swim_distance_set_index = -1;
     }
 
-    if (!currSets.includes(prevSets[currentInsight.highest_laps_set_index])) {
+    if (!currSets
+      .includes(prevSets[currentInsight.highest_laps_set_index])) {
       currentInsight.activity_id_most_laps = "";
       currentInsight.highest_laps_value = -1;
       currentInsight.highest_laps_set_index = -1;
     }
 
-    if (!currSets.includes(prevSets[currentInsight.highest_swim_duration_set_index])) {
+    if (!currSets
+      .includes(prevSets[currentInsight.highest_swim_duration_set_index])) {
       currentInsight.activity_id_most_swim_duration = "";
       currentInsight.highest_swim_duration_value = -1;
       currentInsight.highest_swim_duration_set_index = -1;

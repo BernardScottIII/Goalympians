@@ -12,6 +12,9 @@ import * as admin from "firebase-admin";
 import {FieldValue, Timestamp} from "firebase-admin/firestore";
 import {currentAndNextMonthStart} from "../utils/currentAndNextMonthStart";
 import {Workout} from "../types/workout";
+import {WorkoutInsight} from "../types/insight";
+import {User} from "../types/user";
+import { user } from "firebase-functions/v1/auth";
 
 const db = admin.firestore();
 
@@ -23,7 +26,6 @@ export const updateWorkoutCount = v2.firestore
       if (!snapshot) return;
 
       const newWorkout = snapshot.data() as Workout;
-      console.log(`sending: ${newWorkout.id}`);
 
       // Conversion of Firestore Timestamp to JS Date
       const date = newWorkout.date.toDate();
@@ -47,10 +49,38 @@ export const updateWorkoutCount = v2.firestore
         return;
       }
 
+      var userSnapshot =
+      await db.doc(`users/${newWorkout.userId}`).get();
+      let userDocument = userSnapshot.data() as User;
+
+      let newWorkoutDate: Date = newWorkout.date.toDate();
+      let dayOfWeek: string = newWorkoutDate
+      .toLocaleString('en-us', {weekday: 'long'})
+      .toLowerCase();
+
+      if(!userDocument.streak_valid_days[
+        dayOfWeek as keyof typeof userDocument.streak_valid_days
+      ]) {
+        // userDocument.streak_valid_days[
+        //   dayOfWeek as keyof typeof userDocument.streak_valid_days
+        // ] = true;
+
+        let dayKey: string = `streak_valid_days.${dayOfWeek}`;
+
+        const userUpdatePromise = userSnapshot.ref.update({
+          [dayKey]: true,
+        });
+
+        Promise.all([userUpdatePromise]);
+      }
+
       const updatePromises: Promise<FirebaseFirestore.WriteResult>[] = [];
 
       // data.workout_count += 1
       insightSnapshot.forEach((doc) => {
+        let insightSnapshot = doc.data() as WorkoutInsight;
+        
+
         const updatePromise = doc.ref.update({
           "workout_count": FieldValue.increment(1),
         });

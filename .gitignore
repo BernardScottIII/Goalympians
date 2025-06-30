@@ -13,6 +13,8 @@ Golympian.xcodeproj/project.xcworkspace/xcuserdata/bernardscott.xcuserdatad/User
 Golympian.xcodeproj/project.pbxproj
 Golympian.xcodeproj/project.xcworkspace/xcuserdata/bernardscott.xcuserdatad/UserInterfaceState.xcuserstate
 
+Cloud_Functions/functions/db/
+
 # Logs
 Cloud_Functions/logs
 *.log

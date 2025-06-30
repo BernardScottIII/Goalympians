@@ -8,9 +8,9 @@
 import SwiftUI
 import Charts
 
-struct InsightCardView: View {
+struct WorkoutStreakCardView: View {
     
-    @ObservedObject var viewModel: InsightsViewModel
+    @StateObject private var viewModel = WorkoutStreakCardViewModel()
     
     private var numValidDays: CGFloat {
         var result = 0.0
@@ -113,5 +113,5 @@ struct InsightCardView: View {
 }
 
 #Preview {
-    InsightCardView(viewModel: InsightsViewModel())
+    WorkoutStreakCardView()
 }

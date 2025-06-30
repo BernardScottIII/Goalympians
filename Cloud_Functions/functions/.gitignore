@@ -9,5 +9,5 @@ typings/
 node_modules/
 *.local
 
-/functions/db
+Cloud_Functions/functions/db
 /functions/firestore-debug.log
