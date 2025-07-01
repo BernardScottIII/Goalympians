@@ -14,6 +14,7 @@ import {currentAndNextMonthStart} from "../utils/currentAndNextMonthStart";
 import {Workout} from "../types/workout";
 import {User} from "../types/user";
 import {getTotalValidDays} from "../utils/getTotalValidDays";
+import { getWeek } from "../utils/getWeekNumber";
 
 const db = admin.firestore();
 
@@ -48,7 +49,6 @@ export const updateWorkoutCount = v2.firestore
         return;
       }
 
-
       const userSnapshot =
       await db.doc(`users/${newWorkout.userId}`).get();
       const userDocument = userSnapshot.data() as User;
@@ -60,7 +60,10 @@ export const updateWorkoutCount = v2.firestore
       const dayOfWeekKey =
       dayOfWeek as keyof typeof userDocument.streak_valid_days;
 
-      if (!userDocument.streak_valid_days[dayOfWeekKey]) {
+      if (
+        !userDocument.streak_valid_days[dayOfWeekKey] &&
+        getWeek(newWorkoutDate) == getWeek(new Date())
+      ) {
         userDocument.streak_valid_days[dayOfWeekKey] = true;
 
         const dayKey = `streak_valid_days.${dayOfWeek}`;
