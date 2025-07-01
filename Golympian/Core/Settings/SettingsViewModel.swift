@@ -13,6 +13,14 @@ final class SettingsViewModel: ObservableObject {
     @Published var authProviders: [AuthProviderOption] = []
     @Published var authUser: AuthDataResultModel? = nil
     
+    let workoutDataService: WorkoutManagerProtocol
+    
+    init(
+        workoutDataService: WorkoutManagerProtocol
+    ) {
+        self.workoutDataService = workoutDataService
+    }
+    
     func loadAuthProviders() {
         if let providers = try? AuthenticationManager.shared.getProviders() {
             authProviders = providers
@@ -42,10 +50,6 @@ final class SettingsViewModel: ObservableObject {
         try await AuthenticationManager.shared.updatePassword(password: password)
     }
     
-    func deleteAccount() async throws {
-        try await AuthenticationManager.shared.delete()
-    }
-    
     func loadAuthUser() {
         self.authUser = try? AuthenticationManager.shared.getAuthenticatedUser()
     }
@@ -61,5 +65,35 @@ final class SettingsViewModel: ObservableObject {
         let email = "hello123@gmail.com"
         let password = "Hello123!"
         self.authUser = try await AuthenticationManager.shared.linkEmail(email: email, password: password)
+    }
+}
+
+// MARK: Account and Data Deletion
+extension SettingsViewModel {
+    func deleteAccount() async throws {
+        let userId = try AuthenticationManager.shared.getAuthenticatedUser().uid
+        
+        // MARK: Exercise Removal
+        let exercises = try await ExerciseManager.shared.getAllExercises(
+            nameDescending: nil,
+            forCategory: nil,
+            usingEquipment: nil,
+            uuids: [userId]
+        )
+        for exercise in exercises {
+            try await ExerciseManager.shared.removeUserExercise(userId: userId, exercise: exercise)
+        }
+        
+        // MARK: Workout Removal
+        let workouts = try await workoutDataService.getAllWorkouts()
+        for workout in workouts {
+            for activity in try await workoutDataService.getAllWorkoutActivities(workoutId: workout.id) {
+                try await workoutDataService.removeWorkoutActivity(workoutId: workout.id, activityId: activity.id)
+            }
+            try await workoutDataService.removeWorkout(workoutId: workout.id)
+        }
+        
+        try await UserManager.shared.deleteUser(userId: userId)
+        try await AuthenticationManager.shared.delete()
     }
 }

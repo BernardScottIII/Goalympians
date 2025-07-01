@@ -19,9 +19,7 @@ struct CreateWorkoutView: View {
     @FocusState private var keyboardFocused: Bool
     private let dateRange: ClosedRange<Date> = {
         let calendar = Calendar.current
-        let today = Date.now
         let startComponents = DateComponents(year: 1970, month: 1, day: 1)
-        let endComponents = DateComponents(year: 2021, month: 12, day: 31, hour: 23, minute: 59, second: 59)
         return calendar.date(from:startComponents)! ... Date(timeIntervalSinceNow: 0)
     }()
     

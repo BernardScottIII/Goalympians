@@ -60,7 +60,7 @@ struct ProfileView: View {
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 NavigationLink {
-                    SettingsView(showSignInView: $showSignInView)
+                    SettingsView(showSignInView: $showSignInView, workoutDataService: workoutDataService)
                 } label: {
                     Image(systemName: "gear")
                         .font(.headline)

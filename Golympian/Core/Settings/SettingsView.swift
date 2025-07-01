@@ -6,13 +6,24 @@
 //
 
 import SwiftUI
+import FirebaseFirestore
 
 struct SettingsView: View {
     
-    @StateObject private var viewModel = SettingsViewModel()
+    @StateObject private var viewModel: SettingsViewModel
     @Environment(\.dismiss) private var dismiss
     
     @Binding var showSignInView: Bool
+    let workoutDataService: WorkoutManagerProtocol
+    
+    init(
+        showSignInView: Binding<Bool>,
+        workoutDataService: WorkoutManagerProtocol
+    ) {
+        self.workoutDataService = workoutDataService
+        _showSignInView = showSignInView
+        _viewModel = StateObject(wrappedValue: SettingsViewModel(workoutDataService: workoutDataService))
+    }
     
     var body: some View {
         List {
@@ -56,7 +67,7 @@ struct SettingsView: View {
 
 #Preview {
     NavigationStack {
-        SettingsView(showSignInView: .constant(true))
+        SettingsView(showSignInView: .constant(true), workoutDataService: ProdWorkoutManager(workoutCollection: Firestore.firestore().collection("workouts")))
     }
 }
 
