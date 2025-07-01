@@ -17,6 +17,13 @@ struct CreateWorkoutView: View {
     @State private var date: Date = Date.now
     @State private var missingNameAlert: Bool = false
     @FocusState private var keyboardFocused: Bool
+    private let dateRange: ClosedRange<Date> = {
+        let calendar = Calendar.current
+        let today = Date.now
+        let startComponents = DateComponents(year: 1970, month: 1, day: 1)
+        let endComponents = DateComponents(year: 2021, month: 12, day: 31, hour: 23, minute: 59, second: 59)
+        return calendar.date(from:startComponents)! ... Date(timeIntervalSinceNow: 0)
+    }()
     
     let workoutDataService: WorkoutManagerProtocol
     
@@ -33,7 +40,7 @@ struct CreateWorkoutView: View {
             TextField("Workout Description", text: $description)
                 .textInputAutocapitalization(.sentences)
             
-            DatePicker("Date", selection: $date)
+            DatePicker("Date", selection: $date, in: dateRange)
         }
         .navigationTitle("Create Workout")
         .onAppear {
