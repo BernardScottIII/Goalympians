@@ -24,7 +24,7 @@ struct InsightCardView: View {
     }
     
     var body: some View {
-        LazyVGrid(columns: Array(repeating: GridItem(spacing: 20), count: 1)) {
+        Grid {
             HStack {
                 Text("\(insightMetricGrouping.rawValue)")
                     .font(.title)
@@ -34,6 +34,7 @@ struct InsightCardView: View {
                 Image(insightMetricSymbol)
                     .foregroundStyle(Color(red: 1, green: (124/255), blue: 0))
                     .font(.system(size: 48))
+                    .frame(height: 48)
             }
             .padding()
             
@@ -42,6 +43,7 @@ struct InsightCardView: View {
                     Text("Total \(insightMetricGrouping.rawValue) this month: \(insightMetricGroup[0])")
                     Text("Highest \(insightMetricGrouping.rawValue) recorded this month: \(insightMetricGroup[2])")
                 }
+                .frame(maxHeight: .infinity)
                 
                 Spacer()
             }
@@ -49,10 +51,9 @@ struct InsightCardView: View {
         }
         .background(Color(uiColor: .systemGray6))
         .clipShape(.rect(cornerRadius:15))
-        .padding()
     }
 }
 
 #Preview {
-    InsightCardView(workoutInsight: .init(id: UUID().uuidString, date: Date.now), insightMetricGrouping: .elevation)
+    InsightCardView(workoutInsight: .init(id: UUID().uuidString, date: Date.now), insightMetricGrouping: .laps)
 }

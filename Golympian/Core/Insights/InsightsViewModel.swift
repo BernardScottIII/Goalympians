@@ -11,8 +11,7 @@ import FirebaseFirestore
 @MainActor
 final class InsightsViewModel: ObservableObject {
     @Published private(set) var workoutInsight: WorkoutInsight = WorkoutInsight(id: "INVALID UUID", date: .now)
-    @Published var exerciseCountsWithName: [(exerciseName: String, count: Int)] = []
-    private var exerciseCountsUniqueNames: Set<String> = []
+    @Published var exerciseCountsWithNames: [(exerciseName: String, count: Int)] = []
     
     func getInsights() async throws {
         let authDataResult = try AuthenticationManager.shared.getAuthenticatedUser()
@@ -22,6 +21,12 @@ final class InsightsViewModel: ObservableObject {
         }
         try await labelExerciseCounts(firstInsight.exerciseOccurrenceCounts)
         self.workoutInsight = firstInsight
+    }
+    
+    func refreshInsights() async throws {
+        workoutInsight = WorkoutInsight(id: "INVALID UUID", date: .now)
+        exerciseCountsWithNames = []
+        try await getInsights()
     }
     
     func initUserNewInsight() {
@@ -39,13 +44,13 @@ final class InsightsViewModel: ObservableObject {
         for (exerciseId, count) in exerciseCounts {
             let exerciseName = try await getExerciseName(exerciseId: exerciseId)
             
-            if let index = exerciseCountsWithName.firstIndex(where: {$0.exerciseName == exerciseName}) {
+            if let index = exerciseCountsWithNames.firstIndex(where: {$0.exerciseName == exerciseName}) {
                 let updatedTuple = (exerciseName: exerciseName, count: count)
-                exerciseCountsWithName[index] = updatedTuple
+                exerciseCountsWithNames[index] = updatedTuple
             } else {
-                exerciseCountsWithName.append((exerciseName: exerciseName, count: count))
+                exerciseCountsWithNames.append((exerciseName: exerciseName, count: count))
             }
         }
-        exerciseCountsWithName.sort(by: {$0.count > $1.count})
+        exerciseCountsWithNames.sort(by: {$0.count > $1.count})
     }
 }

@@ -15,9 +15,17 @@ struct InsightMetricView: View {
         LazyVGrid(columns: Array(repeating: GridItem(spacing: 20), count: 1)) {
             WorkoutInsightCardView(viewModel: viewModel)
             
-            ForEach(WorkoutInsight.InsightMetricGrouping.allCases, id: \.self) { grouping in
-                InsightCardView(workoutInsight: viewModel.workoutInsight, insightMetricGrouping: grouping)
+            ScrollView(.horizontal) {
+                HStack {
+                    ForEach(WorkoutInsight.InsightMetricGrouping.allCases, id: \.self) { grouping in
+                        InsightCardView(workoutInsight: viewModel.workoutInsight, insightMetricGrouping: grouping)
+                            .containerRelativeFrame(.horizontal, count: 1, spacing: 0)
+                    }
+                }
+                .scrollTargetLayout()
             }
+            .contentMargins(16, for: .scrollContent)
+            .scrollTargetBehavior(.viewAligned)
         }
     }
 }

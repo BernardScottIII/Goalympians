@@ -41,7 +41,7 @@ struct TabbarView: View {
             
             Tab("Insights", systemImage: "chart.xyaxis.line", value: .insights) {
                 NavigationStack(path: $insightNavigationPath) {
-                    InsightsView()
+                    InsightsView(showSignInView: $showSignInView)
                 }
             }
             

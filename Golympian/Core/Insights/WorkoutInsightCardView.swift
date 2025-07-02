@@ -33,7 +33,7 @@ struct WorkoutInsightCardView: View {
             .padding([.leading, .trailing])
             
             Chart {
-                ForEach(viewModel.exerciseCountsWithName.prefix(5), id: \.exerciseName) { entry in
+                ForEach(viewModel.exerciseCountsWithNames.prefix(5), id: \.exerciseName) { entry in
                     BarMark(
                         x: .value("Count", entry.count),
                         y: .value("Workout Name", entry.exerciseName)

@@ -56,18 +56,12 @@ struct InsightsView: View {
     
     @State private var currentInsight: String?
     @EnvironmentObject private var healthManager: HealthManager
-    
-    private var selectedInsight: ActivityInsight? {
-        guard let currentInsight else { return nil }
-        return ActivityInsight.mockData.first {
-            currentInsight == $0.exerciseName
-        }
-    }
-    
     @StateObject private var viewModel = InsightsViewModel()
     
+    @Binding var showSignInView: Bool
+    
     var body: some View {
-        ScrollView {
+        ScrollView(showsIndicators: false) {
 //            Button("Add new insight") {
 //                viewModel.initUserNewInsight()
 //            }
@@ -82,17 +76,6 @@ struct InsightsView: View {
             .padding(.horizontal)
             
             InsightMetricView(viewModel: viewModel)
-            
-            // "It works"
-            // We should set up a listener so it updates in real time and doesn't require refresh
-            // Ooh I should also learn how to implement refreshes
-            // We shouldn't use state because I'd need potentially infinite # of state vars
-//            Text("List of insights")
-//            ForEach(viewModel.insights) {insight in
-//                Text("New insight:")
-//                // Why force-unwrap? Trust me bro, the key is there.
-//                Text("Number of workouts created: \(Int(insight.data["count"]!))")
-//            }
         }
         .navigationTitle("Insights Page")
         .onAppear {
@@ -102,31 +85,18 @@ struct InsightsView: View {
                 try await viewModel.getInsights()
             }
         }
+        .onChange(of: showSignInView) { oldValue, newValue in
+            Task {
+                try await viewModel.refreshInsights()
+            }
+        }
     }
-}
-
-struct ActivityInsight: Identifiable {
-    let id = UUID()
-    let userId: String
-    let exerciseName: String
-    let usedInWorkouts: Int
-    let totalRepetitionsRecorded: Int
-    let setType: SetType
-    
-    static let mockData: [ActivityInsight] = [
-        .init(userId: "GzP3A2DuGXcurrH1GrIl0ghqYPe2", exerciseName: "Sample Exercise 1", usedInWorkouts: 6, totalRepetitionsRecorded: 32, setType: .resistanceSet),
-        .init(userId: "GzP3A2DuGXcurrH1GrIl0ghqYPe2", exerciseName: "Sample Exercise 2", usedInWorkouts: 8, totalRepetitionsRecorded: 64, setType: .runSet),
-        .init(userId: "GzP3A2DuGXcurrH1GrIl0ghqYPe2", exerciseName: "Sample Exercise 3", usedInWorkouts: 5, totalRepetitionsRecorded: 35, setType: .swimSet),
-        .init(userId: "GzP3A2DuGXcurrH1GrIl0ghqYPe2", exerciseName: "Sample Exercise 4", usedInWorkouts: 3, totalRepetitionsRecorded: 12, setType: .resistanceSet),
-        .init(userId: "GzP3A2DuGXcurrH1GrIl0ghqYPe2", exerciseName: "Sample Exercise 5", usedInWorkouts: 4, totalRepetitionsRecorded: 32, setType: .swimSet),
-        .init(userId: "GzP3A2DuGXcurrH1GrIl0ghqYPe2", exerciseName: "Sample Exercise 6", usedInWorkouts: 10, totalRepetitionsRecorded: 120, setType: .runSet),
-    ]
 }
 
 #Preview {
     @Previewable @StateObject var healthManager = HealthManager()
     NavigationStack {
-        InsightsView()
+        InsightsView(showSignInView: .constant(false))
             .environmentObject(healthManager)
     }
 }
