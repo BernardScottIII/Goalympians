@@ -33,9 +33,6 @@ export const updateTotalSets = v2.firestore
         const previousData = previous?.data() as WorkoutActivity;
         const currentData = current?.data() as WorkoutActivity;
 
-        // console.log(previousData);
-        // console.log(currentData);
-
         // subtract
         // current.data.activity_sets.count - previous.data.activity_sets.count
         const currentNumSets = currentData.activity_sets.length;
@@ -66,8 +63,23 @@ export const updateTotalSets = v2.firestore
         // take the difference (positive or negative) and add it to
         // user/{user_id}/workout_insights/{insight_id}.total_sets
         insightSnapshot.forEach((doc) => {
+          const currentInsight = doc.data() as WorkoutInsight;
+          const exerciseSetOccurrenceId =
+          `exercise_set_counts.${currentData.exercise_id}`;
+          let exerciseIdMostSets = currentInsight.exercise_id_most_sets;
+          if (currentInsight.exercise_set_counts[currentData.exercise_id] + 1 >
+            currentInsight.exercise_set_counts[
+              currentInsight.exercise_id_most_sets
+            ]
+          ) {
+            exerciseIdMostSets = currentData.exercise_id;
+          }
+
           const updatePromise = doc.ref.update({
             "total_sets": FieldValue.increment(numActivitySetsDifference),
+            "exercise_id_most_sets": exerciseIdMostSets,
+            [exerciseSetOccurrenceId]: FieldValue
+              .increment(numActivitySetsDifference),
           });
           updatePromises.push(updatePromise);
         });

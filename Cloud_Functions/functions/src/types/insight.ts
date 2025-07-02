@@ -39,4 +39,6 @@ export type WorkoutInsight = {
     "highest_swim_duration_set_index": number,
     "highest_repetitions_value": number,
     "highest_repetitions_set_index": number,
+    "exercise_set_counts": { [key: string]: number },
+    "exercise_id_most_sets": string
 }

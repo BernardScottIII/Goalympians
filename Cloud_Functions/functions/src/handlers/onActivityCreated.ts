@@ -39,15 +39,19 @@ export const updateExerciseCounts = v2.firestore
         const updatePromises: Promise<FirebaseFirestore.WriteResult>[] = [];
 
         insightSnapshot.forEach((doc) => {
-          const exerciseOccurrenceId =
+          const exerciseActivityOccurrenceId =
           `exercise_occurrence_counts.${newActivity.exercise_id}`;
+          const exerciseSetOccurrenceId =
+          `exercise_set_counts.${newActivity.exercise_id}`;
 
           const currentInsight = doc.data() as WorkoutInsight;
           // if thisExerciseId.FieldValue.increment(1) >
           // exerciseOccurrenceCounts[exerciseIdMostActivities]
           // exerciseIdMostActivities = thisExerciseId
-          let exerciseIdGreatestCount =
+          let exerciseIdGreatestActivityCount =
           currentInsight.exercise_id_most_activities;
+          let exerciseIdGreatestSetCount =
+          currentInsight.exercise_id_most_sets;
 
           if (
             currentInsight.exercise_occurrence_counts[
@@ -59,13 +63,28 @@ export const updateExerciseCounts = v2.firestore
             currentInsight.exercise_id_most_activities =
             newActivity.exercise_id;
 
-            exerciseIdGreatestCount = newActivity.exercise_id;
+            exerciseIdGreatestActivityCount = newActivity.exercise_id;
+          }
+
+          if (
+            currentInsight.exercise_set_counts[
+              newActivity.exercise_id] + 1 >
+            currentInsight.exercise_set_counts[
+              currentInsight.exercise_id_most_sets] ||
+            currentInsight.exercise_id_most_sets == ""
+          ) {
+            currentInsight.exercise_id_most_sets =
+            newActivity.exercise_id;
+
+            exerciseIdGreatestSetCount = newActivity.exercise_id;
           }
 
           const updatePromise = doc.ref.update({
             "total_sets": FieldValue.increment(1),
-            [exerciseOccurrenceId]: FieldValue.increment(1),
-            "exercise_id_most_activities": exerciseIdGreatestCount,
+            [exerciseActivityOccurrenceId]: FieldValue.increment(1),
+            "exercise_id_most_activities": exerciseIdGreatestActivityCount,
+            [exerciseSetOccurrenceId]: FieldValue.increment(1),
+            "exercise_id_most_sets": exerciseIdGreatestSetCount,
           });
           updatePromises.push(updatePromise);
         });

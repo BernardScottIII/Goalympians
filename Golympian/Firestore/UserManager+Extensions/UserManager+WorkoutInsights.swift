@@ -26,6 +26,8 @@ struct WorkoutInsight: Codable {
     let highestWeightSetIndex: Int
     let exerciseIdMostActivities: String
     let exerciseOccurrenceCounts: [String: Int]
+    let exerciseIdMostSets: String
+    let exerciseSetCounts: [String:Int]
     let activityIdMostLaps: String
     let highestLapsValue: Int
     let highestLapsSetIndex: Int
@@ -90,6 +92,8 @@ struct WorkoutInsight: Codable {
         self.activityIdMostRepetitions = ""
         self.highestRepetitionsValue = 0
         self.highestRepetitionsSetIndex = 0
+        self.exerciseIdMostSets = ""
+        self.exerciseSetCounts = [:]
     }
     
     func encode(to encoder: any Encoder) throws {
@@ -132,6 +136,8 @@ struct WorkoutInsight: Codable {
         try container.encode(self.activityIdMostRepetitions, forKey: .activityIdMostRepetitions)
         try container.encode(self.highestRepetitionsValue, forKey: .highestRepetitionsValue)
         try container.encode(self.highestRepetitionsSetIndex, forKey: .highestRepetitionsSetIndex)
+        try container.encode(self.exerciseIdMostSets, forKey: .exerciseIdMostSets)
+        try container.encode(self.exerciseSetCounts, forKey: .exerciseSetCounts)
     }
     
     enum CodingKeys: String, CodingKey, CaseIterable {
@@ -173,6 +179,8 @@ struct WorkoutInsight: Codable {
         case activityIdMostRepetitions = "activity_id_most_repetitions"
         case highestRepetitionsValue = "highest_repetitions_value"
         case highestRepetitionsSetIndex = "highest_repetitions_set_index"
+        case exerciseIdMostSets = "exercise_id_most_sets"
+        case exerciseSetCounts = "exercise_set_counts"
         
         static var allCases: [CodingKeys] {
             return [
@@ -214,6 +222,8 @@ struct WorkoutInsight: Codable {
                 .activityIdMostRepetitions,
                 .highestRepetitionsValue,
                 .highestRepetitionsSetIndex,
+                .exerciseIdMostSets,
+                .exerciseSetCounts
             ]
         }
     }
@@ -258,6 +268,8 @@ struct WorkoutInsight: Codable {
             ("activityIdMostRepetitions", "\(self.activityIdMostRepetitions)"),
             ("highestRepetitionsValue", "\(self.highestRepetitionsValue)"),
             ("highestRepetitionsSetIndex", "\(self.highestRepetitionsSetIndex)"),
+            ("exerciseIdMostSets", "\(self.exerciseIdMostSets)"),
+            ("exerciseSetCounts", "\(self.exerciseSetCounts)")
         ]
     }
     
@@ -301,6 +313,8 @@ struct WorkoutInsight: Codable {
         self.activityIdMostRepetitions = try container.decode(String.self, forKey: .activityIdMostRepetitions)
         self.highestRepetitionsValue = try container.decode(Int.self, forKey: .highestRepetitionsValue)
         self.highestRepetitionsSetIndex = try container.decode(Int.self, forKey: .highestRepetitionsSetIndex)
+        self.exerciseIdMostSets = try container.decode(String.self, forKey: .exerciseIdMostSets)
+        self.exerciseSetCounts = try container.decode([String:Int].self, forKey: .exerciseSetCounts)
     }
     
     enum InsightMetricGrouping: String, CaseIterable {
