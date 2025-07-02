@@ -165,4 +165,13 @@ extension UserManager {
             .whereField("date", isLessThan: Timestamp(date: toDate))
             .getDocuments(as: WorkoutInsight.self)
     }
+    
+    func getAllUserInsights(userId: String) async throws -> [WorkoutInsight] {
+        return try await userWorkoutInsightCollection(userId: userId)
+            .getDocuments(as: WorkoutInsight.self)
+    }
+    
+    func deleteUserInsight(userId: String, insightId: String) async throws {
+        try await userWorkoutInsightDocument(userId: userId, insightId: insightId).delete()
+    }
 }

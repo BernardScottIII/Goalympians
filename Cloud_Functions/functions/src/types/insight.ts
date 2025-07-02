@@ -14,7 +14,7 @@ export type WorkoutInsight = {
     "total_swim_duration": number,
     "total_laps": number,
     "exercise_id_most_activities": string,
-    "exercise_occurrence_counts": { "id": string, "count": number }
+    "exercise_occurrence_counts": { [key: string]: number }
     "activity_id_most_elevation": string,
     "activity_id_most_laps": string,
     "activity_id_most_run_distance": string,

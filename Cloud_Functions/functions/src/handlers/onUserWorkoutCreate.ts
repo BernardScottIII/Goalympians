@@ -14,7 +14,7 @@ import {currentAndNextMonthStart} from "../utils/currentAndNextMonthStart";
 import {Workout} from "../types/workout";
 import {User} from "../types/user";
 import {getTotalValidDays} from "../utils/getTotalValidDays";
-import { getWeek } from "../utils/getWeekNumber";
+import {getWeek} from "../utils/getWeekNumber";
 
 const db = admin.firestore();
 

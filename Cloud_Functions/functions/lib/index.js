@@ -48,4 +48,5 @@ const admin = __importStar(require("firebase-admin"));
 admin.initializeApp();
 __exportStar(require("./handlers/onUserWorkoutCreate"), exports);
 __exportStar(require("./handlers/onActivitySetUpdate"), exports);
+__exportStar(require("./handlers/onActivityCreated"), exports);
 //# sourceMappingURL=index.js.map

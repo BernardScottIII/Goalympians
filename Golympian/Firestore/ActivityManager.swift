@@ -143,7 +143,7 @@ enum SetType: String, Codable, CaseIterable {
         switch self {
         case .resistanceSet: return [
             "weight": "scalemass.fill",
-            "repetitions": "pencil.and.list.clipboard"
+            "repetitions": "checkmark.arrow.trianglehead.counterclockwise"
         ]
         case .runSet: return [
             "distance": "point.bottomleft.forward.to.arrow.triangle.scurvepath.fill",

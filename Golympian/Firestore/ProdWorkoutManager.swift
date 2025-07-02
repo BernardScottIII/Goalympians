@@ -57,6 +57,11 @@ final class ProdWorkoutManager: WorkoutManagerProtocol {
     }
     
     func removeWorkout(workoutId: String) async throws {
+        let activities = try await getAllWorkoutActivities(workoutId: workoutId)
+        for activity in activities {
+            try await removeWorkoutActivity(workoutId: workoutId, activityId: activity.id)
+        }
+        
         try await workoutDocument(workoutId: workoutId).delete()
     }
 }
@@ -141,88 +146,88 @@ extension ProdWorkoutManager {
 }
 
 // MARK: Activity Set
-extension ProdWorkoutManager {
-    
-    private func activitySetCollection(workoutId: String, activityId: String) -> CollectionReference {
-        workoutActivityDocument(workoutId: workoutId, activityId: activityId).collection("activity_sets")
-    }
-    
-    private func activitySetDocument(workoutId: String, activityId: String, activitySetId: String) -> DocumentReference {
-        activitySetCollection(workoutId: workoutId, activityId: activityId).document(activitySetId)
-    }
-    
-    func addWorkoutActivitySet(workoutId: String, activityId: String) async throws {
-        let document = activitySetCollection(workoutId: workoutId, activityId: activityId).document()
-        let documentId = document.documentID
-        let activitySetType = try await workoutActivityDocument(workoutId: workoutId, activityId: activityId).getDocument(as: DBActivity.self).setType
-        
-        let data: [String:Any] = {
-            switch activitySetType {
-            case .resistanceSet:
-                [
-                    DBResistanceSet.CodingKeys.id.rawValue: documentId,
-                    DBResistanceSet.CodingKeys.weight.rawValue: 0.0,
-                    DBResistanceSet.CodingKeys.repetitions.rawValue: 0
-                ]
-            case .runSet:
-                [
-                    DBRunSet.CodingKeys.id.rawValue: documentId,
-                    DBRunSet.CodingKeys.distance.rawValue: 0.0,
-                    DBRunSet.CodingKeys.elevation.rawValue: 0.0,
-                    DBRunSet.CodingKeys.duration.rawValue: 0.0
-                ]
-            case .swimSet:
-                [
-                    DBSwimSet.CodingKeys.id.rawValue: documentId,
-                    DBSwimSet.CodingKeys.distance.rawValue: 0.0,
-                    DBSwimSet.CodingKeys.laps.rawValue: 0,
-                    DBSwimSet.CodingKeys.duration.rawValue: 0.0
-                ]
-            }
-        }()
-        
-        try await document.setData(data, merge: false)
-    }
-    
-    func removeWorkoutActivitySet(workoutId: String, activityId: String, activitySetId: String) async throws {
-        try await activitySetDocument(workoutId: workoutId, activityId: activityId, activitySetId: activitySetId).delete()
-    }
-    
-    func getAllActivitySets(workoutId: String, activityId: String) async throws -> [DBActivitySet] {
-        let activity = try await workoutActivityDocument(workoutId: workoutId, activityId: activityId).getDocument(as: DBActivity.self)
-        
-        return switch activity.setType {
-        case .resistanceSet:
-            try await activitySetCollection(workoutId: workoutId, activityId: activityId).getDocuments(as: DBResistanceSet.self)
-        case .runSet:
-            try await activitySetCollection(workoutId: workoutId, activityId: activityId).getDocuments(as: DBRunSet.self)
-        case .swimSet:
-            try await activitySetCollection(workoutId: workoutId, activityId: activityId).getDocuments(as: DBSwimSet.self)
-        }
-    }
-    
-    func updateActivitySet(workoutId: String, activity: DBActivity, set: DBActivitySet) async throws {
-        switch activity.setType {
-        case .resistanceSet:
-            try activitySetDocument(workoutId: workoutId, activityId: activity.id, activitySetId: set.id).setData(from: set as! DBResistanceSet, merge: true)
-        case .runSet:
-            try activitySetDocument(workoutId: workoutId, activityId: activity.id, activitySetId: set.id).setData(from: set as! DBRunSet, merge: true)
-        case .swimSet:
-            try activitySetDocument(workoutId: workoutId, activityId: activity.id, activitySetId: set.id).setData(from: set as! DBSwimSet, merge: true)
-        }
-    }
-    
-    func getActivitySet(workoutId: String, activity: DBActivity, setId: String) async throws -> DBActivitySet {
-        switch activity.setType {
-        case .resistanceSet:
-            return try await activitySetDocument(workoutId: workoutId, activityId: activity.id, activitySetId: setId).getDocument(as: DBResistanceSet.self)
-        case .runSet:
-            return try await activitySetDocument(workoutId: workoutId, activityId: activity.id, activitySetId: setId).getDocument(as: DBRunSet.self)
-        case .swimSet:
-            return try await activitySetDocument(workoutId: workoutId, activityId: activity.id, activitySetId: setId).getDocument(as: DBSwimSet.self)
-        }
-        
-    }
-}
+//extension ProdWorkoutManager {
+//    
+//    private func activitySetCollection(workoutId: String, activityId: String) -> CollectionReference {
+//        workoutActivityDocument(workoutId: workoutId, activityId: activityId).collection("activity_sets")
+//    }
+//    
+//    private func activitySetDocument(workoutId: String, activityId: String, activitySetId: String) -> DocumentReference {
+//        activitySetCollection(workoutId: workoutId, activityId: activityId).document(activitySetId)
+//    }
+//    
+//    func addWorkoutActivitySet(workoutId: String, activityId: String) async throws {
+//        let document = activitySetCollection(workoutId: workoutId, activityId: activityId).document()
+//        let documentId = document.documentID
+//        let activitySetType = try await workoutActivityDocument(workoutId: workoutId, activityId: activityId).getDocument(as: DBActivity.self).setType
+//        
+//        let data: [String:Any] = {
+//            switch activitySetType {
+//            case .resistanceSet:
+//                [
+//                    DBResistanceSet.CodingKeys.id.rawValue: documentId,
+//                    DBResistanceSet.CodingKeys.weight.rawValue: 0.0,
+//                    DBResistanceSet.CodingKeys.repetitions.rawValue: 0
+//                ]
+//            case .runSet:
+//                [
+//                    DBRunSet.CodingKeys.id.rawValue: documentId,
+//                    DBRunSet.CodingKeys.distance.rawValue: 0.0,
+//                    DBRunSet.CodingKeys.elevation.rawValue: 0.0,
+//                    DBRunSet.CodingKeys.duration.rawValue: 0.0
+//                ]
+//            case .swimSet:
+//                [
+//                    DBSwimSet.CodingKeys.id.rawValue: documentId,
+//                    DBSwimSet.CodingKeys.distance.rawValue: 0.0,
+//                    DBSwimSet.CodingKeys.laps.rawValue: 0,
+//                    DBSwimSet.CodingKeys.duration.rawValue: 0.0
+//                ]
+//            }
+//        }()
+//        
+//        try await document.setData(data, merge: false)
+//    }
+//    
+//    func removeWorkoutActivitySet(workoutId: String, activityId: String, activitySetId: String) async throws {
+//        try await activitySetDocument(workoutId: workoutId, activityId: activityId, activitySetId: activitySetId).delete()
+//    }
+//    
+//    func getAllActivitySets(workoutId: String, activityId: String) async throws -> [DBActivitySet] {
+//        let activity = try await workoutActivityDocument(workoutId: workoutId, activityId: activityId).getDocument(as: DBActivity.self)
+//        
+//        return switch activity.setType {
+//        case .resistanceSet:
+//            try await activitySetCollection(workoutId: workoutId, activityId: activityId).getDocuments(as: DBResistanceSet.self)
+//        case .runSet:
+//            try await activitySetCollection(workoutId: workoutId, activityId: activityId).getDocuments(as: DBRunSet.self)
+//        case .swimSet:
+//            try await activitySetCollection(workoutId: workoutId, activityId: activityId).getDocuments(as: DBSwimSet.self)
+//        }
+//    }
+//    
+//    func updateActivitySet(workoutId: String, activity: DBActivity, set: DBActivitySet) async throws {
+//        switch activity.setType {
+//        case .resistanceSet:
+//            try activitySetDocument(workoutId: workoutId, activityId: activity.id, activitySetId: set.id).setData(from: set as! DBResistanceSet, merge: true)
+//        case .runSet:
+//            try activitySetDocument(workoutId: workoutId, activityId: activity.id, activitySetId: set.id).setData(from: set as! DBRunSet, merge: true)
+//        case .swimSet:
+//            try activitySetDocument(workoutId: workoutId, activityId: activity.id, activitySetId: set.id).setData(from: set as! DBSwimSet, merge: true)
+//        }
+//    }
+//    
+//    func getActivitySet(workoutId: String, activity: DBActivity, setId: String) async throws -> DBActivitySet {
+//        switch activity.setType {
+//        case .resistanceSet:
+//            return try await activitySetDocument(workoutId: workoutId, activityId: activity.id, activitySetId: setId).getDocument(as: DBResistanceSet.self)
+//        case .runSet:
+//            return try await activitySetDocument(workoutId: workoutId, activityId: activity.id, activitySetId: setId).getDocument(as: DBRunSet.self)
+//        case .swimSet:
+//            return try await activitySetDocument(workoutId: workoutId, activityId: activity.id, activitySetId: setId).getDocument(as: DBSwimSet.self)
+//        }
+//        
+//    }
+//}
 
 

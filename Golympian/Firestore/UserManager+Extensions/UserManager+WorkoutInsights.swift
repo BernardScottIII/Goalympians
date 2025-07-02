@@ -34,7 +34,7 @@ struct WorkoutInsight: Codable {
     let highestRunDistanceValue: Double
     let highestRunDistanceSetIndex: Int
     let highestSwimDistanceValue: Double
-    let highestSwimDistancesetIndex: Int
+    let highestSwimDistanceSetIndex: Int
     let activityIdMostElevation: String
     let highestElevationValue: Double
     let highestElevationSetIndex: Int
@@ -77,7 +77,7 @@ struct WorkoutInsight: Codable {
         self.highestRunDistanceValue = 0
         self.highestRunDistanceSetIndex = 0
         self.highestSwimDistanceValue = 0
-        self.highestSwimDistancesetIndex = 0
+        self.highestSwimDistanceSetIndex = 0
         self.activityIdMostElevation = ""
         self.highestElevationValue = 0
         self.highestElevationSetIndex = 0
@@ -119,7 +119,7 @@ struct WorkoutInsight: Codable {
         try container.encode(self.highestRunDistanceValue, forKey: .highestRunDistanceValue)
         try container.encode(self.highestRunDistanceSetIndex, forKey: .highestRunDistanceSetIndex)
         try container.encode(self.highestSwimDistanceValue, forKey: .highestSwimDistanceValue)
-        try container.encode(self.highestSwimDistancesetIndex, forKey: .highestSwimDistancesetIndex)
+        try container.encode(self.highestSwimDistanceSetIndex, forKey: .highestSwimDistanceSetIndex)
         try container.encode(self.activityIdMostElevation, forKey: .activityIdMostElevation)
         try container.encode(self.highestElevationValue, forKey: .highestElevationValue)
         try container.encode(self.highestElevationSetIndex, forKey: .highestElevationSetIndex)
@@ -160,7 +160,7 @@ struct WorkoutInsight: Codable {
         case highestRunDistanceValue = "highest_run_distance_value"
         case highestRunDistanceSetIndex = "highest_run_distance_set_index"
         case highestSwimDistanceValue = "highest_swim_distance_value"
-        case highestSwimDistancesetIndex = "highest_swim_distance_set_index"
+        case highestSwimDistanceSetIndex = "highest_swim_distance_set_index"
         case activityIdMostElevation = "activity_id_most_elevation"
         case highestElevationValue = "highest_elevation_value"
         case highestElevationSetIndex = "highest_elevation_set_index"
@@ -201,7 +201,7 @@ struct WorkoutInsight: Codable {
                 .highestRunDistanceValue,
                 .highestRunDistanceSetIndex,
                 .highestSwimDistanceValue,
-                .highestSwimDistancesetIndex,
+                .highestSwimDistanceSetIndex,
                 .activityIdMostElevation,
                 .highestElevationValue,
                 .highestElevationSetIndex,
@@ -245,7 +245,7 @@ struct WorkoutInsight: Codable {
             ("highestRunDistanceValue", "\(self.highestRunDistanceValue)"),
             ("highestRunDistanceSetIndex", "\(self.highestRunDistanceSetIndex)"),
             ("highestSwimDistanceValue", "\(self.highestSwimDistanceValue)"),
-            ("highestSwimDistancesetIndex", "\(self.highestSwimDistancesetIndex)"),
+            ("highestSwimDistancesetIndex", "\(self.highestSwimDistanceSetIndex)"),
             ("activityIdMostElevation", "\(self.activityIdMostElevation)"),
             ("highestElevationValue", "\(self.highestElevationValue)"),
             ("highestElevationSetIndex", "\(self.highestElevationSetIndex)"),
@@ -288,7 +288,7 @@ struct WorkoutInsight: Codable {
         self.highestRunDistanceValue = try container.decode(Double.self, forKey: .highestRunDistanceValue)
         self.highestRunDistanceSetIndex = try container.decode(Int.self, forKey: .highestRunDistanceSetIndex)
         self.highestSwimDistanceValue = try container.decode(Double.self, forKey: .highestSwimDistanceValue)
-        self.highestSwimDistancesetIndex = try container.decode(Int.self, forKey: .highestSwimDistancesetIndex)
+        self.highestSwimDistanceSetIndex = try container.decode(Int.self, forKey: .highestSwimDistanceSetIndex)
         self.activityIdMostElevation = try container.decode(String.self, forKey: .activityIdMostElevation)
         self.highestElevationValue = try container.decode(Double.self, forKey: .highestElevationValue)
         self.highestElevationSetIndex = try container.decode(Int.self, forKey: .highestElevationSetIndex)
@@ -302,59 +302,45 @@ struct WorkoutInsight: Codable {
         self.highestRepetitionsValue = try container.decode(Int.self, forKey: .highestRepetitionsValue)
         self.highestRepetitionsSetIndex = try container.decode(Int.self, forKey: .highestRepetitionsSetIndex)
     }
+    
+    enum InsightMetricGrouping: String, CaseIterable {
+        case elevation = "Elevation"
+        case laps = "Laps"
+        case runDuration = "Run Duration"
+        case swimDuration = "Swim Duration"
+        case runDistance = "Run Distance"
+        case swimDistance = "Swim Distance"
+        case repetitions = "Repetitions"
+        case weight = "Weight"
+        
+        var allCases: [InsightMetricGrouping] {
+            return [.elevation, .laps, .runDuration, .swimDuration, .runDistance, .swimDistance, .repetitions, .weight]
+        }
+    }
+    
+    func getMetricGrouping(_ insightMetric: InsightMetricGrouping) -> [Any] {
+        switch insightMetric {
+        case .elevation: return [totalElevation, activityIdMostElevation, highestElevationValue, highestElevationSetIndex]
+        case .laps: return [totalLaps, activityIdMostLaps, highestLapsValue, highestLapsSetIndex]
+        case .runDuration: return [totalRunSetDuration, activityIdMostRunDuration, highestRunDurationValue, highestRunDurationSetIndex]
+        case .swimDuration: return [totalSwimSetDuration, activityIdMostSwimDuration, highestSwimDurationValue, highestSwimDurationSetIndex]
+        case .runDistance: return [totalRunSetDistance, activityIdMostRunDistance, highestRunDistanceValue, highestRunDistanceSetIndex]
+        case .swimDistance: return [totalSwimSetDistance, activityIdMostSwimDistance, highestSwimDistanceValue, highestSwimDistanceSetIndex]
+        case .repetitions: return [totalRepetitions, activityIdMostRepetitions, highestRepetitionsValue, highestRepetitionsSetIndex]
+        case .weight: return  [totalWeight, activityIdMostWeight, highestWeightValue, highestWeightSetIndex]
+        }
+    }
+    
+    func getMetricSymbol(_ insightMetric: InsightMetricGrouping) -> String {
+        switch insightMetric {
+        case .elevation: return "custom.barometer"
+        case .laps: return "custom.point.forward.to.point.capsulepath"
+        case .runDuration: return "custom.figure.run.badge.clock"
+        case .swimDuration: return "custom.figure.open.water.swim.badge.clock"
+        case .runDistance: return "custom.figure.run.badge.location"
+        case .swimDistance: return "custom.figure.open.water.swim.badge.location"
+        case .repetitions: return "custom.checkmark.arrow.trianglehead.counterclockwise"
+        case .weight: return "custom.scalemass.fill"
+        }
+    }
 }
-
-//extension UserManager {
-//    private func userWorkoutInsightCollection(userId: String) -> CollectionReference {
-//        Firestore.firestore().collection("users").document(userId).collection("workout_insights")
-//    }
-//    
-//    private func userWorkoutInsightDocument(userId: String, insightId: String) -> DocumentReference {
-//        userWorkoutInsightCollection(userId: userId).document(insightId)
-//    }
-//    
-//    func initUserWorkoutInsights(userId: String) async throws {
-//        let document = userWorkoutInsightCollection(userId: userId).document()
-//        let documentId = document.documentID
-//        
-//        var calendar = Calendar.current
-//        calendar.timeZone = TimeZone(abbreviation: "GMT")!
-//        let components = calendar.dateComponents([.year, .month], from: Date())
-//        
-//        // Leaving all other dateComponents nil will set them to default values,
-//        // which is desireable when trying to get the first of the current month
-//        let newInsight = WorkoutInsight(
-//            id: documentId,
-//            date: Calendar.current.date(from: components)!
-//        )
-//        
-//        try document.setData(from: newInsight, merge: false)
-//    }
-//    
-//    func getCurrMonthUserWorkoutInsight(userId: String) async throws -> [WorkoutInsight] {
-//        
-//        var calendar = Calendar.current
-//        calendar.timeZone = TimeZone(abbreviation: "GMT")!
-//        let components = calendar.dateComponents([.year, .month], from: Date())
-//        let fromDate = calendar.date(from: components)!
-//        let _ = calendar.date(byAdding: .month, value: 1, to: fromDate)!
-//        
-//        let myUser = try await UserManager.shared.getUser(userId: userId)
-//        print(myUser.streakData)
-//
-////        print(Timestamp(date: fromDate))
-////        print(Timestamp(date: toDate))
-//        return try await userWorkoutInsightCollection(userId: userId)
-//            .getDocuments(as: WorkoutInsight.self)
-////            .whereField("date", isGreaterThanOrEqualTo: Timestamp(date: fromDate))
-////            .whereField("date", isLessThan: Timestamp(date: toDate))
-//        
-////        print("result count: \(result.count)")
-////        
-////        if result.count > 1 {
-////            throw DecodingError.typeMismatch(WorkoutInsight.self, DecodingError.Context(codingPath: [], debugDescription: "More than one workout insight for the current month found."))
-////        }
-////        return result.first!
-//    }
-//}
-

@@ -87,10 +87,13 @@ extension SettingsViewModel {
         // MARK: Workout Removal
         let workouts = try await workoutDataService.getAllWorkouts()
         for workout in workouts {
-            for activity in try await workoutDataService.getAllWorkoutActivities(workoutId: workout.id) {
-                try await workoutDataService.removeWorkoutActivity(workoutId: workout.id, activityId: activity.id)
-            }
             try await workoutDataService.removeWorkout(workoutId: workout.id)
+        }
+        
+        // MARK: Insight Removal
+        let insights = try await UserManager.shared.getAllUserInsights(userId: userId)
+        for insight in insights {
+            try await UserManager.shared.deleteUserInsight(userId: userId, insightId: insight.id)
         }
         
         try await UserManager.shared.deleteUser(userId: userId)

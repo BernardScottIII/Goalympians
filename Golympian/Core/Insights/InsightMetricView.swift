@@ -13,8 +13,10 @@ struct InsightMetricView: View {
     
     var body: some View {
         LazyVGrid(columns: Array(repeating: GridItem(spacing: 20), count: 1)) {
-            ForEach(viewModel.workoutInsight.properties, id: \.key) { property in
-                Text("\(property.key): \(property.value)")
+            WorkoutInsightCardView(viewModel: viewModel)
+            
+            ForEach(WorkoutInsight.InsightMetricGrouping.allCases, id: \.self) { grouping in
+                InsightCardView(workoutInsight: viewModel.workoutInsight, insightMetricGrouping: grouping)
             }
         }
     }
@@ -22,5 +24,7 @@ struct InsightMetricView: View {
 
 #Preview {
     @Previewable @StateObject var viewModel = InsightsViewModel()
-    InsightMetricView(viewModel: viewModel)
+    ScrollView {
+        InsightMetricView(viewModel: viewModel)
+    }
 }

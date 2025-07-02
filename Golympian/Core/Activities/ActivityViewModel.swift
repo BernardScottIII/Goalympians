@@ -51,12 +51,6 @@ final class ActivityViewModel: ObservableObject {
         }
     }
     
-    func addActivitySet(workoutId: String, activityId: String) {
-        Task {
-            try await dataService.addWorkoutActivitySet(workoutId: workoutId, activityId: activityId)
-        }
-    }
-    
     func updateActivity(workoutId: String, activity: DBActivity) {
         Task {
             try await dataService.updateWorkoutActivity(workoutId: workoutId, activity: activity)

@@ -12,3 +12,4 @@ admin.initializeApp();
 
 export * from "./handlers/onUserWorkoutCreate";
 export * from "./handlers/onActivitySetUpdate";
+export * from "./handlers/onActivityCreated";

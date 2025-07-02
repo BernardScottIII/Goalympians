@@ -34,13 +34,13 @@ protocol WorkoutManagerProtocol {
     func removeActivitySet(workoutId: String, activityId: String, set: [String:Any]) async throws
     
     // MARK: ActivitySet Protocol
-    func addWorkoutActivitySet(workoutId: String, activityId: String) async throws
-    
-    func removeWorkoutActivitySet(workoutId: String, activityId: String, activitySetId: String) async throws
-    
-    func getAllActivitySets(workoutId: String, activityId: String) async throws -> [DBActivitySet]
-    
-    func updateActivitySet(workoutId: String, activity: DBActivity, set: DBActivitySet) async throws
-    
-    func getActivitySet(workoutId: String, activity: DBActivity, setId: String) async throws -> DBActivitySet
+//    func addWorkoutActivitySet(workoutId: String, activityId: String) async throws
+//    
+//    func removeWorkoutActivitySet(workoutId: String, activityId: String, activitySetId: String) async throws
+//    
+//    func getAllActivitySets(workoutId: String, activityId: String) async throws -> [DBActivitySet]
+//    
+//    func updateActivitySet(workoutId: String, activity: DBActivity, set: DBActivitySet) async throws
+//    
+//    func getActivitySet(workoutId: String, activity: DBActivity, setId: String) async throws -> DBActivitySet
 }

@@ -29,7 +29,7 @@ struct HKInsightCard: View {
                     Spacer()
                     
                     Image(systemName: hkInsight.image)
-                        .foregroundStyle(.green)
+                        .foregroundStyle(Color(red: 1, green: (124/255), blue: 0))
                 }
                 .padding()
                 

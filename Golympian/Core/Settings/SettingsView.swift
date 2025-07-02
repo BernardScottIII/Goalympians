@@ -10,6 +10,7 @@ import FirebaseFirestore
 
 struct SettingsView: View {
     
+    @State private var accountDeletionFlag: Bool = false
     @StateObject private var viewModel: SettingsViewModel
     @Environment(\.dismiss) private var dismiss
     
@@ -39,14 +40,7 @@ struct SettingsView: View {
             }
             
             Button("Delete Account", role: .destructive) {
-                Task {
-                    do {
-                        try await viewModel.deleteAccount()
-                        showSignInView = true
-                    } catch {
-                        print(error)
-                    }
-                }
+                accountDeletionFlag = true
             }
             if viewModel.authProviders.contains(.email) {
                 emailSection
@@ -61,6 +55,23 @@ struct SettingsView: View {
         }
         .onChange(of: showSignInView) {
             dismiss()
+        }
+        .alert("Permanently Delete Account?", isPresented: $accountDeletionFlag) {
+            Button("Confirm", role: .destructive, action: initiateAccountDelete)
+            Button("Cancel", role: .cancel, action: {})
+        } message: {
+            Text("Are you sure you would like to permanently delete your account? This action cannot be undone.")
+        }
+    }
+    
+    private func initiateAccountDelete() {
+        Task {
+            do {
+                try await viewModel.deleteAccount()
+                showSignInView = true
+            } catch {
+                print(error)
+            }
         }
     }
 }
