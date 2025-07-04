@@ -13,7 +13,7 @@ struct APIExerciseArray: Codable {
     let total, skip, limit: Int
 }
 
-struct APIExercise: Identifiable, Codable {
+struct APIExercise: Identifiable, Codable, Hashable {
     @DocumentID var id: String?
     let name: String
     let equipment: String // Not EquipmentOption to allow for custom user input

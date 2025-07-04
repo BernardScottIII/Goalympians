@@ -93,8 +93,10 @@ struct CreateExerciseView: View {
             
         }
         .onAppear {
-            viewModel.getExercises()
-            keyboardFocused = true
+            Task {
+                try await viewModel.getExercises()
+                keyboardFocused = true
+            }
         }
         .navigationTitle("Create Exercise")
         .alert(

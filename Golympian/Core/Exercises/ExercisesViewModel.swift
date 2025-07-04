@@ -60,28 +60,26 @@ final class ExercisesViewModel: ObservableObject {
     
     func filterSelectedOption(option: FilterOption) async throws {
         self.selectedFilter = option
-        self.getExercises()
+        try await self.getExercises()
     }
     
     func filterEquipmentOption(equipment: EquipmentOption) async throws {
         self.selectedEquipment = equipment
-        self.getExercises()
+        try await self.getExercises()
     }
     
     func categorySelected(category: CategoryOption) async throws {
         self.selectedCategory = category
-        self.getExercises()
+        try await self.getExercises()
     }
     
     func userIdsSelected(userIds: [String]) async throws {
         self.userIds = userIds
-        self.getExercises()
+        try await self.getExercises()
     }
     
-    func getExercises() {
-        Task {
-            self.exercises = try await ExerciseManager.shared.getAllExercises(nameDescending: selectedFilter?.nameDescending, forCategory: selectedCategory?.rawValue, usingEquipment: selectedEquipment?.rawValue, uuids: userIds)
-        }
+    func getExercises() async throws {
+        self.exercises = try await ExerciseManager.shared.getAllExercises(nameDescending: selectedFilter?.nameDescending, forCategory: selectedCategory?.rawValue, usingEquipment: selectedEquipment?.rawValue, uuids: userIds)
     }
     
     func removeUserExercise(exercise: APIExercise) async throws {
