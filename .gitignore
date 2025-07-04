@@ -1,17 +1,17 @@
-Golympian/GoogleService-Info.plist
-Golympian/Info.plist
-Golympian/Info.plist
+Golympians/GoogleService-Info.plist
+Golympians/Info.plist
+Golympians/Info.plist
 Cloud_Functions/Functions/node_modules
 .DS_Store
-Golympian/.DS_Store
+Golympians/.DS_Store
 Cloud_Functions/.DS_Store
-Golympian/project.xcworkspace/xcuserdata/bernardscott.xcuserdatad/UserInterfaceState.xcuserstate
-Golympian/project.pbxproj
-Golympian.xcodeproj/project.xcworkspace/xcuserdata/bernardscott.xcuserdatad/UserInterfaceState.xcuserstate
-Golympian.xcodeproj/xcuserdata/bernardscott.xcuserdatad/xcschemes/xcschememanagement.plist
-Golympian.xcodeproj/project.xcworkspace/xcuserdata/bernardscott.xcuserdatad/UserInterfaceState.xcuserstate
-Golympian.xcodeproj/project.pbxproj
-Golympian.xcodeproj/project.xcworkspace/xcuserdata/bernardscott.xcuserdatad/UserInterfaceState.xcuserstate
+Golympians/project.xcworkspace/xcuserdata/bernardscott.xcuserdatad/UserInterfaceState.xcuserstate
+Golympians/project.pbxproj
+Golympians.xcodeproj/project.xcworkspace/xcuserdata/bernardscott.xcuserdatad/UserInterfaceState.xcuserstate
+Golympians.xcodeproj/xcuserdata/bernardscott.xcuserdatad/xcschemes/xcschememanagement.plist
+Golympians.xcodeproj/project.xcworkspace/xcuserdata/bernardscott.xcuserdatad/UserInterfaceState.xcuserstate
+Golympians.xcodeproj/project.pbxproj
+Golympians.xcodeproj/project.xcworkspace/xcuserdata/bernardscott.xcuserdatad/UserInterfaceState.xcuserstate
 
 Cloud_Functions/functions/db/
 
