@@ -88,6 +88,8 @@ export const updateExerciseCounts = v2.firestore
           });
           updatePromises.push(updatePromise);
         });
+
+        await Promise.all(updatePromises);
       } catch (error) {
         console.error("Error updating matching documents");
         console.log(error);
