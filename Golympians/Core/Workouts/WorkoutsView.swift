@@ -13,12 +13,15 @@ struct WorkoutsView: View {
     @State private var pickerSelection: String = "My Workouts"
     private let screens = ["My Workouts", "Shared with Me"]
     
+    @Binding var path: NavigationPath
     let workoutDataService: WorkoutManagerProtocol
     
     init(
+        path: Binding<NavigationPath>,
         workoutDataService: WorkoutManagerProtocol
     ) {
         self.workoutDataService = workoutDataService
+        _path = path
         _viewModel = StateObject(wrappedValue: WorkoutViewModel(workoutDataService: workoutDataService))
     }
     
@@ -45,8 +48,9 @@ struct WorkoutsView: View {
 }
 
 #Preview {
+    @Previewable @State var path = NavigationPath()
     let dataService = ProdWorkoutManager(workoutCollection: Firestore.firestore().collection("workouts"))
     NavigationStack {
-        WorkoutsView(workoutDataService: dataService)
+        WorkoutsView(path: $path, workoutDataService: dataService)
     }
 }

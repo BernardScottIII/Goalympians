@@ -23,10 +23,15 @@ struct CreateWorkoutView: View {
         return calendar.date(from:startComponents)! ... Date(timeIntervalSinceNow: 0)
     }()
     
-    let workoutDataService: WorkoutManagerProtocol
+    @ObservedObject var viewModel: WorkoutViewModel
+    @Binding var path: NavigationPath
     
-    init(workoutDataService: WorkoutManagerProtocol) {
-        self.workoutDataService = workoutDataService
+    init(
+        viewModel: WorkoutViewModel,
+        path: Binding<NavigationPath>
+    ) {
+        self.viewModel = viewModel
+        _path = path
     }
     
     var body: some View {
@@ -58,13 +63,7 @@ struct CreateWorkoutView: View {
         
         if !missingNameAlert {
             Task {
-                try await workoutDataService.createNewWorkout(workout: DBWorkout(
-                    id: UUID().uuidString,
-                    userId: AuthenticationManager.shared.getAuthenticatedUser().uid,
-                    name: name,
-                    description: description,
-                    date: date
-                ))
+                try await viewModel.createWorkout(name: name, description: description, date: date)
             }
             dismiss()
         }
@@ -72,7 +71,9 @@ struct CreateWorkoutView: View {
 }
 
 #Preview {
+    @Previewable @State var path = NavigationPath()
+    @Previewable @StateObject var viewModel = WorkoutViewModel(workoutDataService: ProdWorkoutManager(workoutCollection: Firestore.firestore().collection("workouts")))
     NavigationStack {
-        CreateWorkoutView(workoutDataService: ProdWorkoutManager(workoutCollection: Firestore.firestore().collection("workouts")))
+        CreateWorkoutView(viewModel: viewModel, path: $path)
     }
 }

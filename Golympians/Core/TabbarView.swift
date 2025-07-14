@@ -36,7 +36,7 @@ struct TabbarView: View {
             Tab("Workouts", systemImage: "dumbbell", value: .workouts) {
                 NavigationStack(path: $workoutNavigationPath) {
 //                    WorkoutsView(workoutDataService: workoutDataService)
-                    UserWorkoutsView(workoutDataService: workoutDataService)
+                    UserWorkoutsView(workoutDataService: workoutDataService, path: $workoutNavigationPath)
                 }
             }
             

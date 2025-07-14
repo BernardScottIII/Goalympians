@@ -15,14 +15,15 @@ struct UserWorkoutsView: View {
     @State private var removeWorkoutAlert: Bool = false
     @State private var editMode = EditMode.inactive
     
-//    @ObservedObject var viewModel: WorkoutViewModel
-    
+    @Binding var path: NavigationPath
     let workoutDataService: WorkoutManagerProtocol
     
     init(
-        workoutDataService: WorkoutManagerProtocol
+        workoutDataService: WorkoutManagerProtocol,
+        path: Binding<NavigationPath>
     ) {
         self.workoutDataService = workoutDataService
+        _path = path
         _viewModel = StateObject(wrappedValue: WorkoutViewModel(workoutDataService: workoutDataService))
     }
     
@@ -54,7 +55,16 @@ struct UserWorkoutsView: View {
             }
             ToolbarItem(placement: .topBarTrailing) {
                 NavigationLink("Add Workout") {
-                    CreateWorkoutView(workoutDataService: viewModel.workoutDataService)
+                    CreateWorkoutView(viewModel: viewModel, path: $path)
+                        .onDisappear {
+                            Task {
+                                try await viewModel.getAllWorkouts()
+                                if let newWorkout = viewModel.newWorkout {
+                                    path.append(newWorkout)
+                                    viewModel.clearNewWorkout()
+                                }
+                            }
+                        }
                 }
             }
         }
@@ -83,9 +93,9 @@ struct UserWorkoutsView: View {
 }
 
 #Preview {
+    @Previewable @State var path = NavigationPath()
     @Previewable @StateObject var viewModel = WorkoutViewModel(workoutDataService: ProdWorkoutManager(workoutCollection: Firestore.firestore().collection("workouts")))
     NavigationStack {
-//        UserWorkoutsView(viewModel: viewModel)
-        UserWorkoutsView(workoutDataService: ProdWorkoutManager(workoutCollection: Firestore.firestore().collection("workouts")))
+        UserWorkoutsView(workoutDataService: ProdWorkoutManager(workoutCollection: Firestore.firestore().collection("workouts")), path: $path)
     }
 }

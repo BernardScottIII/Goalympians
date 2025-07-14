@@ -21,7 +21,6 @@ struct InternalVariableView: View {
     @State private var removeWorkoutField: String
     @State private var userExercisesList: [APIExercise]
     @State private var globalExerciseList: [APIExercise]
-//    @State private var activitiesList: [DBActivity]
     
     let dataService: WorkoutManagerProtocol
     
@@ -38,7 +37,6 @@ struct InternalVariableView: View {
         self.removeWorkoutField = ""
         self.userExercisesList = []
         self.globalExerciseList = []
-//        self.activitiesList = []
     }
     
     var body: some View {

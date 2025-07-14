@@ -12,10 +12,12 @@ import SwiftUI
 final class WorkoutViewModel: ObservableObject {
     
     @Published private(set) var workouts: [DBWorkout] = []
-    @State var workoutNavigationPath: [NavigationPath] = []
+    @Published private(set) var newWorkout: DBWorkout? = nil
     let workoutDataService: WorkoutManagerProtocol
     
-    init(workoutDataService: WorkoutManagerProtocol) {
+    init(
+        workoutDataService: WorkoutManagerProtocol
+    ) {
         self.workoutDataService = workoutDataService
     }
     
@@ -36,5 +38,20 @@ final class WorkoutViewModel: ObservableObject {
     
     func removeWorkout(workoutId: String) async throws {
         try await workoutDataService.removeWorkout(workoutId: workoutId)
+    }
+    
+    func createWorkout(name: String, description: String, date: Date) async throws {
+        self.newWorkout = try DBWorkout(
+            id: UUID().uuidString,
+            userId: AuthenticationManager.shared.getAuthenticatedUser().uid,
+            name: name,
+            description: description,
+            date: date
+        )
+        try await workoutDataService.createNewWorkout(workout: newWorkout!)
+    }
+    
+    func clearNewWorkout() {
+        newWorkout = nil
     }
 }
