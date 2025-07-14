@@ -81,7 +81,7 @@ struct EditWorkoutView: View {
                 }
             }
             ToolbarItem(placement: .topBarLeading) {
-                Button("Save Changes", action: saveWorkout)
+                Button("Save", action: saveWorkout)
             }
         }
         .onAppear {

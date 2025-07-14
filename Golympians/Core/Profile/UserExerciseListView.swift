@@ -84,6 +84,15 @@ struct UserExerciseListView: View {
             EditButton()
         }
         .environment(\.editMode, $editMode)
+        
+        NavigationLink("Create New Exercise") {
+            CreateExerciseView(viewModel: viewModel)
+        }
+        .padding()
+        .background(.purple)
+        .clipShape(.buttonBorder)
+        .foregroundStyle(.white)
+        .fontWeight(.bold)
     }
     
     private func removeUserExercise() {
