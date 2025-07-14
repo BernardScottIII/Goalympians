@@ -5,7 +5,7 @@
 //  Created by Bernard Scott on 4/3/25.
 //
 
-import Foundation
+import SwiftUI
 import FirebaseFirestore
 
 @MainActor
@@ -84,5 +84,21 @@ final class ExercisesViewModel: ObservableObject {
     
     func removeUserExercise(exercise: APIExercise) async throws {
         try await ExerciseManager.shared.removeUserExercise(userId: AuthenticationManager.shared.getAuthenticatedUser().uid, exercise: exercise)
+    }
+    
+    func binding(for exercise: APIExercise) -> Binding<APIExercise>? {
+        print(exercise.id ?? "NO ID")
+        guard let index = exercises.firstIndex(where: {$0.id == exercise.id! }) else {
+            return nil
+        }
+        
+        return Binding(
+            get: {self.exercises[index]},
+            set: {self.exercises[index] = $0}
+        )
+    }
+    
+    func updateExercise(exercise: APIExercise) async throws {
+        try await ExerciseManager.shared.updateExercise(exercise: exercise)
     }
 }

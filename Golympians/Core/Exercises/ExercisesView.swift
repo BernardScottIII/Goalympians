@@ -69,7 +69,7 @@ struct ExercisesView: View {
                     // "It's good enough"
                     ZStack(alignment: .trailing) {
                         NavigationLink {
-                            ExerciseDetailsView(exercise: exercise)
+                            ExerciseDetailsView(viewModel: viewModel, exercise: viewModel.binding(for: exercise)!)
                         } label: {
                             Image(systemName: "info.circle")
                                 .foregroundStyle(.blue)

@@ -6,10 +6,12 @@
 //
 
 import SwiftUI
+import FirebaseFirestore
 
 struct ExerciseDetailsView: View {
     
-    let exercise: APIExercise
+    @ObservedObject var viewModel: ExercisesViewModel
+    @Binding var exercise: APIExercise
     
     var body: some View {
         HStack{
@@ -41,22 +43,35 @@ struct ExerciseDetailsView: View {
                 }
             }
         }
+        .toolbar {
+            ToolbarItem {
+                NavigationLink("Edit") {
+                    EditExerciseView(exercise: $exercise, viewModel: viewModel)
+                }
+            }
+        }
     }
 }
 
 #Preview {
+    @Previewable @StateObject var viewModel = ExercisesViewModel(dataService: ProdWorkoutManager(workoutCollection: Firestore.firestore().collection("workouts")))
+    @Previewable @State var exercise = APIExercise(
+        id: UUID().uuidString,
+        name: "Sample Exercise",
+        equipment: "Keyboard and Mouse",
+        target: .noCategory,
+        secondaryMuscles: ["Forehead", "Fingers", "eyes"],
+        instructions: ["Sit down at keyboard", "start typing", "nothing works", "cry"],
+        gifUrl: "google.com",
+        uuid: "SampleUserID",
+        setType: .resistanceSet
+    )
     NavigationStack {
         NavigationLink("Exercise Details View") {
-            ExerciseDetailsView(exercise: APIExercise(
-                id: UUID().uuidString,
-                name: "Sample Exercise",
-                equipment: "Keyboard and Mouse",
-                target: .noCategory,
-                secondaryMuscles: ["Forehead", "Fingers", "eyes"],
-                instructions: ["Sit down at keyboard", "start typing", "nothing works", "cry"],
-                gifUrl: "google.com",
-                uuid: "SampleUserID",
-                setType: .resistanceSet))
+            ExerciseDetailsView(
+                viewModel: viewModel,
+                exercise: $exercise
+            )
         }
     }
 }

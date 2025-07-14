@@ -15,11 +15,11 @@ struct APIExerciseArray: Codable {
 
 struct APIExercise: Identifiable, Codable, Hashable {
     @DocumentID var id: String?
-    let name: String
-    let equipment: String // Not EquipmentOption to allow for custom user input
-    let target: CategoryOption
-    let secondaryMuscles: [String]
-    let instructions: [String]
+    var name: String
+    var equipment: String // Not EquipmentOption to allow for custom user input
+    var target: CategoryOption
+    var secondaryMuscles: [String]
+    var instructions: [String]
     let gifUrl: String
     let uuid: String
     let setType: SetType
@@ -100,5 +100,9 @@ final class ExerciseManager {
         }
         
         return try await result.getDocuments(as: APIExercise.self)
+    }
+    
+    func updateExercise(exercise: APIExercise) async throws {
+        try exerciseDocument(exerciseId: exercise.id!).setData(from: exercise, merge: true)
     }
 }

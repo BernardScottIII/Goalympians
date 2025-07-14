@@ -122,7 +122,7 @@ struct InternalVariableView: View {
         }
         .navigationTitle("Debug View")
         .navigationDestination(for: APIExercise.self) { exercise in
-            ExerciseDetailsView(exercise: exercise)
+            ExerciseDetailsView(viewModel: exercisesViewModel, exercise: exercisesViewModel.binding(for: exercise)!)
         }
         .onAppear {
             Task {

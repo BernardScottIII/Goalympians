@@ -37,12 +37,6 @@ struct CreateExerciseView: View {
                     }
                 }
                 
-                Picker("Type of Exercise", selection: $setType) {
-                    ForEach(SetType.allCases, id: \.self) { set_type in
-                        Text(set_type.prettyString)
-                    }
-                }
-                
                 Picker("Equipment Used", selection: $equipment) {
                     ForEach(EquipmentOption.allCases, id: \.self) { equipment in
                         Text(equipment.prettyString)
@@ -51,6 +45,17 @@ struct CreateExerciseView: View {
                 if (equipment == EquipmentOption.customEquipment) {
                     TextField("Custom Equipment Name", text: $customEquipment)
                         .textInputAutocapitalization(.words)
+                }
+            }
+            
+            Section("Exercise Type") {
+                Text("This cannot be changed once the exercise is created.")
+                    .foregroundStyle(.red)
+                
+                Picker("Type of Exercise", selection: $setType) {
+                    ForEach(SetType.allCases, id: \.self) { set_type in
+                        Text(set_type.prettyString)
+                    }
                 }
             }
             

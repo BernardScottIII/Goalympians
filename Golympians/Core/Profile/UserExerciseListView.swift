@@ -47,7 +47,7 @@ struct UserExerciseListView: View {
                         
                         ZStack(alignment: .trailing) {
                             NavigationLink {
-                                ExerciseDetailsView(exercise: exercise)
+                                ExerciseDetailsView(viewModel: viewModel, exercise: viewModel.binding(for: exercise)!)
                             } label: {
                                 Image(systemName: "info.circle")
                                     .foregroundStyle(.blue)
