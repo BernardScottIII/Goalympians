@@ -59,7 +59,7 @@ struct ExercisesView: View {
                             guard let index = activityViewModel.activities.firstIndex(where: {$0.exercise.id == exercise.id}) else { return }
                             activityViewModel.addEmptyActivitySet(
                                 workoutId: workoutId,
-                                activity: activityViewModel.activities[index].workoutActivity
+                                activity: activityViewModel.activities[index].activity
                             )
                             scrollTargetActivity = index
                         }

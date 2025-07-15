@@ -34,22 +34,22 @@ struct ActivityView: View {
                     Text("No Exercises in Workout")
                 }
             } else {
-                ForEach(viewModel.activities, id: \.workoutActivity.id) { entry in
+                ForEach($viewModel.activities) { $workoutActivity in
                     Section {
                         HStack {
-                            Text(entry.exercise.name)
+                            Text(workoutActivity.exercise.name)
                             
                             Spacer()
                             
                             Button("", systemImage: "plus") {
                                 if viewModel.activities.count < 10 {
-                                    viewModel.addEmptyActivitySet(workoutId: workoutId, activity: entry.workoutActivity)
+                                    viewModel.addEmptyActivitySet(workoutId: workoutId, activity: workoutActivity.activity)
                                     viewModel.getAllActivities(workoutId: workoutId)
                                 }
                             }
                             Button("", systemImage: "trash") {
                                 removeActivityAlert = true
-                                targetActivityId = entry.workoutActivity.id
+                                targetActivityId = workoutActivity.activity.id
                             }
                         }
                         .buttonStyle(.plain)
@@ -57,10 +57,10 @@ struct ActivityView: View {
                         ActivitySetsView(
                             viewModel: viewModel,
                             workoutId: workoutId,
-                            activity: viewModel.binding(for: entry.workoutActivity.id)!
+                            activity: $workoutActivity.activity
                         )
                     }
-                    .id(entry.workoutActivity.workoutIndex)
+                    .id(workoutActivity.activity.workoutIndex)
                 }
             }
         }

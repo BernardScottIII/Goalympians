@@ -87,7 +87,6 @@ final class ExercisesViewModel: ObservableObject {
     }
     
     func binding(for exercise: APIExercise) -> Binding<APIExercise>? {
-        print(exercise.id ?? "NO ID")
         guard let index = exercises.firstIndex(where: {$0.id == exercise.id! }) else {
             return nil
         }

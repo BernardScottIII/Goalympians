@@ -16,7 +16,7 @@ struct WorkoutActivityOrderView: View {
     
     var body: some View {
         List {
-            ForEach(activityViewModel.activities, id: \.workoutActivity.id) { entry in
+            ForEach(activityViewModel.activities, id: \.activity.id) { entry in
                 // Try making everything it's own section
                 Text(entry.exercise.name)
             }

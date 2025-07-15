@@ -29,11 +29,11 @@ struct DeveloperActivityView: View {
             .task {
                 activityViewModel.getAllActivities(workoutId: workoutId)
             }
-        ForEach(activityViewModel.activities, id: \.workoutActivity.id) { activity in
-            Text("ID: \(activity.workoutActivity.id)")
-            Text("Exercise ID: \(activity.workoutActivity.exerciseId)")
-            Text("Set Type: \(activity.workoutActivity.setType.rawValue)")
-            Text("Workout Index: \(activity.workoutActivity.workoutIndex)")
+        ForEach(activityViewModel.activities, id: \.activity.id) { entry in
+            Text("ID: \(entry.activity.id)")
+            Text("Exercise ID: \(entry.activity.exerciseId)")
+            Text("Set Type: \(entry.activity.setType.rawValue)")
+            Text("Workout Index: \(entry.activity.workoutIndex)")
         }
     }
 }

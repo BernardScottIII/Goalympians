@@ -106,7 +106,7 @@ struct UserExerciseListView: View {
                 activityViewModel.getAllActivities(workoutId: workout.id)
                 for activity in activityViewModel.activities {
                     if activity.exercise.id! == removalCandidateExercise.id {
-                        activityViewModel.removeFromWorkout(workoutId: workout.id, activityId: activity.workoutActivity.id)
+                        activityViewModel.removeFromWorkout(workoutId: workout.id, activityId: activity.activity.id)
                     }
                 }
             }
