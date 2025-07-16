@@ -59,7 +59,7 @@ struct ExerciseDetailsView: View {
         id: UUID().uuidString,
         name: "Sample Exercise",
         equipment: "Keyboard and Mouse",
-        target: .noCategory,
+        target: .allMuscles,
         secondaryMuscles: ["Forehead", "Fingers", "eyes"],
         instructions: ["Sit down at keyboard", "start typing", "nothing works", "cry"],
         gifUrl: "google.com",

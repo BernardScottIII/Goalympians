@@ -7,12 +7,12 @@
 
 import Foundation
 
-enum CategoryOption: String, Codable, CaseIterable {
-    case noCategory, abductor, abs, adductors, biceps, calves, cardiovascularSystem, delts, forearms, glutes, hamstrings, lats, levatorScapulae, pectorals, quads, serratusAnterior, spine, traps, triceps, upperBack
+enum MuscleOption: String, Codable, CaseIterable {
+    case allMuscles, abductor, abs, adductors, biceps, calves, cardiovascularSystem, delts, forearms, glutes, hamstrings, lats, levatorScapulae, pectorals, quads, serratusAnterior, spine, traps, triceps, upperBack
     
     var prettyString: String {
         switch self {
-        case .noCategory: return "All Muscles"
+        case .allMuscles: return "All Muscles"
         case .abductor: return "Abductor"
         case .abs: return "Abdominals/Core"
         case .adductors: return "Adductors"
@@ -21,13 +21,13 @@ enum CategoryOption: String, Codable, CaseIterable {
         case .cardiovascularSystem: return "Cardio/Heart"
         case .delts: return "Deltoids"
         case .forearms: return "Forearms"
-        case .glutes: return "Gluteal Muscles"
+        case .glutes: return "Glutes"
         case .hamstrings: return "Hamstrings"
-        case .lats: return "Latissimus Dorsi"
-        case .levatorScapulae: return "Levator Scapulae (Neck)"
-        case .pectorals: return "Pectorals (Chest)"
+        case .lats: return "Lats/Back"
+        case .levatorScapulae: return "Neck"
+        case .pectorals: return "Chest"
         case .quads: return "Quadriceps"
-        case .serratusAnterior: return "Serratus Anterior"
+        case .serratusAnterior: return "Sholder Blade"
         case .spine: return "Spine (Lower Back)"
         case .traps: return "Trapezius"
         case .triceps: return "Triceps"
@@ -70,7 +70,7 @@ enum EquipmentOption: String, Codable, CaseIterable {
         case .weighted: return "Weighted"
         case .wheelRoller: return "Wheel Roller"
         case .customEquipment: return "Special/Custom Equipment"
-        case .noEquipment: return "All Equipment"
+        case .noEquipment: return "No Equipment"
         }
     }
 }

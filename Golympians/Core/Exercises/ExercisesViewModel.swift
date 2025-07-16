@@ -13,7 +13,7 @@ final class ExercisesViewModel: ObservableObject {
     
     @Published private(set) var exercises: [APIExercise] = []
     @Published var selectedFilter: FilterOption? = .noFilter
-    @Published var selectedCategory: CategoryOption? = .noCategory
+    @Published var selectedMuscle: MuscleOption? = .allMuscles
     @Published var selectedEquipment: EquipmentOption? = .noEquipment
     @Published var userIds: [String]? = nil
     
@@ -68,8 +68,8 @@ final class ExercisesViewModel: ObservableObject {
         try await self.getExercises()
     }
     
-    func categorySelected(category: CategoryOption) async throws {
-        self.selectedCategory = category
+    func muscleSelected(muscle: MuscleOption) async throws {
+        self.selectedMuscle = muscle
         try await self.getExercises()
     }
     
@@ -79,7 +79,7 @@ final class ExercisesViewModel: ObservableObject {
     }
     
     func getExercises() async throws {
-        self.exercises = try await ExerciseManager.shared.getAllExercises(nameDescending: selectedFilter?.nameDescending, forCategory: selectedCategory?.rawValue, usingEquipment: selectedEquipment?.rawValue, uuids: userIds)
+        self.exercises = try await ExerciseManager.shared.getAllExercises(nameDescending: selectedFilter?.nameDescending, forMuscle: selectedMuscle?.rawValue, usingEquipment: selectedEquipment?.rawValue, uuids: userIds)
     }
     
     func removeUserExercise(exercise: APIExercise) async throws {

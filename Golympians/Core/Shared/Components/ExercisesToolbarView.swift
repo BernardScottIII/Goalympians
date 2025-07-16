@@ -33,15 +33,15 @@ struct ExercisesToolbarViewModifier: ViewModifier {
                     }
                 }
                 ToolbarItem(placement: .topBarTrailing) {
-                    Menu("Category: \(viewModel.selectedCategory?.rawValue ?? "NONE")", systemImage: "figure.strengthtraining.traditional") {
-                        ForEach(CategoryOption.allCases, id: \.self) { option in
+                    Menu("Muscle: \(viewModel.selectedMuscle?.rawValue ?? "NONE")", systemImage: "figure.strengthtraining.traditional") {
+                        ForEach(MuscleOption.allCases, id: \.self) { option in
                             Button {
                                 Task {
-                                    try? await viewModel.categorySelected(category: option)
+                                    try? await viewModel.muscleSelected(muscle: option)
                                 }
                             } label: {
                                 HStack {
-                                    if viewModel.selectedCategory == option {
+                                    if viewModel.selectedMuscle == option {
                                         Image(systemName: "checkmark")
                                     }
                                     Text(option.prettyString)

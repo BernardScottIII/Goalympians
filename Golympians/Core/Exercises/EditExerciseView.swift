@@ -40,7 +40,7 @@ struct EditExerciseView: View {
             TextField("Exercise Name", text: $exercise.name)
             
             Picker("Primary Muscle", selection: $exercise.target) {
-                ForEach(CategoryOption.allCases, id: \.self) { muscle in
+                ForEach(MuscleOption.allCases, id: \.self) { muscle in
                     Text(muscle.prettyString)
                 }
             }

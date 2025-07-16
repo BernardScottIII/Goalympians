@@ -14,7 +14,7 @@ struct CreateExerciseView: View {
     @State private var instructions: [String] = [""]
     @State private var numInstructions: Int = 1
     @State private var setType: SetType = SetType.resistanceSet
-    @State private var targetMuscle: CategoryOption = CategoryOption.noCategory
+    @State private var targetMuscle: MuscleOption = MuscleOption.allMuscles
     @State private var equipment: EquipmentOption = EquipmentOption.noEquipment
     @State private var customEquipment: String = ""
     @State private var instructionCountAlert: Bool = false
@@ -32,7 +32,7 @@ struct CreateExerciseView: View {
                     .textInputAutocapitalization(.words)
                 
                 Picker("Primary Muscle", selection: $targetMuscle) {
-                    ForEach(CategoryOption.allCases, id: \.self) { muscle in
+                    ForEach(MuscleOption.allCases, id: \.self) { muscle in
                         Text(muscle.prettyString)
                     }
                 }

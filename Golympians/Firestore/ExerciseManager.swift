@@ -17,7 +17,7 @@ struct APIExercise: Identifiable, Codable, Hashable {
     @DocumentID var id: String?
     var name: String
     var equipment: String // Not EquipmentOption to allow for custom user input
-    var target: CategoryOption
+    var target: MuscleOption
     var secondaryMuscles: [String]
     var instructions: [String]
     let gifUrl: String
@@ -73,7 +73,7 @@ final class ExerciseManager {
     // they'd do the exact same thing?
     func getAllExercises(
         nameDescending descending: Bool?,
-        forCategory category: String?,
+        forMuscle muscle: String?,
         usingEquipment equipment: String?,
         uuids: [String]?
     ) async throws -> [APIExercise] {
@@ -83,9 +83,9 @@ final class ExerciseManager {
             result = result.order(by: APIExercise.CodingKeys.name.rawValue, descending: descending)
         }
         
-        if let category = category {
-            if category != CategoryOption.noCategory.rawValue {
-                result = result.whereField(APIExercise.CodingKeys.target.rawValue, isEqualTo: category)
+        if let muscle = muscle {
+            if muscle != MuscleOption.allMuscles.rawValue {
+                result = result.whereField(APIExercise.CodingKeys.target.rawValue, isEqualTo: muscle)
             }
         }
         

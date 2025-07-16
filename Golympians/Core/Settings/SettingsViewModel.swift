@@ -76,7 +76,7 @@ extension SettingsViewModel {
         // MARK: Exercise Removal
         let exercises = try await ExerciseManager.shared.getAllExercises(
             nameDescending: nil,
-            forCategory: nil,
+            forMuscle: nil,
             usingEquipment: nil,
             uuids: [userId]
         )

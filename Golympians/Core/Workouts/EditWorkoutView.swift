@@ -57,17 +57,6 @@ struct EditWorkoutView: View {
                     }
                 }
             }
-            if keyboardOnScreen {
-                HStack {
-                    Button("Done") {
-                        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
-                    }
-                    .padding()
-                    
-                    Spacer()
-                }
-                .background(Color(UIColor.systemGray5))
-            }
         }
         .navigationTitle("Edit Workout")
         .navigationBarTitleDisplayMode(.inline)
@@ -100,6 +89,15 @@ struct EditWorkoutView: View {
             }
             ToolbarItem(placement: .topBarLeading) {
                 Button("Save", action: saveWorkout)
+            }
+            ToolbarItem(placement: .keyboard) {
+                HStack {
+                    Button("Done") {
+                        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+                    }
+                    
+                    Spacer()
+                }
             }
         }
         .onAppear {
