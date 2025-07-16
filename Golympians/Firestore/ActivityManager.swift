@@ -169,7 +169,7 @@ struct DBActivity: Identifiable, Codable {
     let exerciseId: String
     let setType: SetType
     let workoutIndex: Int
-    let activitySets: [[String:Any]]
+    var activitySets: [[String:Any]]
     
     var activitySetsHash: Int {
         activitySets.flatMap { dict in
