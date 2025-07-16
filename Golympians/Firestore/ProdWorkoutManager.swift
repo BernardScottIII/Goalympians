@@ -47,7 +47,8 @@ final class ProdWorkoutManager: WorkoutManagerProtocol {
     }
     
     func getAllWorkouts(descending: Bool?) async throws -> [DBWorkout] {
-        var result: Query = workoutCollection
+        var result: Query = try workoutCollection
+            .whereField("userId", isEqualTo: AuthenticationManager.shared.getAuthenticatedUser().uid)
         
         if let descending = descending {
             result = result.order(by: "date", descending: descending)
