@@ -17,6 +17,7 @@ struct ResistanceSetView: View {
             Image(systemName: "scalemass.fill")
             TextField("weight", text: $weight)
                 .keyboardType(.decimalPad)
+//                .focused
             
             Image(systemName: "checkmark.arrow.trianglehead.counterclockwise")
             TextField("repetitions", text: $repetitions)

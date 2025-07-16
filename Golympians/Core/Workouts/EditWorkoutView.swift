@@ -13,6 +13,7 @@ struct EditWorkoutView: View {
     @StateObject private var activityViewModel: ActivityViewModel
     @State private var userId: String = ""
     @State private var scrollTargetActivity: Int? = nil
+    @State private var keyboardOnScreen: Bool = false
     
     @Binding var workout: DBWorkout
     var workoutDataService: WorkoutManagerProtocol
@@ -56,6 +57,17 @@ struct EditWorkoutView: View {
                     }
                 }
             }
+            if keyboardOnScreen {
+                HStack {
+                    Button("Done") {
+                        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+                    }
+                    .padding()
+                    
+                    Spacer()
+                }
+                .background(Color(UIColor.systemGray5))
+            }
         }
         .navigationTitle("Edit Workout")
         .navigationBarTitleDisplayMode(.inline)
@@ -94,6 +106,12 @@ struct EditWorkoutView: View {
             Task {
                 self.userId = try AuthenticationManager.shared.getAuthenticatedUser().uid
             }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillShowNotification)) { _ in
+            keyboardOnScreen = true
+        }
+        .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillHideNotification)) { _ in
+            keyboardOnScreen = false
         }
     }
     
