@@ -14,15 +14,21 @@ struct ActivityView: View {
     @State private var targetActivityId: String? = nil
     
     @ObservedObject var viewModel: ActivityViewModel
+    @Binding var userId: String
+    @Binding var scrollTargetActivity: Int?
     let workoutDataService: WorkoutManagerProtocol
     let workoutId: String
     
     init(
         viewModel: ActivityViewModel,
+        userId: Binding<String>,
+        scrollTargetActivity: Binding<Int?>,
         workoutDataService: WorkoutManagerProtocol,
         workoutId: String
     ) {
         self.viewModel = viewModel
+        _userId = userId
+        _scrollTargetActivity = scrollTargetActivity
         self.workoutId = workoutId
         self.workoutDataService = workoutDataService
     }
@@ -31,7 +37,20 @@ struct ActivityView: View {
         List {
             if viewModel.activities.isEmpty {
                 Section {
-                    Text("No Exercises in Workout")
+                    NavigationLink {
+                        ExercisesView(
+                            activityViewModel: viewModel,
+                            workoutDataService: workoutDataService,
+                            workoutId: workoutId,
+                            userIds: [userId, "global"],
+                            scrollTargetActivity: $scrollTargetActivity
+                        )
+                        .onDisappear {
+                            viewModel.getAllActivities(workoutId: workoutId)
+                        }
+                    } label: {
+                        Text("Add your first exercise to this workout!")
+                    }
                 }
             } else {
                 ForEach($viewModel.activities) { $workoutActivity in
@@ -87,9 +106,14 @@ struct ActivityView: View {
 
 #Preview {
     @Previewable let workoutDataService = ProdWorkoutManager(workoutCollection: Firestore.firestore().collection("workouts"))
+    @Previewable @State var userId: String = ""
+    @Previewable @State var scrollTargetActivity: Int? = nil
     NavigationStack {
         ActivityView(
-            viewModel: ActivityViewModel(dataService: workoutDataService), workoutDataService: workoutDataService,
+            viewModel: ActivityViewModel(dataService: workoutDataService),
+            userId: $userId,
+            scrollTargetActivity: $scrollTargetActivity,
+            workoutDataService: workoutDataService,
             workoutId: "1"
         )
     }

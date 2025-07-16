@@ -38,7 +38,13 @@ struct EditWorkoutView: View {
                     
                     DatePicker("date", selection: $workout.date)
                     
-                    ActivityView(viewModel: activityViewModel, workoutDataService: workoutDataService, workoutId: workout.id)
+                    ActivityView(
+                        viewModel: activityViewModel,
+                        userId: $userId,
+                        scrollTargetActivity: $scrollTargetActivity,
+                        workoutDataService: workoutDataService,
+                        workoutId: workout.id
+                    )
                 }
                 .onAppear {
                     if scrollTargetActivity != nil {
