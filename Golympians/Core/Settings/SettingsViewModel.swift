@@ -85,7 +85,7 @@ extension SettingsViewModel {
         }
         
         // MARK: Workout Removal
-        let workouts = try await workoutDataService.getAllWorkouts()
+        let workouts = try await workoutDataService.getAllWorkouts(descending: nil)
         for workout in workouts {
             try await workoutDataService.removeWorkout(workoutId: workout.id)
         }

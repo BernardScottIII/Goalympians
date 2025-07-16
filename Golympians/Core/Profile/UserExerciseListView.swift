@@ -101,7 +101,7 @@ struct UserExerciseListView: View {
         }
         
         Task {
-            try await workoutViewModel.getAllWorkouts()
+            try await workoutViewModel.getAllWorkouts(descending: nil)
             for workout in workoutViewModel.workouts {
                 activityViewModel.getAllActivities(workoutId: workout.id)
                 for activity in activityViewModel.activities {

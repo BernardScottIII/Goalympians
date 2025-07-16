@@ -47,24 +47,33 @@ struct UserWorkoutsView: View {
         }
         .navigationTitle("Workouts")
         .task {
-            try? await viewModel.getAllWorkouts()
+            try? await viewModel.getAllWorkouts(descending: viewModel.dateOption?.dateDescending)
         }
         .toolbar {
             ToolbarItem(placement: .topBarLeading) {
                 EditButton()
             }
             ToolbarItem(placement: .topBarTrailing) {
-                NavigationLink("Add Workout") {
-                    CreateWorkoutView(viewModel: viewModel, path: $path)
-                        .onDisappear {
+                Menu("", systemImage: "arrow.up.arrow.down") {
+                    ForEach(DateOption.allCases, id: \.self) { option in
+                        Button {
                             Task {
-                                try await viewModel.getAllWorkouts()
-                                if let newWorkout = viewModel.newWorkout {
-                                    path.append(newWorkout)
-                                    viewModel.clearNewWorkout()
+                                try? await viewModel.filterDateOption(option: option)
+                            }
+                        } label: {
+                            HStack {
+                                if viewModel.dateOption == option {
+                                    Image(systemName: "checkmark")
                                 }
+                                Text(option.prettyString)
                             }
                         }
+                    }
+                }
+            }
+            ToolbarItem(placement: .topBarTrailing) {
+                NavigationLink("Add Workout") {
+                    CreateWorkoutView(viewModel: viewModel, path: $path)
                 }
             }
         }
@@ -87,7 +96,7 @@ struct UserWorkoutsView: View {
         
         Task {
             try await viewModel.removeWorkout(workoutId: removalCandidateWorkout.id)
-            try await viewModel.getAllWorkouts()
+            try await viewModel.getAllWorkouts(descending: viewModel.dateOption?.dateDescending)
         }
     }
 }

@@ -63,9 +63,8 @@ struct CreateWorkoutView: View {
         
         if !missingNameAlert {
             Task {
-                try await viewModel.createWorkout(name: name, description: description, date: date)
+                path.append(try await viewModel.createWorkout(name: name, description: description, date: date))
             }
-            dismiss()
         }
     }
 }

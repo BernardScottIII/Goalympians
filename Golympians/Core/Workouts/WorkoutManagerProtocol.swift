@@ -10,7 +10,7 @@ protocol WorkoutManagerProtocol {
     
     func getWorkout(workoutId: String) async throws -> DBWorkout
     
-    func getAllWorkouts() async throws -> [DBWorkout]
+    func getAllWorkouts(descending: Bool?) async throws -> [DBWorkout]
     
     func updateWorkout(workout: DBWorkout) async throws
     

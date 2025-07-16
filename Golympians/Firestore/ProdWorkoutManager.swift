@@ -46,10 +46,14 @@ final class ProdWorkoutManager: WorkoutManagerProtocol {
         try await workoutDocument(workoutId: workoutId).getDocument(as: DBWorkout.self)
     }
     
-    func getAllWorkouts() async throws -> [DBWorkout] {
-        try await workoutCollection
-            .whereField("userId", isEqualTo: AuthenticationManager.shared.getAuthenticatedUser().uid)
-            .getDocuments(as: DBWorkout.self)
+    func getAllWorkouts(descending: Bool?) async throws -> [DBWorkout] {
+        var result: Query = workoutCollection
+        
+        if let descending = descending {
+            result = result.order(by: "date", descending: descending)
+        }
+        
+        return try await result.getDocuments(as: DBWorkout.self)
     }
     
     func updateWorkout(workout: DBWorkout) async throws {

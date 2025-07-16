@@ -126,7 +126,7 @@ struct InternalVariableView: View {
         }
         .onAppear {
             Task {
-                try await workoutViewModel.getAllWorkouts()
+                try await workoutViewModel.getAllWorkouts(descending: workoutViewModel.dateOption?.dateDescending)
                 try await profileViewModel.loadCurrentUser()
                 try await exercisesViewModel.userIdsSelected(userIds: ["global", AuthenticationManager.shared.getAuthenticatedUser().uid])
                 try await exercisesViewModel.getExercises()
@@ -148,7 +148,7 @@ struct InternalVariableView: View {
         Task {
             try await workoutViewModel.removeWorkout(workoutId: removeWorkoutField)
             removeWorkoutField = ""
-            try await workoutViewModel.getAllWorkouts()
+            try await workoutViewModel.getAllWorkouts(descending: workoutViewModel.dateOption?.dateDescending)
         }
     }
 }
