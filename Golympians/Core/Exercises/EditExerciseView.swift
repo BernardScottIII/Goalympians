@@ -10,12 +10,14 @@ import FirebaseFirestore
 
 struct EditExerciseView: View {
     
-    @State private var customEquipment: String = ""
-    @State private var instructionCountAlert: Bool = false
     @Environment(\.dismiss) private var dismiss
+    @State private var instructionCountAlert: Bool = false
+    @State private var showMuscleOptionSheet: Bool = false
+    @State private var showEquipmentOptionSheet: Bool = false
     
-    @State private var numInstructions: Int
     @State private var equipment: EquipmentOption
+    @State private var customEquipment: String
+    @State private var numInstructions: Int
     
     @Binding var exercise: APIExercise
     @ObservedObject var viewModel: ExercisesViewModel
@@ -27,11 +29,13 @@ struct EditExerciseView: View {
         _exercise = exercise
         self.viewModel = viewModel
         numInstructions = exercise.instructions.count
-        equipment = .noEquipment
-        for option in EquipmentOption.allCases {
-            if option.rawValue == exercise.equipment.wrappedValue {
-                equipment = option
-            }
+        
+        if let initEquipment = EquipmentOption(rawValue: exercise.wrappedValue.equipment) {
+            _equipment = State(initialValue: initEquipment)
+            customEquipment = ""
+        } else {
+            _equipment = State(initialValue: EquipmentOption.customEquipment)
+            customEquipment = exercise.wrappedValue.equipment
         }
     }
     
@@ -39,18 +43,21 @@ struct EditExerciseView: View {
         Form {
             TextField("Exercise Name", text: $exercise.name)
             
-            Picker("Primary Muscle", selection: $exercise.target) {
-                ForEach(MuscleOption.allCases, id: \.self) { muscle in
-                    Text(muscle.prettyString)
-                }
+            Button("Primary Muscle: \(exercise.target.prettyString)") {
+                showMuscleOptionSheet = true
+            }
+            .sheet(isPresented: $showMuscleOptionSheet) {
+                MuscleOptionMenuView(selection: $exercise.target, isPresented: $showMuscleOptionSheet)
             }
             
-            Picker("Equipment Used", selection: $equipment) {
-                ForEach(EquipmentOption.allCases, id: \.self) { equipment in
-                    Text(equipment.prettyString)
-                }
+            Button("Equipment Used: \(equipment.prettyString)") {
+                showEquipmentOptionSheet = true
             }
-            if (exercise.equipment == EquipmentOption.customEquipment.rawValue) {
+            .sheet(isPresented: $showEquipmentOptionSheet) {
+                EquipmentOptionMenuView(selection: $equipment, isPresented: $showEquipmentOptionSheet)
+            }
+            
+            if (equipment.rawValue == EquipmentOption.customEquipment.rawValue) {
                 TextField("Custom Equipment Name", text: $customEquipment)
                     .textInputAutocapitalization(.words)
             }
@@ -103,6 +110,9 @@ struct EditExerciseView: View {
     
     private func saveExercise() {
         Task {
+            let savedEquipment = equipment != EquipmentOption.customEquipment ? equipment.rawValue : customEquipment
+            exercise.equipment = savedEquipment
+            
             try await viewModel.updateExercise(exercise: exercise)
             dismiss()
         }

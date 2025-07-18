@@ -10,6 +10,8 @@ import FirebaseFirestore
 
 struct ExerciseDetailsView: View {
     
+    @State private var showMuscleOptionSheet: Bool = false
+    
     @ObservedObject var viewModel: ExercisesViewModel
     @Binding var exercise: APIExercise
     
@@ -31,7 +33,7 @@ struct ExerciseDetailsView: View {
                 if let equipmentValue = EquipmentOption(rawValue: exercise.equipment) {
                     Text(equipmentValue.prettyString)
                 } else {
-                    Text("Bad Equipment Value, report this issue.")
+                    Text(exercise.equipment)
                 }
             }
             Section("Target Muscle") {

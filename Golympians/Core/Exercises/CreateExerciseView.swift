@@ -21,6 +21,8 @@ struct CreateExerciseView: View {
     @State private var duplicateExerciseAlert: Bool = false
     @State private var missingNameAlert: Bool = false
     @FocusState private var keyboardFocused: Bool
+    @State private var showMuscleOptionSheet: Bool = false
+    @State private var showEquipmentOptionSheet: Bool = false
     
     @ObservedObject var viewModel: ExercisesViewModel
     
@@ -31,16 +33,18 @@ struct CreateExerciseView: View {
                     .focused($keyboardFocused)
                     .textInputAutocapitalization(.words)
                 
-                Picker("Primary Muscle", selection: $targetMuscle) {
-                    ForEach(MuscleOption.allCases, id: \.self) { muscle in
-                        Text(muscle.prettyString)
-                    }
+                Button("Primary Muscle: \(targetMuscle.prettyString)") {
+                    showMuscleOptionSheet = true
+                }
+                .sheet(isPresented: $showMuscleOptionSheet) {
+                    MuscleOptionMenuView(selection: $targetMuscle, isPresented: $showMuscleOptionSheet)
                 }
                 
-                Picker("Equipment Used", selection: $equipment) {
-                    ForEach(EquipmentOption.allCases, id: \.self) { equipment in
-                        Text(equipment.prettyString)
-                    }
+                Button("Equipment Used: \(equipment.prettyString)") {
+                    showEquipmentOptionSheet = true
+                }
+                .sheet(isPresented: $showEquipmentOptionSheet) {
+                    EquipmentOptionMenuView(selection: $equipment, isPresented: $showEquipmentOptionSheet)
                 }
                 if (equipment == EquipmentOption.customEquipment) {
                     TextField("Custom Equipment Name", text: $customEquipment)
@@ -48,15 +52,23 @@ struct CreateExerciseView: View {
                 }
             }
             
-            Section("Exercise Type") {
-                Text("This cannot be changed once the exercise is created.")
-                    .foregroundStyle(.red)
-                
+            Section {
                 Picker("Type of Exercise", selection: $setType) {
                     ForEach(SetType.allCases, id: \.self) { set_type in
                         Text(set_type.prettyString)
                     }
                 }
+            } header: {
+                Text("Exercise Type")
+            } footer: {
+                HStack {
+                    Image(systemName: "exclamationmark.triangle")
+                    // Magic number here. My intention is for the icon to be the same height as text
+                        .font(.system(size: 24))
+                    
+                    Text("This cannot be changed once the exercise is created.")
+                }
+                .foregroundStyle(.red)
             }
             
             Section("Instructions") {
@@ -97,6 +109,7 @@ struct CreateExerciseView: View {
             }
             
         }
+        .scrollDismissesKeyboard(.immediately)
         .onAppear {
             Task {
                 try await viewModel.getExercises()
@@ -156,5 +169,7 @@ struct CreateExerciseView: View {
 
 #Preview {
     @Previewable let dataService = ProdWorkoutManager(workoutCollection: Firestore.firestore().collection("workouts"))
-    CreateExerciseView(viewModel: ExercisesViewModel(dataService: dataService))
+    NavigationStack {
+        CreateExerciseView(viewModel: ExercisesViewModel(dataService: dataService))
+    }
 }
