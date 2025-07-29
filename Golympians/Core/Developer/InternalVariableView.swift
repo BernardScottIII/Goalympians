@@ -15,8 +15,9 @@ struct InternalVariableView: View {
     @StateObject private var activityViewModel: ActivityViewModel
     @StateObject private var insightsViewModel: InsightsViewModel
     @StateObject private var settingsViewModel: SettingsViewModel
-    @StateObject private var profileViewModel: ProfileViewModel
+    @StateObject private var profileViewModel: UserAccountViewModel
     @StateObject private var authenticationViewModel: AuthenticationViewModel
+    @AppStorage("profileIncomplete") var profileIncomplete: Bool = false
     
     @State private var removeWorkoutField: String
     @State private var userExercisesList: [APIExercise]
@@ -31,7 +32,7 @@ struct InternalVariableView: View {
         _activityViewModel = StateObject(wrappedValue: ActivityViewModel(dataService: dataService))
         _insightsViewModel = StateObject(wrappedValue: InsightsViewModel())
         _settingsViewModel = StateObject(wrappedValue: SettingsViewModel(workoutDataService: dataService))
-        _profileViewModel = StateObject(wrappedValue: ProfileViewModel())
+        _profileViewModel = StateObject(wrappedValue: UserAccountViewModel())
         _authenticationViewModel = StateObject(wrappedValue: AuthenticationViewModel())
         
         self.removeWorkoutField = ""
@@ -41,6 +42,13 @@ struct InternalVariableView: View {
     
     var body: some View {
         List {
+            // MARK: @AppStorage Variables
+            Section {
+                Text("AppStorage Variables")
+                    .font(.title)
+                Toggle("Display Complete Profile Page", isOn: $profileIncomplete)
+            }
+            
             // MARK: Profile
             Section {
                 HStack {

@@ -17,6 +17,11 @@ struct DBUser: Codable {
     var usingDarkMode: Bool?
     let streakData: [String:Int]
     let streakValidDays: [String:Bool]
+    var birthday: Date?
+    var username: String
+    var weight: Double?
+    var measurementUnit: String?
+    let photoImagePath: String?
     
     init(auth: AuthDataResultModel) {
         self.userId = auth.uid
@@ -38,6 +43,11 @@ struct DBUser: Codable {
             StreakValidDayKeys.friday.rawValue:false,
             StreakValidDayKeys.saturday.rawValue:false
         ]
+        self.username = ""
+        self.weight = 0.0
+        self.birthday = Date.now
+        self.measurementUnit = MeasurementUnits.imperial.rawValue
+        self.photoImagePath = ""
     }
     
     enum CodingKeys: String, CodingKey {
@@ -49,6 +59,11 @@ struct DBUser: Codable {
         case usingDarkMode = "using_dark_mode"
         case streakData = "streak_data"
         case streakValidDays = "streak_valid_days"
+        case username = "username"
+        case birthday = "birthday"
+        case weight = "weight"
+        case measurementUnit = "measurement_unit"
+        case photoImagePath = "photo_image_path"
     }
     
     init(from decoder: any Decoder) throws {
@@ -61,6 +76,11 @@ struct DBUser: Codable {
         self.usingDarkMode = try container.decodeIfPresent(Bool.self, forKey: .usingDarkMode)
         self.streakData = try container.decode([String:Int].self, forKey: .streakData)
         self.streakValidDays = try container.decode([String:Bool].self, forKey: .streakValidDays)
+        self.birthday = try container.decodeIfPresent(Date.self, forKey: .birthday)
+        self.weight = try container.decodeIfPresent(Double.self, forKey: .weight)
+        self.measurementUnit = try container.decode(String.self, forKey: .measurementUnit)
+        self.username = try container.decode(String.self, forKey: .username)
+        self.photoImagePath = try container.decodeIfPresent(String.self, forKey: .photoImagePath)
     }
     
     func encode(to encoder: any Encoder) throws {
@@ -73,6 +93,11 @@ struct DBUser: Codable {
         try container.encodeIfPresent(self.usingDarkMode, forKey: .usingDarkMode)
         try container.encode(self.streakData, forKey: .streakData)
         try container.encode(self.streakValidDays, forKey: .streakValidDays)
+        try container.encode(self.birthday, forKey: .birthday)
+        try container.encode(self.weight, forKey: .weight)
+        try container.encode(self.measurementUnit, forKey: .measurementUnit)
+        try container.encode(self.username, forKey: .username)
+        try container.encode(self.photoImagePath, forKey: .photoImagePath)
     }
     
     mutating func toggleDarkMode() {
@@ -87,6 +112,19 @@ struct DBUser: Codable {
     
     enum StreakValidDayKeys: String, CodingKey, CaseIterable {
         case sunday, monday, tuesday, wednesday, thursday, friday, saturday
+    }
+}
+
+enum MeasurementUnits: String, CodingKey, CaseIterable {
+    case metric, imperial
+    
+    var prettyString: String {
+        switch self {
+        case .metric:
+            return "Metric (kg/cm/g)"
+        case .imperial:
+            return "Imperial (lbs/in/oz)"
+        }
     }
 }
 
@@ -119,8 +157,21 @@ final class UserManager {
         try await userDocument(userId: userId).updateData(data)
     }
     
+    func updateUserProfileImagePath(userId: String, path: String?, url: String?) async throws {
+        let data: [String: Any] = [
+            DBUser.CodingKeys.photoURL.rawValue : url,
+            DBUser.CodingKeys.photoImagePath.rawValue : path
+        ]
+        
+        try await userDocument(userId: userId).updateData(data)
+    }
+    
     func deleteUser(userId: String) async throws {
         try await userDocument(userId: userId).delete()
+    }
+    
+    func setUserData(userId: String, data: [String:Any]) async throws {
+        try await userDocument(userId: userId).setData(data, merge: true)
     }
 }
 

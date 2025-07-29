@@ -12,7 +12,7 @@ import SwiftUI
 final class WorkoutViewModel: ObservableObject {
     
     @Published private(set) var workouts: [DBWorkout] = []
-    @Published private(set) var dateOption: DateOption? = .noFilter
+    @Published private(set) var dateOption: DateOption? = .dateDescending
     let workoutDataService: WorkoutManagerProtocol
     
     init(

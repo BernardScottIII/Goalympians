@@ -48,6 +48,7 @@ struct SettingsView: View {
             if viewModel.authUser?.isAnonymous == true {
                 anonymousSection
             }
+            developerSection
         }
         .onAppear {
             viewModel.loadAuthProviders()
@@ -150,6 +151,12 @@ extension SettingsView {
             }
         } header: {
             Text("Email Functions")
+        }
+    }
+    
+    private var developerSection: some View {
+        NavigationLink("Developer") {
+            InternalVariableView(dataService: workoutDataService)
         }
     }
 }

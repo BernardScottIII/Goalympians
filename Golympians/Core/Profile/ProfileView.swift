@@ -1,80 +1,110 @@
 //
 //  ProfileView.swift
-//  Goalympians
+//  Golympians
 //
-//  Created by Bernard Scott on 3/30/25.
+//  Created by Bernard Scott on 7/24/25.
 //
 
 import SwiftUI
-import FirebaseFirestore
 
 struct ProfileView: View {
-    @StateObject private var viewModel = ProfileViewModel()
-    @State private var userId: String = ""
     
-    @Binding var showSignInView: Bool
-    let workoutDataService: WorkoutManagerProtocol
+    @StateObject private var viewModel = ProfileViewModel()
+    
+    let profile: Profile
     
     var body: some View {
-        List {
-            if let user = viewModel.user {
-                Text("UserId: \(user.userId)")
-                
-                if let isAnonymous = user.isAnonymous {
-                    Text("Is Anonymous: \(isAnonymous.description.capitalized)")
+        VStack {
+            HStack {
+                if let urlString = profile.photoURL, let url = URL(string: urlString) {
+                    AsyncImage(url: url) { image in
+                        image
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: 108, height: 108)
+                            .clipShape(.circle)
+                    } placeholder: {
+                        ProgressView()
+                            .frame(width: 108, height: 108)
+                    }
+                } else {
+                    Image(systemName: "person.circle.fill")
+                        .font(.system(size: 48))
                 }
                 
-                Button {
-                    viewModel.toggleDarkMode()
-                } label: {
-                    Text("Using Dark Mode: \(user.usingDarkMode?.description.capitalized ?? "No Data")")
+                VStack(alignment: .leading) {
+                    Text(profile.username)
+                        .font(.title)
+                        .fontWeight(.bold)
+                    Text(profile.nickname ?? "")
+                    
+                    HStack {
+                        VStack {
+                            Text("Followers")
+                            Text("\(profile.followers.count)")
+                        }
+                        
+                        VStack {
+                            Text("Following")
+                            Text("\(profile.following.count)")
+                        }
+                    }
+                    
+                    Spacer()
                 }
+                .frame(height: 108)
                 
-                Section("Personal Content") {
-                    NavigationLink("My Exercises", value: "")
-                }
+                Spacer()
             }
+            
+            HStack {
+                Spacer()
+                if profile.followers.contains(viewModel.myProfile?.username ?? "") {
+                    Button {
+                        viewModel.removeFollower(profile, notFollowedBy: viewModel.myProfile)
+                    } label: {
+                        Text("Unfollow")
+                    }
+                    .padding([.leading, .trailing], 32)
+                    .padding([.top, .bottom], 4)
+                    .background(Color.gray.opacity(0.4))
+                    .clipShape(.buttonBorder)
+                } else {
+                    Button {
+                        viewModel.addFollower(profile, followedBy: viewModel.myProfile)
+                    } label: {
+                        Text("Follow")
+                    }
+                    .padding([.leading, .trailing], 32)
+                    .padding([.top, .bottom], 4)
+                    .background(Color.gray.opacity(0.4))
+                    .clipShape(.buttonBorder)
+                }
+                
+                Spacer()
+                Button {
+                    viewModel.removeFollower(profile, notFollowedBy: viewModel.myProfile)
+                } label: {
+                    Text("Share")
+                }
+                .padding([.leading, .trailing], 32)
+                .padding([.top, .bottom], 4)
+                .background(Color.gray.opacity(0.4))
+                .clipShape(.buttonBorder)
+                Spacer()
+            }
+            Spacer()
         }
-        .task {
-            try? await viewModel.loadCurrentUser()
-        }
+        .padding()
         .onAppear {
             Task {
-                userId = try AuthenticationManager.shared.getAuthenticatedUser().uid
-            }
-        }
-        .onChange(of: showSignInView, { oldValue, newValue in
-            Task {
-                try? await viewModel.loadCurrentUser()
-                userId = try AuthenticationManager.shared.getAuthenticatedUser().uid
-            }
-        })
-        .navigationTitle("Profile")
-        .navigationDestination(for: String.self) { _ in
-            UserExerciseListView(
-                viewModel: ExercisesViewModel(dataService: workoutDataService),
-                userId: userId,
-                workoutDataService: workoutDataService
-            )
-        }
-        .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
-                NavigationLink {
-                    SettingsView(showSignInView: $showSignInView, workoutDataService: workoutDataService)
-                } label: {
-                    Image(systemName: "gear")
-                        .font(.headline)
-                }
+                try await viewModel.loadMyProfile()
             }
         }
     }
 }
 
 #Preview {
-    NavigationStack {
-        ProfileView(
-            showSignInView: .constant(false),
-            workoutDataService: ProdWorkoutManager(workoutCollection: Firestore.firestore().collection("workouts"))
-        )
-    }
+    @Previewable let profile = Profile(username: "TheUser", nickname: "Buddy", followers: ["3"], following: ["5", "asd"], photoURL: "", photoPath: "")
+    ProfileView(profile: profile)
 }

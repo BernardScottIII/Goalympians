@@ -12,7 +12,10 @@ struct ContentView: View {
     
     @EnvironmentObject private var healthManager: HealthManager
     @State private var showSignInView: Bool = false
+    @AppStorage("profileIncomplete") var profileIncomplete: Bool = true
     private var workoutDataService = ProdWorkoutManager(workoutCollection: Firestore.firestore().collection("workouts"))
+    
+    @StateObject private var viewModel = ContentViewModel()
     
     var body: some View {
         ZStack {
@@ -22,12 +25,17 @@ struct ContentView: View {
         .onAppear {
             let authUser = try? AuthenticationManager.shared.getAuthenticatedUser()
             self.showSignInView = authUser == nil
+            Task {
+                try await viewModel.checkProfile()
+            }
         }
         .fullScreenCover(isPresented: $showSignInView) {
             NavigationStack {
-//                AuthenticationView(showSignInView: $showSignInView)
                 SignInExistingUser(showSignInView: $showSignInView)
             }
+        }
+        .fullScreenCover(isPresented: $profileIncomplete) {
+            CompleteProfileView(profileCompleted: $profileIncomplete, dataService: workoutDataService)
         }
     }
 }

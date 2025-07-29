@@ -10,7 +10,7 @@ import FirebaseFirestore
 
 struct TabbarView: View {
     enum TabbarTab: Hashable {
-        case workouts, insights, profile, developer
+        case workouts, insights, profile, explore
     }
     
     @State private var selectedTab: TabbarTab = .workouts
@@ -18,7 +18,7 @@ struct TabbarView: View {
     @State private var workoutNavigationPath = NavigationPath()
     @State private var insightNavigationPath = NavigationPath()
     @State private var profileNavigationPath = NavigationPath()
-    @State private var developerNavigationPath = NavigationPath()
+    @State private var exploreNavigationPath = NavigationPath()
     
     @Binding var showSignInView: Bool
     let workoutDataService: WorkoutManagerProtocol
@@ -46,15 +46,15 @@ struct TabbarView: View {
                 }
             }
             
-            Tab("Profile", systemImage: "person", value: .profile) {
-                NavigationStack(path: $profileNavigationPath) {
-                    ProfileView(showSignInView: $showSignInView, workoutDataService: workoutDataService)
+            Tab("Explore", systemImage: "magnifyingglass", value: .explore) {
+                NavigationStack(path: $exploreNavigationPath) {
+                    ExploreView()
                 }
             }
             
-            Tab("Developer", systemImage: "ellipsis.curlybraces", value: .developer) {
-                NavigationStack(path: $developerNavigationPath) {
-                    InternalVariableView(dataService: workoutDataService)
+            Tab("Profile", systemImage: "person", value: .profile) {
+                NavigationStack(path: $profileNavigationPath) {
+                    UserAccountView(showSignInView: $showSignInView, workoutDataService: workoutDataService)
                 }
             }
         }
@@ -62,7 +62,7 @@ struct TabbarView: View {
             if selectedTab == .workouts { workoutNavigationPath = NavigationPath() }
             if selectedTab == .insights { insightNavigationPath = NavigationPath() }
             if selectedTab == .profile { profileNavigationPath = NavigationPath() }
-            if selectedTab == .developer { developerNavigationPath = NavigationPath() }
+            if selectedTab == .explore { exploreNavigationPath = NavigationPath() }
         }
     }
 }

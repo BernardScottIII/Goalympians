@@ -1,8 +1,8 @@
 //
 //  ProfileViewModel.swift
-//  Goalympians
+//  Golympians
 //
-//  Created by Bernard Scott on 3/31/25.
+//  Created by Bernard Scott on 7/24/25.
 //
 
 import Foundation
@@ -10,20 +10,27 @@ import Foundation
 @MainActor
 final class ProfileViewModel: ObservableObject {
     
-    @Published private(set) var user: DBUser? = nil
+    @Published private(set) var myProfile: Profile? = nil
     
-    func loadCurrentUser() async throws {
-        let authDataResult = try AuthenticationManager.shared.getAuthenticatedUser()
-        user = try await UserManager.shared.getUser(userId: authDataResult.uid)
+    func loadMyProfile() async throws {
+        let userId = try AuthenticationManager.shared.getAuthenticatedUser().uid
+        let username = try await UserManager.shared.getUser(userId: userId).username
+        self.myProfile = try await ProfileManager.shared.getProfile(username: username)
     }
     
-    func toggleDarkMode() {
-        guard let user else { return }
-        let currentValue = user.usingDarkMode ?? false
+    func addFollower(_ followRecipient: Profile, followedBy followInitiater: Profile?) {
         Task {
-            try await UserManager.shared.updateUserDarkMode(userId: user.userId, usingDarkMode: !currentValue)
-            self.user = try await UserManager.shared.getUser(userId: user.userId)
+            if let followInitiater = followInitiater {
+                try await ProfileManager.shared.addFollower(followRecipient, followedBy: followInitiater)
+            }
         }
     }
     
+    func removeFollower(_ followRecipient: Profile, notFollowedBy followInitiater: Profile?) {
+        Task {
+            if let followInitiater = followInitiater {
+                try await ProfileManager.shared.removeFollower(followRecipient, notFollowedBy: followInitiater)
+            }
+        }
+    }
 }

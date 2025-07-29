@@ -23,7 +23,6 @@ struct GoalympianApp: App {
     
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
     @StateObject var healthManager = HealthManager()
-    
 
     var body: some Scene {
         WindowGroup {
