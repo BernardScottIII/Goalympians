@@ -5,7 +5,7 @@
 //  Created by Bernard Scott on 7/24/25.
 //
 
-import Foundation
+import SwiftUI
 
 @MainActor
 final class ExploreViewModel: ObservableObject {

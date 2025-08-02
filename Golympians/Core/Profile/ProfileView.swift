@@ -11,7 +11,18 @@ struct ProfileView: View {
     
     @StateObject private var viewModel = ProfileViewModel()
     
+    @State private var followerCount: Int
+    @State private var followingCount: Int
+    
     let profile: Profile
+    
+    init(
+        profile: Profile
+    ) {
+        self.profile = profile
+        followerCount = profile.followers.count
+        followingCount = profile.following.count
+    }
     
     var body: some View {
         VStack {
@@ -41,12 +52,12 @@ struct ProfileView: View {
                     HStack {
                         VStack {
                             Text("Followers")
-                            Text("\(profile.followers.count)")
+                            Text("\(followerCount)")
                         }
                         
                         VStack {
                             Text("Following")
-                            Text("\(profile.following.count)")
+                            Text("\(followingCount)")
                         }
                     }
                     
@@ -59,7 +70,9 @@ struct ProfileView: View {
             
             HStack {
                 Spacer()
-                if profile.followers.contains(viewModel.myProfile?.username ?? "") {
+                // There's certainly a better way to implement this, but I'm
+                // garbage at coding.
+                if viewModel.isFollowing ?? false == true {
                     Button {
                         viewModel.removeFollower(profile, notFollowedBy: viewModel.myProfile)
                     } label: {
@@ -99,12 +112,18 @@ struct ProfileView: View {
         .onAppear {
             Task {
                 try await viewModel.loadMyProfile()
+                viewModel.checkIsFollowing(for: profile)
+            }
+        }
+        .onChange(of: viewModel.isFollowing) { oldValue, newValue in
+            Task {
+                followerCount = try await viewModel.getFollowerCount(for: profile.username)
+                followingCount = try await viewModel.getFollowingCount(for: profile.username)
             }
         }
     }
 }
 
 #Preview {
-    @Previewable let profile = Profile(username: "TheUser", nickname: "Buddy", followers: ["3"], following: ["5", "asd"], photoURL: "", photoPath: "")
-    ProfileView(profile: profile)
+    ProfileView(profile: Profile(username: "TheUser", nickname: "Buddy", followers: ["3"], following: ["5", "asd"], photoURL: "", photoPath: ""))
 }

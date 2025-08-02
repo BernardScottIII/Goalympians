@@ -11,6 +11,7 @@ import FirebaseFirestore
 
 struct UserAccountView: View {
     @StateObject private var viewModel = UserAccountViewModel()
+    @StateObject private var profileViewModel = ProfileViewModel()
     @State private var userId: String = ""
     @State private var selectedPhoto: PhotosPickerItem? = nil
     @State private var url: URL? = nil
@@ -20,27 +21,47 @@ struct UserAccountView: View {
     
     var body: some View {
         List {
-            if let user = viewModel.user {
+            if let user = viewModel.user, let profile = profileViewModel.myProfile {
                 HStack {
-                    if let urlString = viewModel.user?.photoURL, let url = URL(string: urlString) {
+                    if let urlString = user.photoURL, let url = URL(string: urlString) {
                         AsyncImage(url: url) { image in
                             image
                                 .resizable()
                                 .scaledToFill()
-                                .frame(width: 48, height: 48)
+                                .frame(width: 108, height: 108)
                                 .clipShape(.circle)
                         } placeholder: {
                             ProgressView()
-                                .frame(width: 48, height: 48)
+                                .frame(width: 108, height: 108)
                         }
                     } else {
                         Image(systemName: "person.circle.fill")
                             .font(.system(size: 48))
                     }
                     
-                    VStack {
-                        Text("UserId: \(user.userId)")
+                    VStack(alignment: .leading) {
+                        Text(user.username)
+                            .font(.title)
+                            .fontWeight(.bold)
+                        Text(profile.nickname ?? "")
+                        
+                        HStack {
+                            VStack {
+                                Text("Followers")
+                                Text("\(profile.followers.count)")
+                            }
+                            
+                            VStack {
+                                Text("Following")
+                                Text("\(profile.following.count)")
+                            }
+                        }
+                        
+                        Spacer()
                     }
+                    .frame(height: 108)
+                    
+                    Spacer()
                 }
                 
                 Section("Personal Content") {
@@ -73,6 +94,7 @@ struct UserAccountView: View {
         }
         .task {
             try? await viewModel.loadCurrentUser()
+            try? await profileViewModel.loadMyProfile()
         }
         .onAppear {
             Task {
