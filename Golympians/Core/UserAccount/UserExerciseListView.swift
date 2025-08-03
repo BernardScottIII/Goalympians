@@ -33,76 +33,75 @@ struct UserExerciseListView: View {
         self.workoutDataService = workoutDataService
     }
     
-    var listView: some View {
-        return List {
-            ForEach(viewModel.exercises.filter{
-                searchText.isEmpty ? true : $0.name.localizedStandardContains(searchText)
-            }, id: \.id) { exercise in
-                HStack {
-                    Text(exercise.name)
-                        .truncationMode(.tail)
-                        .lineLimit(1)
-                    
-                    if !self.editMode.isEditing {
-                        Spacer()
+    var body: some View {
+        List {
+            if isLoading {
+                ProgressView()
+                    .task {
+                        try? await viewModel.userIdsSelected(userIds: [userId])
+                        self.isLoading = false
+                    }
+            } else {
+                ForEach(viewModel.exercises.filter{
+                    searchText.isEmpty ? true : $0.name.localizedStandardContains(searchText)
+                }, id: \.id) { exercise in
+                    HStack {
+                        Text(exercise.name)
+                            .truncationMode(.tail)
+                            .lineLimit(1)
                         
-                        ZStack(alignment: .trailing) {
-                            NavigationLink {
-                                ExerciseDetailsView(viewModel: viewModel, exercise: viewModel.binding(for: exercise)!)
-                            } label: {
-                                Image(systemName: "info.circle")
-                                    .foregroundStyle(.blue)
+                        if !self.editMode.isEditing {
+                            Spacer()
+                            
+                            ZStack(alignment: .trailing) {
+                                NavigationLink {
+                                    ExerciseDetailsView(viewModel: viewModel, exercise: viewModel.binding(for: exercise)!)
+                                } label: {
+                                    Image(systemName: "info.circle")
+                                        .foregroundStyle(.blue)
+                                }
+                                .scaledToFit()
                             }
-                            .scaledToFit()
+                            .buttonStyle(.plain)
                         }
-                        .buttonStyle(.plain)
                     }
                 }
-            }
-            .onDelete { indexSet in
-                removeExerciseAlert = true
-                for index in indexSet {
-                    removalCandidateExercise = viewModel.exercises[index]
+                .onDelete { indexSet in
+                    removeExerciseAlert = true
+                    for index in indexSet {
+                        removalCandidateExercise = viewModel.exercises[index]
+                    }
                 }
+                .deleteDisabled(!self.editMode.isEditing)
             }
-            .deleteDisabled(!self.editMode.isEditing)
         }
-    }
-    
-    var body: some View {
-        if isLoading {
-            ProgressView()
-                .task {
-                    try? await viewModel.userIdsSelected(userIds: [userId])
-                    self.isLoading = false
-                }
-        } else {
-            listView
-            .searchable(text: $searchText)
-            .alert(
-                "Remove Custom Exercise",
-                isPresented: $removeExerciseAlert
-            ) {
-                Button("Remove Exercise", role:.destructive, action: removeUserExercise)
-                Button("Cancel", role: .cancel, action: {})
-            } message: {
-                Text("Are you sure you want to delete this exercise? Doing so will remove all sets from every workout of this exercise. This action may take a moment.")
-            }
-            .withExercisesToolbar(viewModel: viewModel)
-            .toolbar {
-                EditButton()
-            }
-            .environment(\.editMode, $editMode)
-            
-            NavigationLink("Create New Exercise") {
-                CreateExerciseView(viewModel: viewModel)
-            }
-            .padding()
-            .background(.purple)
-            .clipShape(.buttonBorder)
-            .foregroundStyle(.white)
-            .fontWeight(.bold)
+        .searchable(text: $searchText)
+//        .onAppear {
+//            UIView.setAnimationsEnabled(false)
+//        }
+        .alert(
+            "Remove Custom Exercise",
+            isPresented: $removeExerciseAlert
+        ) {
+            Button("Remove Exercise", role:.destructive, action: removeUserExercise)
+            Button("Cancel", role: .cancel, action: {})
+        } message: {
+            Text("Are you sure you want to delete this exercise? Doing so will remove all sets from every workout of this exercise. This action may take a moment.")
         }
+        .withExercisesToolbar(viewModel: viewModel)
+        .toolbar {
+            EditButton()
+        }
+        .environment(\.editMode, $editMode)
+        
+        NavigationLink("Create New Exercise") {
+            CreateExerciseView(viewModel: viewModel)
+        }
+        .padding()
+        .background(.purple)
+        .clipShape(.buttonBorder)
+        .foregroundStyle(.white)
+        .fontWeight(.bold)
     }
     
     private func removeUserExercise() {
