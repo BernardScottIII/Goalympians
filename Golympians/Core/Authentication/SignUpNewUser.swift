@@ -38,6 +38,21 @@ struct SignUpNewUser: View {
                 }
             }
             
+            Button {
+                Task {
+                    do {
+                        try await authenticationViewModel.signInApple()
+                        showSignInView = false
+                    } catch {
+                        print(error)
+                    }
+                }
+            } label: {
+                SignInWithAppleButtonViewRepresentable(type: .signUp, style: .whiteOutline)
+                    .allowsHitTesting(false)
+            }
+            .frame(height: 55)
+            
             Spacer()
             
             Button {

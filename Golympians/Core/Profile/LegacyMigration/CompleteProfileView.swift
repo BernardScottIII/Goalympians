@@ -26,14 +26,14 @@ struct CompleteProfileView: View {
     
     @StateObject private var viewModel: CompleteProvileViewModel
 
-    @Binding var profileCompleted: Bool
+    @Binding var profileIncomplete: Bool
     let dataService: WorkoutManagerProtocol
     
     init(
         profileCompleted: Binding<Bool>,
         dataService: WorkoutManagerProtocol
     ) {
-        _profileCompleted = profileCompleted
+        _profileIncomplete = profileCompleted
         self.dataService = dataService
         
         _viewModel = StateObject(wrappedValue: CompleteProvileViewModel(dataService: dataService))
@@ -218,12 +218,6 @@ If you are seeing this screen, thank you for being an early adopter! We've just 
                 }
             }
         })
-//        .onChange(of: userAccountViewModel.user?.photoURL, { oldValue, newValue in
-//            print("changed!")
-//            if let newValue {
-//                url = URL(string: newValue)
-//            }
-//        })
         
         Button {
             Task {
@@ -241,7 +235,7 @@ If you are seeing this screen, thank you for being an early adopter! We've just 
                 
                 try await viewModel.createNewProfile(profile: newProfile)
             }
-            profileCompleted.toggle()
+            profileIncomplete.toggle()
         } label: {
             Text("Continue")
                 

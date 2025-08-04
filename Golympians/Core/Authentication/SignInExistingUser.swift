@@ -11,6 +11,7 @@ import GoogleSignInSwift
 
 struct SignInExistingUser: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.colorScheme) private var colorScheme
     @StateObject private var emailViewModel = SignInEmailViewModel()
     @StateObject private var authenticationViewModel = AuthenticationViewModel()
     @State private var alertToSignUp: Bool = false
@@ -40,18 +41,42 @@ struct SignInExistingUser: View {
                 }
             }
             
+            Button {
+                Task {
+                    do {
+                        try await authenticationViewModel.signInApple()
+                        showSignInView = false
+                    } catch {
+                        print(error)
+                    }
+                }
+            } label: {
+                SignInWithAppleButtonViewRepresentable(type: .signIn, style: .whiteOutline)
+                    .allowsHitTesting(false)
+            }
+            .frame(height: 55)
+            
             Spacer()
             
             NavigationLink {
                 SignUpNewUser(showSignInView: $showSignInView)
             } label: {
-                Text("Create Account")
-                    .font(.headline)
-                    .foregroundStyle(Color.white)
-                    .frame(height: 55)
-                    .frame(maxWidth: .infinity)
-                    .background(Color.blue)
-                    .clipShape(.buttonBorder)
+                HStack {
+                    Text("Create New Account")
+                        .font(.headline)
+                        .foregroundStyle(Color.white)
+                    
+                    Spacer()
+                    
+                    Image(systemName: "chevron.right")
+                        .foregroundStyle(.background)
+                        .font(.system(size: 24))
+                }
+                .padding()
+                .frame(height: 55)
+                .frame(maxWidth: .infinity)
+                .background(Color.blue)
+                .clipShape(.buttonBorder)
             }
             
             Button {
