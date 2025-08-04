@@ -47,7 +47,6 @@ final class StorageManager {
         metadata.contentType = "image/jpeg"
         
         let userId = try AuthenticationManager.shared.getAuthenticatedUser().uid
-        print(userId)
         
         let path = "\(UUID().uuidString).jpeg"
         

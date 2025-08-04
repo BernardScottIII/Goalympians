@@ -14,7 +14,6 @@ struct UserAccountView: View {
     @StateObject private var profileViewModel = ProfileViewModel()
     @State private var userId: String = ""
     @State private var selectedPhoto: PhotosPickerItem? = nil
-    @State private var url: URL? = nil
     @State var profile: Profile? = nil
     @State private var followerCount: Int = 0
     @State private var followingCount: Int = 0

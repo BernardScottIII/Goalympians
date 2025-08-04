@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import PhotosUI
 import FirebaseFirestore
 
 struct CompleteProfileView: View {
@@ -14,7 +15,9 @@ struct CompleteProfileView: View {
     @State private var age: Int = 0
     @State private var birthday: Date = Date.now
     @State private var weight: Double = 0.0
-    @StateObject private var profileViewModel = UserAccountViewModel()
+    @State private var selectedPhoto: PhotosPickerItem? = nil
+    @State private var url: URL? = nil
+    @StateObject private var userAccountViewModel = UserAccountViewModel()
     private let dateRange: ClosedRange<Date> = {
         let calendar = Calendar.current
         let startComponents = DateComponents(year: 1970, month: 1, day: 1)
@@ -37,7 +40,7 @@ struct CompleteProfileView: View {
     }
     
     var body: some View {
-        VStack {
+        ScrollView {
             HStack {
                 Text("Update Notice")
                     .font(.title)
@@ -52,6 +55,37 @@ If you are seeing this screen, thank you for being an early adopter! We've just 
 """)
                 
                 Spacer()
+            }
+            
+            Spacer()
+            
+            Section("Profile Picture") {
+                PhotosPicker(selection: $selectedPhoto, matching: .images, photoLibrary: .shared()) {
+                    if url != nil {
+                        AsyncImage(url: url) { image in
+                            image
+                                .resizable()
+                                .scaledToFill()
+                                .frame(width: 108, height: 108)
+                                .clipShape(.circle)
+                        } placeholder: {
+                            ProgressView()
+                                .frame(width: 108, height: 108)
+                        }
+                    } else {
+                        ZStack {
+                            Text("Tap to upload profile picture")
+                                .frame(width: 96)
+                                .fontWeight(.bold)
+                                .multilineTextAlignment(.center)
+                                .foregroundStyle(.black)
+                            
+                            Image(systemName: "person.circle.fill")
+                                .font(.system(size: 108))
+                                .foregroundStyle(Color(red: 0.0, green: 0.0, blue: 0.0, opacity: 0.3))
+                        }
+                    }
+                }
             }
             
             Spacer()
@@ -166,38 +200,53 @@ If you are seeing this screen, thank you for being an early adopter! We've just 
                     Spacer()
                 }
             }
-            
-            Spacer()
-            
-            Button {
-                Task {
-                    let userId = profileViewModel.user!.userId
-                    
-                    let newProfile = Profile(
-                        username: username,
-                        nickname: nickname,
-                        followers: [],
-                        following: [],
-                        photoURL: nil,
-                        photoPath: nil
-                    )
-                    try await viewModel.setUserData(userId: userId, data: ["username":username])
-                    
-                    try await viewModel.createNewProfile(profile: newProfile)
-                }
-                profileCompleted.toggle()
-            } label: {
-                Text("Continue")
-                    
-            }
-            .disabled(viewModel.formIsIncomplete)
         }
         .padding()
         .onAppear {
             Task {
-                try await profileViewModel.loadCurrentUser()
+                try await userAccountViewModel.loadCurrentUser()
             }
         }
+        .onChange(of: selectedPhoto, { oldValue, newValue in
+            if let newValue {
+                Task {
+                    try await userAccountViewModel.saveFirstProfileImage(item: newValue)
+                    try await userAccountViewModel.loadCurrentUser()
+                    if let photoURL = userAccountViewModel.user?.photoURL {
+                        url = URL(string: photoURL)
+                    }
+                }
+            }
+        })
+//        .onChange(of: userAccountViewModel.user?.photoURL, { oldValue, newValue in
+//            print("changed!")
+//            if let newValue {
+//                url = URL(string: newValue)
+//            }
+//        })
+        
+        Button {
+            Task {
+                let userId = userAccountViewModel.user!.userId
+                
+                let newProfile = Profile(
+                    username: username,
+                    nickname: nickname,
+                    followers: [],
+                    following: [],
+                    photoURL: userAccountViewModel.user?.photoURL,
+                    photoPath: userAccountViewModel.user?.photoImagePath
+                )
+                try await viewModel.setUserData(userId: userId, data: ["username":username])
+                
+                try await viewModel.createNewProfile(profile: newProfile)
+            }
+            profileCompleted.toggle()
+        } label: {
+            Text("Continue")
+                
+        }
+        .disabled(viewModel.formIsIncomplete)
     }
 }
 

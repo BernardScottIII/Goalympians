@@ -28,6 +28,17 @@ final class UserAccountViewModel: ObservableObject {
         }
     }
     
+    func saveFirstProfileImage(item: PhotosPickerItem) async throws {
+        guard let user else { return }
+        
+        guard let data = try await item.loadTransferable(type: Data.self) else {
+            return
+        }
+        let (path, _) = try await StorageManager.shared.saveImage(data: data)
+        let url = try await StorageManager.shared.getURLForImage(path: path)
+        try await UserManager.shared.updateUserProfileImagePath(userId: user.userId, path: path, url: url.absoluteString)
+    }
+    
     func saveProfileImage(item: PhotosPickerItem) {
         guard let user else { return }
         
@@ -35,10 +46,7 @@ final class UserAccountViewModel: ObservableObject {
             guard let data = try await item.loadTransferable(type: Data.self) else {
                 return
             }
-            let (path, name) = try await StorageManager.shared.saveImage(data: data)
-//            print("SUCCESS")
-//            print(path)
-//            print(name)
+            let (path, _) = try await StorageManager.shared.saveImage(data: data)
             let url = try await StorageManager.shared.getURLForImage(path: path)
             try await UserManager.shared.updateUserProfileImagePath(userId: user.userId, path: path, url: url.absoluteString)
             try await ProfileManager.shared.updatePhotoURL(username: user.username, path: path, url: url.absoluteString)

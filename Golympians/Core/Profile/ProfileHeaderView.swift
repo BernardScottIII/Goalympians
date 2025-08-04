@@ -27,7 +27,7 @@ struct ProfileHeaderView: View {
                 }
             } else {
                 Image(systemName: "person.circle.fill")
-                    .font(.system(size: 48))
+                    .font(.system(size: 108))
             }
             
             VStack(alignment: .leading) {
