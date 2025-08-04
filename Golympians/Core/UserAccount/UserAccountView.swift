@@ -15,57 +15,31 @@ struct UserAccountView: View {
     @State private var userId: String = ""
     @State private var selectedPhoto: PhotosPickerItem? = nil
     @State private var url: URL? = nil
+    @State var profile: Profile? = nil
+    @State private var followerCount: Int = 0
+    @State private var followingCount: Int = 0
     
     @Binding var showSignInView: Bool
     let workoutDataService: WorkoutManagerProtocol
     
     var body: some View {
+        if let profile = profileViewModel.myProfile {
+            ProfileHeaderView(
+                followerCount: $followerCount,
+                followingCount: $followingCount,
+                profile: profile
+            )
+            .padding()
+        }
+        
         List {
-            if let user = viewModel.user, let profile = profileViewModel.myProfile {
-                HStack {
-                    if let urlString = user.photoURL, let url = URL(string: urlString) {
-                        AsyncImage(url: url) { image in
-                            image
-                                .resizable()
-                                .scaledToFill()
-                                .frame(width: 108, height: 108)
-                                .clipShape(.circle)
-                        } placeholder: {
-                            ProgressView()
-                                .frame(width: 108, height: 108)
-                        }
-                    } else {
-                        Image(systemName: "person.circle.fill")
-                            .font(.system(size: 48))
-                    }
-                    
-                    VStack(alignment: .leading) {
-                        Text(user.username)
-                            .font(.title)
-                            .fontWeight(.bold)
-                        Text(profile.nickname ?? "")
-                        
-                        HStack {
-                            VStack {
-                                Text("Followers")
-                                Text("\(profile.followers.count)")
-                            }
-                            
-                            VStack {
-                                Text("Following")
-                                Text("\(profile.following.count)")
-                            }
-                        }
-                        
-                        Spacer()
-                    }
-                    .frame(height: 108)
-                    
-                    Spacer()
-                }
-                
-                Section("Personal Content") {
-                    NavigationLink("My Exercises", value: "")
+            Section("Personal Content") {
+                NavigationLink("My Exercises") {
+                    UserExerciseListView(
+                        viewModel: ExercisesViewModel(dataService: workoutDataService),
+                        userId: userId,
+                        workoutDataService: workoutDataService
+                    )
                 }
             }
             
@@ -73,28 +47,20 @@ struct UserAccountView: View {
                 Text("Select Profile Picture")
             }
             
-//            if let urlString = viewModel.user?.photoURL, let url = URL(string: urlString) {
-//                AsyncImage(url: url) { image in
-//                    image
-//                        .resizable()
-//                        .scaledToFill()
-//                        .frame(width: 48, height: 48)
-//                        .clipShape(.circle)
-//                } placeholder: {
-//                    ProgressView()
-//                        .frame(width: 150, height: 150)
-//                }
-//            }
-            
             if viewModel.user?.photoImagePath != nil {
                 Button("Delete Image") {
                     viewModel.deleteProfileImage()
                 }
             }
         }
+        .scrollDisabled(true)
         .task {
             try? await viewModel.loadCurrentUser()
             try? await profileViewModel.loadMyProfile()
+            if let profile = profileViewModel.myProfile {
+                followerCount = profile.followers.count
+                followingCount = profile.following.count
+            }
         }
         .onAppear {
             Task {
@@ -113,13 +79,6 @@ struct UserAccountView: View {
             }
         })
         .navigationTitle("Profile")
-        .navigationDestination(for: String.self) { _ in
-            UserExerciseListView(
-                viewModel: ExercisesViewModel(dataService: workoutDataService),
-                userId: userId,
-                workoutDataService: workoutDataService
-            )
-        }
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 NavigationLink {

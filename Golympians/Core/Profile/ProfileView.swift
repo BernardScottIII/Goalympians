@@ -26,47 +26,8 @@ struct ProfileView: View {
     
     var body: some View {
         VStack {
-            HStack {
-                if let urlString = profile.photoURL, let url = URL(string: urlString) {
-                    AsyncImage(url: url) { image in
-                        image
-                            .resizable()
-                            .scaledToFill()
-                            .frame(width: 108, height: 108)
-                            .clipShape(.circle)
-                    } placeholder: {
-                        ProgressView()
-                            .frame(width: 108, height: 108)
-                    }
-                } else {
-                    Image(systemName: "person.circle.fill")
-                        .font(.system(size: 48))
-                }
-                
-                VStack(alignment: .leading) {
-                    Text(profile.username)
-                        .font(.title)
-                        .fontWeight(.bold)
-                    Text(profile.nickname ?? "")
-                    
-                    HStack {
-                        VStack {
-                            Text("Followers")
-                            Text("\(followerCount)")
-                        }
-                        
-                        VStack {
-                            Text("Following")
-                            Text("\(followingCount)")
-                        }
-                    }
-                    
-                    Spacer()
-                }
-                .frame(height: 108)
-                
-                Spacer()
-            }
+            
+            ProfileHeaderView(followerCount: $followerCount, followingCount: $followingCount, profile: profile)
             
             HStack {
                 Spacer()
@@ -125,5 +86,7 @@ struct ProfileView: View {
 }
 
 #Preview {
-    ProfileView(profile: Profile(username: "TheUser", nickname: "Buddy", followers: ["3"], following: ["5", "asd"], photoURL: "", photoPath: ""))
+    NavigationStack {
+        ProfileView(profile: Profile(username: "TheUser", nickname: "Buddy", followers: ["Nard"], following: ["5", "asd"], photoURL: "", photoPath: ""))
+    }
 }

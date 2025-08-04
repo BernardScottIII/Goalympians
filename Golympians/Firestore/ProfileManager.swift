@@ -123,4 +123,12 @@ final class ProfileManager {
         
         try await profileDocument(username: username).updateData(data)
     }
+    
+    func queryProfiles(searchText: String) async throws -> [Profile] {
+        try await profileCollection
+            .whereField("username", isLessThanOrEqualTo: searchText)
+            .whereField("username", isGreaterThanOrEqualTo: searchText)
+//            .whereField("username", isEqualTo: searchText)
+            .getDocuments(as: Profile.self)
+    }
 }

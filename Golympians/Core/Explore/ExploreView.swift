@@ -19,7 +19,6 @@ struct ExploreView: View {
                 ForEach(viewModel.profiles.filter {
                     searchText.isEmpty ? true : $0.username.localizedStandardContains(searchText)
                 }, id: \.username) { profile in
-//                    NavigationLink(profile.username, value: profile)
                     NavigationLink(value: profile) {
                         ProfileSearchResultView(profile: profile)
                     }
@@ -39,5 +38,7 @@ struct ExploreView: View {
 }
 
 #Preview {
-    ExploreView()
+    NavigationStack {
+        ExploreView()
+    }
 }

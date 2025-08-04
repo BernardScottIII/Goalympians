@@ -36,11 +36,15 @@ struct UserExerciseListView: View {
     var body: some View {
         List {
             if isLoading {
-                ProgressView()
-                    .task {
-                        try? await viewModel.userIdsSelected(userIds: [userId])
-                        self.isLoading = false
-                    }
+                HStack {
+                    Text("Loading your exercises...")
+                    
+                    ProgressView()
+                        .task {
+                            try? await viewModel.userIdsSelected(userIds: [userId])
+                            self.isLoading = false
+                        }
+                }
             } else {
                 ForEach(viewModel.exercises.filter{
                     searchText.isEmpty ? true : $0.name.localizedStandardContains(searchText)
