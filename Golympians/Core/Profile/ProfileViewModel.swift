@@ -5,12 +5,12 @@
 //  Created by Bernard Scott on 7/24/25.
 //
 
-import Foundation
+import SwiftUI
 
 @MainActor
 final class ProfileViewModel: ObservableObject {
     
-    @Published private(set) var myProfile: Profile? = nil
+    @Published var myProfile: Profile? = nil
     @Published private(set) var isFollowing: Bool? = nil
     
     func loadMyProfile() async throws {
@@ -55,5 +55,11 @@ final class ProfileViewModel: ObservableObject {
     
     func getFollowingCount(for username: String) async throws -> Int {
         try await ProfileManager.shared.getProfile(username: username).following.count
+    }
+    
+    func updateProfileData(data: [String:Any]) async throws {
+        if let username = myProfile?.username {
+            try await ProfileManager.shared.updateProfile(username: username, data: data)            
+        }
     }
 }

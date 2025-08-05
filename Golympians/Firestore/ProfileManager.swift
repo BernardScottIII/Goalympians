@@ -131,4 +131,8 @@ final class ProfileManager {
 //            .whereField("username", isEqualTo: searchText)
             .getDocuments(as: Profile.self)
     }
+    
+    func updateProfile(username: String, data: [String:Any]) async throws {
+        try await profileDocument(username: username).updateData(data)
+    }
 }

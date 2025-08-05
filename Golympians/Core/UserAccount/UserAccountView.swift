@@ -13,7 +13,7 @@ struct UserAccountView: View {
     @StateObject private var viewModel = UserAccountViewModel()
     @StateObject private var profileViewModel = ProfileViewModel()
     @State private var userId: String = ""
-    @State private var selectedPhoto: PhotosPickerItem? = nil
+//    @State private var selectedPhoto: PhotosPickerItem? = nil
     @State var profile: Profile? = nil
     @State private var followerCount: Int = 0
     @State private var followingCount: Int = 0
@@ -41,16 +41,6 @@ struct UserAccountView: View {
                     )
                 }
             }
-            
-            PhotosPicker(selection: $selectedPhoto, matching: .images, photoLibrary: .shared()) {
-                Text("Select Profile Picture")
-            }
-            
-            if viewModel.user?.photoImagePath != nil {
-                Button("Delete Image") {
-                    viewModel.deleteProfileImage()
-                }
-            }
         }
         .scrollDisabled(true)
         .task {
@@ -72,11 +62,6 @@ struct UserAccountView: View {
                 userId = try AuthenticationManager.shared.getAuthenticatedUser().uid
             }
         })
-        .onChange(of: selectedPhoto, { oldValue, newValue in
-            if let newValue {
-                viewModel.saveProfileImage(item: newValue)
-            }
-        })
         .navigationTitle("Profile")
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
@@ -85,6 +70,13 @@ struct UserAccountView: View {
                 } label: {
                     Image(systemName: "gear")
                         .font(.headline)
+                }
+            }
+            ToolbarItem(placement: .topBarLeading) {
+                NavigationLink {
+                    EditProfileView(profileViewModel: profileViewModel, userAccountViewModel: viewModel)
+                } label: {
+                    Text("Edit Profile")
                 }
             }
         }
