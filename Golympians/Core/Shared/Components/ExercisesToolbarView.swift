@@ -9,6 +9,11 @@ import SwiftUI
 import FirebaseFirestore
 
 struct ExercisesToolbarViewModifier: ViewModifier {
+    @State private var showMuscleOptionSheet: Bool = false
+    @State private var selectedMuscle: MuscleOption = .allMuscles
+    @State private var showEquipmentOptionSheet: Bool = false
+    @State private var selectedEquipment: EquipmentOption = .noEquipment
+    
     @ObservedObject var viewModel: ExercisesViewModel
     
     func body(content: Content) -> some View {
@@ -33,40 +38,34 @@ struct ExercisesToolbarViewModifier: ViewModifier {
                     }
                 }
                 ToolbarItem(placement: .topBarTrailing) {
-                    Menu("Muscle: \(viewModel.selectedMuscle?.rawValue ?? "NONE")", systemImage: "figure.strengthtraining.traditional") {
-                        ForEach(MuscleOption.allCases, id: \.self) { option in
-                            Button {
-                                Task {
-                                    try? await viewModel.muscleSelected(muscle: option)
-                                }
-                            } label: {
-                                HStack {
-                                    if viewModel.selectedMuscle == option {
-                                        Image(systemName: "checkmark")
-                                    }
-                                    Text(option.prettyString)
-                                }
-                            }
-                        }
+                    Button {
+                        showMuscleOptionSheet = true
+                    } label: {
+                        Image(systemName: "figure.strengthtraining.traditional")
+                    }
+                    .sheet(isPresented: $showMuscleOptionSheet) {
+                        MuscleOptionMenuView(selection: $selectedMuscle, isPresented: $showMuscleOptionSheet)
                     }
                 }
                 ToolbarItem(placement: .topBarTrailing) {
-                    Menu("Equipment: \(viewModel.selectedEquipment?.rawValue ?? "NONE")", systemImage: "dumbbell.fill") {
-                        ForEach(EquipmentOption.allCases, id: \.self) { option in
-                            Button {
-                                Task {
-                                    try? await viewModel.filterEquipmentOption(equipment: option)
-                                }
-                            } label: {
-                                HStack {
-                                    if viewModel.selectedEquipment == option {
-                                        Image(systemName: "checkmark")
-                                    }
-                                    Text(option.prettyString)
-                                }
-                            }
-                        }
+                    Button {
+                        showEquipmentOptionSheet = true
+                    } label: {
+                        Image(systemName: "dumbbell.fill")
                     }
+                    .sheet(isPresented: $showEquipmentOptionSheet) {
+                        EquipmentOptionMenuView(selection: $selectedEquipment, isPresented: $showEquipmentOptionSheet)
+                    }
+                }
+            }
+            .onChange(of: selectedMuscle) {
+                Task {
+                    try? await viewModel.muscleSelected(muscle: selectedMuscle)
+                }
+            }
+            .onChange(of: selectedEquipment) {
+                Task {
+                    try? await viewModel.filterEquipmentOption(equipment: selectedEquipment)
                 }
             }
     }
