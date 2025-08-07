@@ -35,7 +35,7 @@ struct ContentView: View {
             }
         }
         .fullScreenCover(isPresented: $profileIncomplete) {
-            CompleteProfileView(profileCompleted: $profileIncomplete, dataService: workoutDataService)
+            CompleteProfileView(profileIncomplete: $profileIncomplete)
         }
     }
 }

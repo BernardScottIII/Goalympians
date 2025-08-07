@@ -7,9 +7,9 @@
 
 import SwiftUI
 import PhotosUI
-import FirebaseFirestore
 
 struct CompleteProfileView: View {
+    @Environment(\.colorScheme) private var colorScheme
     @State private var username: String = ""
     @State private var nickname: String = ""
     @State private var age: Int = 0
@@ -24,20 +24,9 @@ struct CompleteProfileView: View {
         return calendar.date(from:startComponents)! ... Date(timeIntervalSinceNow: 0)
     }()
     
-    @StateObject private var viewModel: CompleteProvileViewModel
+    @StateObject private var viewModel = CompleteProfileViewModel()
 
     @Binding var profileIncomplete: Bool
-    let dataService: WorkoutManagerProtocol
-    
-    init(
-        profileCompleted: Binding<Bool>,
-        dataService: WorkoutManagerProtocol
-    ) {
-        _profileIncomplete = profileCompleted
-        self.dataService = dataService
-        
-        _viewModel = StateObject(wrappedValue: CompleteProvileViewModel(dataService: dataService))
-    }
     
     var body: some View {
         ScrollView {
@@ -74,15 +63,15 @@ If you are seeing this screen, thank you for being an early adopter! We've just 
                         }
                     } else {
                         ZStack {
+                            Image(systemName: "person.circle.fill")
+                                .font(.system(size: 108))
+                                .foregroundStyle(.gray.opacity(0.7))
+                            
                             Text("Tap to upload profile picture")
                                 .frame(width: 96)
                                 .fontWeight(.bold)
                                 .multilineTextAlignment(.center)
-                                .foregroundStyle(.black)
-                            
-                            Image(systemName: "person.circle.fill")
-                                .font(.system(size: 108))
-                                .foregroundStyle(Color(red: 0.0, green: 0.0, blue: 0.0, opacity: 0.3))
+                                .foregroundStyle(colorScheme == .light ? .black : .white)
                         }
                     }
                 }
@@ -95,10 +84,12 @@ If you are seeing this screen, thank you for being an early adopter! We've just 
                     .padding()
                     .background(Color.gray.opacity(0.4))
                     .clipShape(.buttonBorder)
-                    .onSubmit {
-                        Task {
-                            try await viewModel.checkUniqueness(username)
-                            viewModel.checkFormCompletion()
+                    .onChange(of: username) { oldValue, newValue in
+                        if !newValue.isEmpty {
+                            Task {
+                                try await viewModel.checkUniqueness(username)
+                                viewModel.checkFormCompletion()
+                            }
                         }
                     }
             } header: {
@@ -108,7 +99,7 @@ If you are seeing this screen, thank you for being an early adopter! We've just 
                     Spacer()
                 }
             } footer: {
-                if viewModel.usernameIsUnique {
+                if viewModel.usernameIsUnique && !username.isEmpty {
                     HStack {
                         Image(systemName: "checkmark")
                         // Magic number here. My intention is for the icon to be the same height as text
@@ -141,7 +132,7 @@ If you are seeing this screen, thank you for being an early adopter! We've just 
                     .clipShape(.buttonBorder)
             } header: {
                 HStack {
-                    Text("Nickname")
+                    Text("Nickname (Optional)")
                         .font(.headline)
                     Spacer()
                 }
@@ -166,7 +157,7 @@ If you are seeing this screen, thank you for being an early adopter! We've just 
                     .clipShape(.buttonBorder)
             } header: {
                 HStack {
-                    Text("Age")
+                    Text("Age (Optional)")
                         .font(.headline)
                     Spacer()
                 }
@@ -195,7 +186,7 @@ If you are seeing this screen, thank you for being an early adopter! We've just 
                 }
             } header: {
                 HStack {
-                    Text("Weight (Units: \(viewModel.measurementUnitDisplay))")
+                    Text("Weight (Units: \(viewModel.measurementUnitDisplay)) (Optional)")
                         .font(.headline)
                     Spacer()
                 }
@@ -245,8 +236,7 @@ If you are seeing this screen, thank you for being an early adopter! We've just 
 }
 
 #Preview {
-    @Previewable let dataService = ProdWorkoutManager(workoutCollection: Firestore.firestore().collection("workouts"))
     NavigationStack {
-        CompleteProfileView(profileCompleted: .constant(false), dataService: dataService)
+        CompleteProfileView(profileIncomplete: .constant(true))
     }
 }
