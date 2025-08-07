@@ -89,6 +89,10 @@ final class ProfileManager {
         try await profileCollection.getDocuments(as: Profile.self)
     }
     
+    private func deleteProfile(profile: Profile) async throws {
+        try await profileDocument(username: profile.username).delete()
+    }
+    
     func addFollower(_ followRecipient: Profile, followedBy followInitiater: Profile) async throws {
         let recipientData: [String: Any] = [
             Profile.CodingKeys.followers.rawValue: FieldValue.arrayUnion([followInitiater.username])
@@ -134,5 +138,40 @@ final class ProfileManager {
     
     func updateProfile(username: String, data: [String:Any]) async throws {
         try await profileDocument(username: username).updateData(data)
+    }
+    
+    func changeUsername(from currUsername: String, to newUsername: String) async throws {
+        // Update Original Profile
+        let oldProfile = try await profileDocument(username: currUsername).getDocument(as: Profile.self)
+        let newProfile = Profile(
+            username: newUsername,
+            nickname: oldProfile.nickname,
+            followers: oldProfile.followers,
+            following: oldProfile.following,
+            photoURL: oldProfile.photoURL,
+            photoPath: oldProfile.photoPath
+        )
+        try await createNewProfile(profile: newProfile)
+        
+        let userId = try AuthenticationManager.shared.getAuthenticatedUser().uid
+        try await UserManager.shared.setUserData(userId: userId, data: [
+            DBUser.CodingKeys.username.rawValue:newUsername
+        ])
+        
+        // Update original profile's followers
+        for follower in newProfile.followers {
+            let followerProfile = try await getProfile(username: follower)
+            try await addFollower(newProfile, followedBy: followerProfile)
+            try await removeFollower(followerProfile, notFollowedBy: oldProfile)
+        }
+        
+        // Update original profile's following
+        for recipient in newProfile.following {
+            let recipientPRofile = try await getProfile(username: recipient)
+            try await addFollower(recipientPRofile, followedBy: newProfile)
+            try await removeFollower(recipientPRofile, notFollowedBy: oldProfile)
+        }
+        
+        try await deleteProfile(profile: oldProfile)
     }
 }

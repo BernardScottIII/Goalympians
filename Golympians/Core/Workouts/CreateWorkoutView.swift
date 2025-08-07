@@ -9,9 +9,6 @@ import SwiftUI
 import FirebaseFirestore
 
 struct CreateWorkoutView: View {
-    
-    @Environment(\.dismiss) private var dismiss
-    
     @State private var name: String = ""
     @State private var description: String = ""
     @State private var date: Date = Date.now
@@ -25,13 +22,16 @@ struct CreateWorkoutView: View {
     
     @ObservedObject var viewModel: WorkoutViewModel
     @Binding var path: NavigationPath
+    @Binding var isPresented: Bool
     
     init(
         viewModel: WorkoutViewModel,
-        path: Binding<NavigationPath>
+        path: Binding<NavigationPath>,
+        isPresented: Binding<Bool>
     ) {
         self.viewModel = viewModel
         _path = path
+        _isPresented = isPresented
     }
     
     var body: some View {
@@ -64,6 +64,7 @@ struct CreateWorkoutView: View {
         if !missingNameAlert {
             Task {
                 path.append(try await viewModel.createWorkout(name: name, description: description, date: date))
+                isPresented = false
             }
         }
     }
@@ -73,6 +74,6 @@ struct CreateWorkoutView: View {
     @Previewable @State var path = NavigationPath()
     @Previewable @StateObject var viewModel = WorkoutViewModel(workoutDataService: ProdWorkoutManager(workoutCollection: Firestore.firestore().collection("workouts")))
     NavigationStack {
-        CreateWorkoutView(viewModel: viewModel, path: $path)
+        CreateWorkoutView(viewModel: viewModel, path: $path, isPresented: .constant(true))
     }
 }

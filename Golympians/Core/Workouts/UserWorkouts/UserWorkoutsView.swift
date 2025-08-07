@@ -14,6 +14,7 @@ struct UserWorkoutsView: View {
     @State private var removalCandidateWorkout: DBWorkout?
     @State private var removeWorkoutAlert: Bool = false
     @State private var editMode = EditMode.inactive
+    @State private var createWorkoutSheetIsPresented = false
     
     @Binding var path: NavigationPath
     let workoutDataService: WorkoutManagerProtocol
@@ -72,9 +73,17 @@ struct UserWorkoutsView: View {
                 }
             }
             ToolbarItem(placement: .topBarTrailing) {
-                NavigationLink("Add Workout") {
-                    CreateWorkoutView(viewModel: viewModel, path: $path)
+                Button {
+                    createWorkoutSheetIsPresented = true
+                } label: {
+                    Text("Add Workout")
                 }
+                .sheet(isPresented: $createWorkoutSheetIsPresented) {
+                    CreateWorkoutView(viewModel: viewModel, path: $path, isPresented: $createWorkoutSheetIsPresented)
+                }
+//                NavigationLink("Add Workout") {
+//                    CreateWorkoutView(viewModel: viewModel, path: $path)
+//                }
             }
         }
         .alert(

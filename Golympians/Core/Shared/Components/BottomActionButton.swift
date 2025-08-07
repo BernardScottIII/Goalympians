@@ -14,7 +14,7 @@ struct BottomActionButton: View {
     var body: some View {
         Button(label, action: action)
             .padding()
-            .background(.purple)
+            .background(.golympiansPrimary)
             .clipShape(.buttonBorder)
             .foregroundStyle(.white)
             .fontWeight(.bold)

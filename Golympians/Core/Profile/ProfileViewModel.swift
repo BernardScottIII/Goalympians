@@ -62,4 +62,10 @@ final class ProfileViewModel: ObservableObject {
             try await ProfileManager.shared.updateProfile(username: username, data: data)            
         }
     }
+    
+    func changeUsername(newUsername: String) async throws {
+        if let username = myProfile?.username {
+            try await ProfileManager.shared.changeUsername(from: username, to: newUsername)
+        }
+    }
 }

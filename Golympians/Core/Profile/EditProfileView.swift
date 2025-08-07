@@ -74,36 +74,37 @@ struct EditProfileView: View {
                 TextField("Nickname", text: $nickname)
             }
             
-            // Coming soon!
-//            NavigationLink {
-//                UpdateUsernameView()
-//            } label: {
-//                Button {} label: {
-//                    Text("Change Username")
-//                        .font(.headline)
-//                        .foregroundStyle(Color.white)
-//                        .frame(height: 55)
-//                        .frame(maxWidth: .infinity)
-//                        .background(Color.blue)
-//                        .clipShape(.buttonBorder)
-//                }
-//            }
-//            .listRowBackground(Color.blue)
-//            .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
+            NavigationLink {
+                UpdateUsernameView(viewModel: profileViewModel)
+            } label: {
+                Button {} label: {
+                    Text("Change Username")
+                        .font(.headline)
+                        .foregroundStyle(Color.white)
+                        .frame(height: 55)
+                        .frame(maxWidth: .infinity)
+                        .background(Color.golympiansPrimary)
+                        .clipShape(.buttonBorder)
+                }
+            }
+            .listRowBackground(Color.golympiansPrimary)
+            .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
         }
         .navigationTitle("Edit Profile")
         .navigationBarBackButtonHidden()
         .toolbar {
             ToolbarItem(placement: .topBarLeading) {
                 Button {
-                    Task {
-                        savingProfile = true
-                        try await profileViewModel.updateProfileData(data: [
-                            Profile.CodingKeys.nickname.rawValue: nickname
-                        ])
-                        savingProfile = false
-                        dismiss()
+                    if nickname != profileViewModel.myProfile?.nickname {
+                        Task {
+                            savingProfile = true
+                            try await profileViewModel.updateProfileData(data: [
+                                Profile.CodingKeys.nickname.rawValue: nickname
+                            ])
+                            savingProfile = false
+                        }
                     }
+                    dismiss()
                 } label: {
                     Text("Save")
                 }

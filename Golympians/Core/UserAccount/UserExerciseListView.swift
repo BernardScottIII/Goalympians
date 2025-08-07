@@ -102,7 +102,7 @@ struct UserExerciseListView: View {
             CreateExerciseView(viewModel: viewModel)
         }
         .padding()
-        .background(.purple)
+        .background(.golympiansPrimary)
         .clipShape(.buttonBorder)
         .foregroundStyle(.white)
         .fontWeight(.bold)
